@@ -6,7 +6,7 @@ export default function NavbarComponent() {
     return (
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
             <div className="container">
-                <Link className="navbar-brand" href={'/sign-in'}>
+                <Link className="navbar-brand" href={'/'}>
                     prova
                 </Link>
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo02">

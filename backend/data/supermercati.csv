@@ -1,0 +1,103 @@
+codice;nome;geo_point;zona_di_prossimita
+1;Supermercato Coop;"{""coordinates"": [11.3401163,44.5019894], ""type"": ""Point""}";MARCONI
+2;Pam;"{""coordinates"": [11.3383915,44.4991457], ""type"": ""Point""}";MARCONI
+3;CONAD CITY;"{""coordinates"": [11.3464096,44.4981818], ""type"": ""Point""}";IRNERIO
+4;TUDAY CONAD;"{""coordinates"": [11.343243,44.4962069], ""type"": ""Point""}";IRNERIO
+5;Supermercato Carrefour Express;"{""coordinates"": [11.3487424,44.4849012], ""type"": ""Point""}";OSSERVANZA - PADERNO
+6;Mix Markt Bologna;"{""coordinates"": [11.3446699,44.5034197], ""type"": ""Point""}";MARCONI
+7;Supermercato Despar Medaglie;"{""coordinates"": [11.3439799,44.5057834], ""type"": ""Point""}";MARCONI
+8;CONAD SUPERSTORE;"{""coordinates"": [11.3740446,44.4840822], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+9;Minimarket Coop;"{""coordinates"": [11.3339472,44.4987137], ""type"": ""Point""}";MARCONI
+10;Minimarket Coop;"{""coordinates"": [11.345948,44.496857], ""type"": ""Point""}";IRNERIO
+11;Minimarket Coop;"{""coordinates"": [11.3477183,44.4945424], ""type"": ""Point""}";IRNERIO
+12;Mini Market;"{""coordinates"": [11.3592643,44.4936248], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+13;Sikder Mini Market Alimentari;"{""coordinates"": [11.3551241,44.4908316], ""type"": ""Point""}";GALVANI
+14;Minimarket Coop;"{""coordinates"": [11.3291961,44.4954201], ""type"": ""Point""}";MALPIGHI
+15;Supermercato Despar Costa;"{""coordinates"": [11.3242756703832,44.4953130257418], ""type"": ""Point""}";SARAGOZZA - SAN LUCA
+16;Minimarket Saragozza;"{""coordinates"": [11.3244437,44.4903232], ""type"": ""Point""}";SARAGOZZA - SAN LUCA
+17;Superstore Coop;"{""coordinates"": [11.312792,44.493652], ""type"": ""Point""}";SARAGOZZA - SAN LUCA
+18;Alimentari Minimarket Raihan;"{""coordinates"": [11.3153401,44.4960605], ""type"": ""Point""}";SARAGOZZA - SAN LUCA
+19;Supermercato Carrefour Express;"{""coordinates"": [11.3350851,44.4932885], ""type"": ""Point""}";MALPIGHI
+20;Minimarket Coop;"{""coordinates"": [11.3364402,44.4928967], ""type"": ""Point""}";MALPIGHI
+21;Coop;"{""coordinates"": [11.339097,44.495881], ""type"": ""Point""}";MALPIGHI
+22;Minimarket Coop;"{""coordinates"": [11.3447841,44.493312], ""type"": ""Point""}";GALVANI
+23;Supermercato Carrefour Express;"{""coordinates"": [11.3198715,44.4911653], ""type"": ""Point""}";SARAGOZZA - SAN LUCA
+24;Supermercato Carrefour Express;"{""coordinates"": [11.3618726,44.4885997], ""type"": ""Point""}";MURRI
+25;Supermercato Carrefour Express;"{""coordinates"": [11.3574581,44.494103], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+26;Supermercato Carrefour Express;"{""coordinates"": [11.3503478,44.4926621], ""type"": ""Point""}";GALVANI
+27;Supermercato Carrefour Express;"{""coordinates"": [11.3645938,44.501802], ""type"": ""Point""}";SAN DONATO VECCHIO
+28;Supermercato Carrefour Express;"{""coordinates"": [11.3469821640642,44.5106342296595], ""type"": ""Point""}";BOLOGNINA
+29;Supermercato Carrefour Market;"{""coordinates"": [11.2971508,44.4887693], ""type"": ""Point""}";BARCA
+30;Supermercato Carrefour Express;"{""coordinates"": [11.388099,44.473391], ""type"": ""Point""}";PONTEVECCHIO - MAZZINI
+31;Eurospin;"{""coordinates"": [11.4181725,44.4767242], ""type"": ""Point""}";
+32;Superstore Coop;"{""coordinates"": [11.4151181,44.4691562], ""type"": ""Point""}";
+33;Supermercato Famila San Lazzaro di Savena;"{""coordinates"": [11.4311175,44.4670156], ""type"": ""Point""}";
+34;Supermercato Coop;"{""coordinates"": [11.3647098,44.4924302], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+35;Supermercato Coop;"{""coordinates"": [11.3717328,44.5050182], ""type"": ""Point""}";SAN DONATO VECCHIO
+36;Supermercato Coop;"{""coordinates"": [11.3610816,44.5056171], ""type"": ""Point""}";SAN DONATO VECCHIO
+37;Supermercato Coop;"{""coordinates"": [11.3153409,44.5024008], ""type"": ""Point""}";SAFFI
+38;Supermercato Coop;"{""coordinates"": [11.2895019,44.4964859], ""type"": ""Point""}";BARCA
+39;Supermercato Coop;"{""coordinates"": [11.3698639,44.4801953], ""type"": ""Point""}";MURRI
+40;Centro Commerciale Pilastro;"{""coordinates"": [11.3896983,44.5119988], ""type"": ""Point""}";SAN DONATO NUOVO
+41;Superstore Coop;"{""coordinates"": [11.3988818,44.5146332], ""type"": ""Point""}";SAN DONATO NUOVO
+42;coop;"{""coordinates"": [11.4027018,44.5134342], ""type"": ""Point""}";SAN DONATO NUOVO
+43;CONAD CITY;"{""coordinates"": [11.3302278,44.4945584], ""type"": ""Point""}";MALPIGHI
+44;CONAD;"{""coordinates"": [11.3291452,44.500788], ""type"": ""Point""}";SAFFI
+45;CONAD CITY;"{""coordinates"": [11.349097,44.500102], ""type"": ""Point""}";IRNERIO
+46;CONAD;"{""coordinates"": [11.3898317,44.4814963], ""type"": ""Point""}";FOSSOLO - DUE MADONNE
+47;CONAD CITY;"{""coordinates"": [11.2955694,44.5039416], ""type"": ""Point""}";SANTA VIOLA
+48;SPAZIO CONAD;"{""coordinates"": [11.3915073,44.4977974], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+49;CONAD SUPERSTORE;"{""coordinates"": [11.335498,44.530544], ""type"": ""Point""}";BEVERARA
+50;Eurospin;"{""coordinates"": [11.3030124,44.5037278], ""type"": ""Point""}";SANTA VIOLA
+51;Eurospin;"{""coordinates"": [11.3221224,44.5152126], ""type"": ""Point""}";BERTALIA - NOCE
+52;Eurospin;"{""coordinates"": [11.3612605,44.5030364], ""type"": ""Point""}";SAN DONATO VECCHIO
+53;Eurospin;"{""coordinates"": [11.3560524,44.5379515], ""type"": ""Point""}";CORTICELLA - DOZZA
+54;Lidl;"{""coordinates"": [11.3661541,44.4983425], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+55;Lidl;"{""coordinates"": [11.3544341,44.5072717], ""type"": ""Point""}";BOLOGNINA
+56;Lidl;"{""coordinates"": [11.39749,44.50324], ""type"": ""Point""}";CROCE DEL BIACCO - ROVERI
+57;Lidl;"{""coordinates"": [11.3253991,44.5145306], ""type"": ""Point""}";BEVERARA
+58;Lidl;"{""coordinates"": [11.3131952,44.5029379], ""type"": ""Point""}";SAFFI
+59;Lidl;"{""coordinates"": [11.28212,44.5145452], ""type"": ""Point""}";BORGO PANIGALE
+60;iN's Mercato;"{""coordinates"": [11.3282019,44.4903153], ""type"": ""Point""}";SARAGOZZA - SAN LUCA
+61;iN's Mercato;"{""coordinates"": [11.3232625,44.5005079], ""type"": ""Point""}";SAFFI
+62;IN'S MERCATO SPA;"{""coordinates"": [11.3697832,44.4855391], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+63;iN's Mercato;"{""coordinates"": [11.3633033,44.5020545], ""type"": ""Point""}";SAN DONATO VECCHIO
+64;iN's Mercato;"{""coordinates"": [11.3796696,44.4818109], ""type"": ""Point""}";PONTEVECCHIO - MAZZINI
+65;IN'S MERCATO SPA;"{""coordinates"": [11.3841986,44.4772852], ""type"": ""Point""}";PONTEVECCHIO - MAZZINI
+66;iN's Mercato;"{""coordinates"": [11.2890898,44.5119411], ""type"": ""Point""}";CASTELDEBOLE - PONTELUNGO
+67;iN's Mercato;"{""coordinates"": [11.2285008,44.4884355], ""type"": ""Point""}";
+68;iN's Mercato;"{""coordinates"": [11.1998514,44.5441871], ""type"": ""Point""}";
+69;Esselunga;"{""coordinates"": [11.3061087,44.5058024], ""type"": ""Point""}";SANTA VIOLA
+70;Esselunga;"{""coordinates"": [11.2702794,44.4837417], ""type"": ""Point""}";
+71;Esselunga;"{""coordinates"": [11.384675,44.4921355], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+72;Esselunga s.p.a web Castel Maggiore;"{""coordinates"": [11.3624509,44.5609883], ""type"": ""Point""}";
+73;Supermercato Eurospar Di Vittorio;"{""coordinates"": [11.2889273,44.4937758], ""type"": ""Point""}";BARCA
+74;Supermercato Eurospar Mascherino;"{""coordinates"": [11.3556999,44.5104564], ""type"": ""Point""}";BOLOGNINA
+75;Supermercato Interspar Industria;"{""coordinates"": [11.3946598,44.5058778], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+76;Supermercato Eurospar Armi;"{""coordinates"": [11.3767313,44.4714004], ""type"": ""Point""}";PONTEVECCHIO - MAZZINI
+77;Supermercato Eurospar Arcoveggio;"{""coordinates"": [11.3475083,44.5338501], ""type"": ""Point""}";CORTICELLA - DOZZA
+78;Alimentari Despar;"{""coordinates"": [11.3021808,44.5367375], ""type"": ""Point""}";
+79;Pam Local;"{""coordinates"": [11.3492717,44.4908436], ""type"": ""Point""}";GALVANI
+80;Pam Local;"{""coordinates"": [11.341231,44.4937601], ""type"": ""Point""}";MALPIGHI
+81;Pam Local;"{""coordinates"": [11.337825,44.497829], ""type"": ""Point""}";MARCONI
+82;Pam Local;"{""coordinates"": [11.3510593,44.4996505], ""type"": ""Point""}";IRNERIO
+83;Pam Local Bologna Orti;"{""coordinates"": [11.3683797,44.4779352], ""type"": ""Point""}";MURRI
+84;Pam Bologna Bellaria;"{""coordinates"": [11.3870878,44.4759803], ""type"": ""Point""}";PONTEVECCHIO - MAZZINI
+85;Pam Panorama;"{""coordinates"": [11.331074,44.5065915], ""type"": ""Point""}";SAFFI
+86;Pam Bologna Corticella;"{""coordinates"": [11.3473758,44.5127287], ""type"": ""Point""}";BOLOGNINA
+87;Pam Supermercato;"{""coordinates"": [11.3494887,44.5204623], ""type"": ""Point""}";BOLOGNINA
+88;ALDI;"{""coordinates"": [11.3418056,44.5013218], ""type"": ""Point""}";MARCONI
+89;ALDI;"{""coordinates"": [11.327599,44.5188783], ""type"": ""Point""}";BEVERARA
+90;ALDI;"{""coordinates"": [11.3527767,44.5119475], ""type"": ""Point""}";BOLOGNINA
+91;ALDI;"{""coordinates"": [11.3940792,44.4766322], ""type"": ""Point""}";FOSSOLO - DUE MADONNE
+92;ALDI;"{""coordinates"": [11.3942353,44.4973326], ""type"": ""Point""}";CROCE DEL BIACCO - ROVERI
+93;ALDI;"{""coordinates"": [11.4240809,44.4656247], ""type"": ""Point""}";
+94;Alì supermercati - Via Bergami;"{""coordinates"": [11.3094217,44.5021834], ""type"": ""Point""}";SAFFI
+95;ALDI;"{""coordinates"": [11.29974,44.5078968], ""type"": ""Point""}";SANTA VIOLA
+96;ALDI;"{""coordinates"": [11.294172,44.5162376], ""type"": ""Point""}";CASTELDEBOLE - PONTELUNGO
+97;CRAI;"{""coordinates"": [11.3158815,44.4920394], ""type"": ""Point""}";SARAGOZZA - SAN LUCA
+98;Supermercato Crai;"{""coordinates"": [11.3515808,44.4977774], ""type"": ""Point""}";IRNERIO
+99;CRAI - Masia Market;"{""coordinates"": [11.3643525,44.4974166], ""type"": ""Point""}";CIRENAICA - MASSARENTI - SCANDELLARA
+100;Crai;"{""coordinates"": [11.3737486,44.4685034], ""type"": ""Point""}";VIA TOSCANA - S. RUFFILLO - MONTE DONATO
+101;Supermercato crai Le Cicogne;"{""coordinates"": [11.4231345,44.4617256], ""type"": ""Point""}";
+102;Ipercoop;"{""coordinates"": [11.419073,44.4904268], ""type"": ""Point""}";

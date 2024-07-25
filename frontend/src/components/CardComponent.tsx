@@ -3,7 +3,7 @@ import {Card, ListGroup} from 'react-bootstrap';
 
 interface Card {
     email: string;
-    password: string;
+    password?: string;
 }
 
 const CardComponent: React.FC<{ card: Card }> = ({card}) => {
@@ -13,7 +13,7 @@ const CardComponent: React.FC<{ card: Card }> = ({card}) => {
             <Card.Body>
                 <ListGroup variant="flush">
                     <ListGroup.Item>{card.email}</ListGroup.Item>
-                    <ListGroup.Item>{card.password}</ListGroup.Item>
+                    <ListGroup.Item>{card.password ? card.password: "" }</ListGroup.Item>
                 </ListGroup>
             </Card.Body>
 

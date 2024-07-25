@@ -1,4 +1,4 @@
-FROM node:alpine3.20
+FROM node:20-alpine3.20
 
 WORKDIR /app
 
@@ -11,6 +11,8 @@ COPY . .
 RUN npm run db:generate
 
 RUN npm run db:migrate
+
+RUN npm run db:seed
 
 EXPOSE 4000
 

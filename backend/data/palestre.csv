@@ -1,0 +1,99 @@
+codice;nome;geo_point;zona_di_prossimita
+1;Sport&Fitness;"{""type"":""Point"",""coordinates"":[11.2914586,44.5027267]}";BARCA
+2;Time4Fit;"{""type"":""Point"",""coordinates"":[11.3333725,44.5085119]}";BOLOGNINA
+3;Anytime Fitness Bologna Centro;"{""type"":""Point"",""coordinates"":[11.3395851,44.5045253]}";MARCONI
+4;Palestra Dream Gym SSD;"{""type"":""Point"",""coordinates"":[11.3516459,44.514037]}";BOLOGNINA
+5;Palestra Mondo Fitness SSD;"{""type"":""Point"",""coordinates"":[11.3678962,44.5007122]}";SAN DONATO VECCHIO
+6;Asd-Aps Regis;"{""type"":""Point"",""coordinates"":[11.3860762,44.4796745]}";FOSSOLO - DUE MADONNE
+7;Operazione Fitness;"{""type"":""Point"",""coordinates"":[11.4120514,44.4751862]}";
+8;Euphoria Fitness Club Bologna Centro;"{""type"":""Point"",""coordinates"":[11.352382,44.4899308]}";GALVANI
+9;Palestra McFIT Bologna Mazzini;"{""type"":""Point"",""coordinates"":[11.3678307,44.4861922]}";CIRENAICA - MASSARENTI - SCANDELLARA
+10;Neptune Gym;"{""type"":""Point"",""coordinates"":[11.3699665,44.4717521]}";VIA TOSCANA - S. RUFFILLO - MONTE DONATO
+11;Prime Exclusive Wellness Bologna Centro;"{""type"":""Point"",""coordinates"":[11.3451251,44.4969825]}";IRNERIO
+12;Palestra Performance;"{""type"":""Point"",""coordinates"":[11.3397111,44.4963912]}";MALPIGHI
+13;Palestra Flexing Bologna centro;"{""type"":""Point"",""coordinates"":[11.3366929,44.4967584]}";MARCONI
+14;Atlas Palestra;"{""type"":""Point"",""coordinates"":[11.3593866,44.5022078]}";SAN DONATO VECCHIO
+15;Palestra - Le Club - Bologna ASD APS;"{""type"":""Point"",""coordinates"":[11.3596403,44.5062339]}";SAN DONATO VECCHIO
+16;Sport Education;"{""type"":""Point"",""coordinates"":[11.3186625,44.4933995]}";SARAGOZZA - SAN LUCA
+17;Centro Sportivo Italiano;"{""type"":""Point"",""coordinates"":[11.3106281,44.4921644]}";SARAGOZZA - SAN LUCA
+18;Piscina Carmen Longo Stadio 25m;"{""type"":""Point"",""coordinates"":[11.3086959,44.4921291]}";SARAGOZZA - SAN LUCA
+19;Bologna De Akker;"{""type"":""Point"",""coordinates"":[11.3085822,44.4929739]}";SARAGOZZA - SAN LUCA
+20;Centro Sportivo Corticelli - C.S.C.;"{""type"":""Point"",""coordinates"":[11.3091144,44.5003395]}";SAFFI
+21;Impianto Sportivo San Luigi Orione;"{""type"":""Point"",""coordinates"":[11.3123705,44.501609]}";SAFFI
+22;Centro Sportivo Santa Caterina;"{""type"":""Point"",""coordinates"":[11.3336546,44.4909455]}";MALPIGHI
+23;Centro Sportivo E. Filippetti;"{""type"":""Point"",""coordinates"":[11.2354698,44.485046]}";
+24;Centro Polisportivo Pizzoli via Zanardi (BO);"{""type"":""Point"",""coordinates"":[11.3160994,44.5247979]}";BERTALIA - NOCE
+25;Centro sportivo Vasco (BO);"{""type"":""Point"",""coordinates"":[11.3274488,44.5221027]}";BEVERARA
+26;Centro Sportivo Ferrari;"{""type"":""Point"",""coordinates"":[11.3406441,44.5162023]}";BOLOGNINA
+27;Centro Sportivo Barca;"{""type"":""Point"",""coordinates"":[11.2809083,44.4931082]}";BARCA
+28;Centro Sportivo Bernardi;"{""type"":""Point"",""coordinates"":[11.3749876,44.4770206]}";MURRI
+29;Centro Universitario Sportivo Terrapieno - Palacus;"{""type"":""Point"",""coordinates"":[11.3883247,44.5016987]}";CIRENAICA - MASSARENTI - SCANDELLARA
+30;Centro Sportivo Pier Paolo Bonori;"{""type"":""Point"",""coordinates"":[11.3689548,44.528422]}";CORTICELLA - DOZZA
+31;Centro Sportivo Felsina FC;"{""type"":""Point"",""coordinates"":[11.3875735,44.4889606]}";FOSSOLO - DUE MADONNE
+32;Impianto Sportivo Baratti;"{""type"":""Point"",""coordinates"":[11.3469282,44.5012393]}";IRNERIO
+33;Body Line Fitness Club Bologna - La palestra delle Palestre a Bologna;"{""type"":""Point"",""coordinates"":[11.3880177,44.4821463]}";FOSSOLO - DUE MADONNE
+34;Gym Republic;"{""type"":""Point"",""coordinates"":[11.3317778,44.4989808]}";MARCONI
+35;Keep Fitness;"{""type"":""Point"",""coordinates"":[11.3327548,44.5005091]}";MARCONI
+36;Palestra Alma Gym UNIone by CUSB;"{""type"":""Point"",""coordinates"":[11.3370187,44.5012104]}";MARCONI
+37;Europalestra Eurogym;"{""type"":""Point"",""coordinates"":[11.3374603,44.5082246]}";BOLOGNINA
+38;Palestra Felsina;"{""type"":""Point"",""coordinates"":[11.3188688,44.5016363]}";SAFFI
+39;Palestra VIN4YOU;"{""type"":""Point"",""coordinates"":[11.3295429,44.4976078]}";MALPIGHI
+40;Palestra del Borgo;"{""type"":""Point"",""coordinates"":[11.3504336,44.5018828]}";IRNERIO
+41;FitActive Bologna Via Friuli;"{""type"":""Point"",""coordinates"":[11.3812625,44.4788589]}";PONTEVECCHIO - MAZZINI
+42;Asd Muscle House Bologna;"{""type"":""Point"",""coordinates"":[11.3752658,44.4827754]}";MURRI
+43;Benefit Dance 2.0;"{""type"":""Point"",""coordinates"":[11.3677016,44.4539875]}";VIA TOSCANA - S. RUFFILLO - MONTE DONATO
+44;StoreFit Bologna San Ruffillo;"{""type"":""Point"",""coordinates"":[11.368943,44.4565388]}";VIA TOSCANA - S. RUFFILLO - MONTE DONATO
+45;CrossFit Murri;"{""type"":""Point"",""coordinates"":[11.3711668,44.4662946]}";VIA TOSCANA - S. RUFFILLO - MONTE DONATO
+46;Palestre StayUp;"{""type"":""Point"",""coordinates"":[11.3782234,44.4673125]}";LUNGO SAVENA
+47;Alessio Citi Fitness Studio;"{""type"":""Point"",""coordinates"":[11.3733101,44.4892433]}";CIRENAICA - MASSARENTI - SCANDELLARA
+48;Enecta FREE FITNESS;"{""type"":""Point"",""coordinates"":[11.3424531,44.4862793]}";GALVANI
+49;Palestra de' Poeti;"{""type"":""Point"",""coordinates"":[11.3455388,44.4904793]}";GALVANI
+50;Si o si Pilates;"{""type"":""Point"",""coordinates"":[11.3487784,44.4932193]}";GALVANI
+51;Refran Club;"{""type"":""Point"",""coordinates"":[11.3444499,44.4972011]}";IRNERIO
+52;Costa We Club;"{""type"":""Point"",""coordinates"":[11.3253406,44.495326]}";SARAGOZZA - SAN LUCA
+53;FITLIFE palestre;"{""type"":""Point"",""coordinates"":[11.3164892,44.4954872]}";SARAGOZZA - SAN LUCA
+54;Palestra Sinergy;"{""type"":""Point"",""coordinates"":[11.3475839,44.5099796]}";BOLOGNINA
+55;FitActive Bologna Creti;"{""type"":""Point"",""coordinates"":[11.3505972,44.5106369]}";BOLOGNINA
+56;CrossFit 2 Torri;"{""type"":""Point"",""coordinates"":[11.3512896,44.51101]}";BOLOGNINA
+57;Curves Bologna Centro;"{""type"":""Point"",""coordinates"":[11.3419878,44.5007522]}";MARCONI
+58;Palestra Movimento - Bologna;"{""type"":""Point"",""coordinates"":[11.323825,44.500125]}";SAFFI
+59;Palestra Don Mazzoli;"{""type"":""Point"",""coordinates"":[11.3040626,44.5082776]}";SANTA VIOLA
+60;Crossfit40133;"{""type"":""Point"",""coordinates"":[11.3055547,44.51231]}";SANTA VIOLA
+61;Gyrotonic Bologna City Center;"{""type"":""Point"",""coordinates"":[11.28617,44.5095592]}";CASTELDEBOLE - PONTELUNGO
+62;Centro Sportivo Effe Academy (ex Morara Spa);"{""type"":""Point"",""coordinates"":[11.2802336,44.5099449]}";CASTELDEBOLE - PONTELUNGO
+63;Palestra Body & Soul;"{""type"":""Point"",""coordinates"":[11.2811812,44.5134543]}";BORGO PANIGALE
+64;Palestra Uisp G. Querzè;"{""type"":""Point"",""coordinates"":[11.2702932,44.5173311]}";BORGO PANIGALE
+65;palestra aldo moro;"{""type"":""Point"",""coordinates"":[11.2935975,44.5200547]}";BIRRA - BARGELLINO - LAVINO
+66;Orange Bologna - Dance Fitness;"{""type"":""Point"",""coordinates"":[11.3039787,44.5063207]}";SANTA VIOLA
+67;Palestra McFIT Bologna Casalecchio;"{""type"":""Point"",""coordinates"":[11.2624951,44.4875394]}";
+68;Virgin Active Bologna Casalecchio;"{""type"":""Point"",""coordinates"":[11.2687647,44.4839339]}";
+69;Palestra Studios Club;"{""type"":""Point"",""coordinates"":[11.2802905,44.4821731]}";
+70;Fit and Go Bologna Casalecchio;"{""type"":""Point"",""coordinates"":[11.2773367,44.4737984]}";
+71;Palestra Porelli - Virtus Bologna;"{""type"":""Point"",""coordinates"":[11.3470241,44.5279496]}";CORTICELLA - DOZZA
+72;Palamargelli;"{""type"":""Point"",""coordinates"":[11.3486378,44.5279946]}";CORTICELLA - DOZZA
+73;Palestra Arcoveggio;"{""type"":""Point"",""coordinates"":[11.3500354,44.5275356]}";CORTICELLA - DOZZA
+74;Palestra UP&GO LAB;"{""type"":""Point"",""coordinates"":[11.3475612,44.5237023]}";CORTICELLA - DOZZA
+75;Palestra Alutto;"{""type"":""Point"",""coordinates"":[11.3432961,44.5192313]}";BOLOGNINA
+76;StoreFit Bologna Fiera;"{""type"":""Point"",""coordinates"":[11.3670196,44.5287096]}";CORTICELLA - DOZZA
+77;Palestre StayUp SSD;"{""type"":""Point"",""coordinates"":[11.3498294,44.5386103]}";CORTICELLA - DOZZA
+78;Palestre Bottego;"{""type"":""Point"",""coordinates"":[11.3296864,44.5213325]}";BEVERARA
+79;Sport Village Bologna;"{""type"":""Point"",""coordinates"":[11.3743189,44.5071137]}";SAN DONATO VECCHIO
+80;Palestre Italiane;"{""type"":""Point"",""coordinates"":[11.3520155,44.5118517]}";BOLOGNINA
+81;Palestra All Stars Club;"{""type"":""Point"",""coordinates"":[11.4246416,44.4668693]}";
+82;Centro Fitness San Lazzaro;"{""type"":""Point"",""coordinates"":[11.4264156,44.4612999]}";
+83;Stadio Arcoveggio;"{""type"":""Point"",""coordinates"":[11.3486369,44.5268106]}";CORTICELLA - DOZZA
+84;Circolo Tennis Italia;"{""type"":""Point"",""coordinates"":[11.2813773,44.498084]}";BARCA
+85;Centro Sportivo Aretusi;"{""type"":""Point"",""coordinates"":[11.2872735,44.5082464]}";CASTELDEBOLE - PONTELUNGO
+86;POLISPORTIVA PONTELUNGO A.D.;"{""type"":""Point"",""coordinates"":[11.3000372,44.5118894]}";SANTA VIOLA
+87;Polisportiva Ceretolese ASD;"{""type"":""Point"",""coordinates"":[11.2613305,44.4788042]}";
+88;Campo di Marte Bologna - Centro sportivo;"{""type"":""Point"",""coordinates"":[11.3447968,44.4856647]}";OSSERVANZA - PADERNO
+89;Centro Sportivo Sterlino;"{""type"":""Point"",""coordinates"":[11.3631574,44.4791346]}";MURRI
+90;Polisportiva Pontevecchio;"{""type"":""Point"",""coordinates"":[11.3806929,44.4685881]}";LUNGO SAVENA
+91;Polisportiva Paolo Poggi A.I.C.S.;"{""type"":""Point"",""coordinates"":[11.4159916,44.4742789]}";
+92;Palasavena;"{""type"":""Point"",""coordinates"":[11.4157334,44.4731984]}";
+93;Eden Park San Lazzaro;"{""type"":""Point"",""coordinates"":[11.4129027,44.4763943]}";
+94;"Circolo ""IL FOSSOLO"" a.s.d.";"{""type"":""Point"",""coordinates"":[11.3880515,44.4897261]}";FOSSOLO - DUE MADONNE
+95;FeelGood! fitness;"{""type"":""Point"",""coordinates"":[11.34838,44.5042465]}";IRNERIO
+96;Prime Exclusive Wellness Bologna Tower;"{""type"":""Point"",""coordinates"":[11.3911111,44.4955556]}";CIRENAICA - MASSARENTI - SCANDELLARA
+97;Curves Casalecchio - Palestra Femminile;"{""type"":""Point"",""coordinates"":[11.270561,44.4819369]}";
+98;One Gym;"{""type"":""Point"",""coordinates"":[11.2591766,44.4864915]}";
