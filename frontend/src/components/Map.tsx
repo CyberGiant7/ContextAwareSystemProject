@@ -44,6 +44,7 @@ export default function Map(prop: LazyMapProps) {
     useEffect(() => {
         getAllZone().then((data) => {
             setData(data);
+            console.log(data);
         }).catch(console.error);
     }, []);
 

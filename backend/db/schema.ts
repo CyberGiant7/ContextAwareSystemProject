@@ -1,10 +1,16 @@
 import {customType, date, doublePrecision, geometry, integer, numeric, pgTable, text} from 'drizzle-orm/pg-core';
+import a from "drizzle-postgis/dist/chunk-F43D3IJN.mjs";
+import {sql} from "drizzle-orm";
+
 
 const customPolygon = customType<{ data: string; }>(
     {
         dataType() {
             return 'geometry(Polygon)';
         },
+        fromDriver(value) {
+            return  sql`st_asgeojson$()` || "null";
+        }
     },
 );
 
