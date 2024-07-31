@@ -18,7 +18,7 @@ export default function App() {
                 <h1>App</h1>
             </header>
             <Container fluid style={{height:"-webkit-fill-available"}}>
-            <LazyMap width="100%" height="100%"/>
+            <LazyMap width="100%" height="500px"/>
             </Container>
         </div>
     )
