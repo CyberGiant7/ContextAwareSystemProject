@@ -3,11 +3,22 @@ import {sql} from "drizzle-orm";
 import c from 'wkx';
 
 
-
 const customPolygon = customType<{ data: string; }>(
     {
         dataType() {
             return 'geometry(Polygon)';
+        },
+        fromDriver(value: any) {
+            let t = Buffer.from(value, "hex");
+            return c.Geometry.parse(t).toGeoJSON({shortCrs: !0}) as any;
+        }
+    },
+);
+
+const customMultiPolygon = customType<{ data: string; }>(
+    {
+        dataType() {
+            return 'geometry(MultiPolygon)';
         },
         fromDriver(value: any) {
             let t = Buffer.from(value, "hex");
@@ -179,5 +190,9 @@ export const fermate_autobus = pgTable('fermate_autobus', {
     geo_point: geometry('geo_point').notNull(),
 });
 
-
-
+export const prezzi_agenzia_entrate = pgTable('prezzi_agenzia_entrate', {
+    codice: text('codice').primaryKey(),
+    prezzo_min: integer('prezzo_min'),
+    prezzo_max: integer('prezzo_max'),
+    geo_shape: customMultiPolygon('geo_shape').notNull(),
+});

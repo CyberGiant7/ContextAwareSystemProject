@@ -135,6 +135,16 @@ const main = async () => {
                     numero_linee: parseInt(row.numero_linee)
                 })
             },
+            {
+                file: './data/prezzi_agenzia_entrate.csv',
+                table: schema.prezzi_agenzia_entrate,
+                transform: (row: any) => ({
+                    ...row,
+                    geo_shape: geomFromGeoJSON(JSON.parse(row.geo_shape)),
+                    prezzo_min: row.prezzo_min ? parseInt(row.prezzo_min) : null,
+                    prezzo_max: row.prezzo_max ? parseInt(row.prezzo_max) : null
+                })
+            },
         ];
 
 
