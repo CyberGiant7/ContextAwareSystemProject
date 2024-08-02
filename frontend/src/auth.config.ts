@@ -1,6 +1,7 @@
 import {NextAuthConfig} from "next-auth"
 import {DefaultSession} from "@auth/core/types";
 import {User} from "@/app/lib/definitions";
+import {NextResponse} from "next/server";
 
 
 declare module "next-auth" {
@@ -18,21 +19,14 @@ export const authConfig = {
         signIn: '/sign-in',
         signOut: '/',
         error: '/error', // Error code passed in query string as ?error=
-        verifyRequest: '/verify-request', // (used for check email message)
-        newUser: "/sas", // If set, new users will be directed here on first sign in
     },
     trustHost: true,
     callbacks: {
         async signIn({user, credentials}) {
-            // console.log('signIn', {user, credentials});
-            if (user) {
-                console.log('signIn', {user, credentials});
-                return true;
-            }
-            return false;
+            return !!user;
         },
         async redirect({url, baseUrl}) {
-            // console.log('redirect', {url, baseUrl});
+            console.log('redirect', {url, baseUrl});
             // Allows relative callback URLs
             if (url.startsWith("/")) return `${baseUrl}${url}`
             // Allows callback URLs on the same origin
@@ -57,16 +51,25 @@ export const authConfig = {
         },
         authorized({auth, request: {nextUrl}}) {
             // console.log('authorized', {auth, nextUrl});
-            const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith('/secret');
-            if (isOnDashboard) {
-                if (isLoggedIn) return true;
-                return false; // Redirect unauthenticated users to login page
-            } else if (isLoggedIn) {
-                return Response.redirect(new URL('/secret', nextUrl));
+            console.log(auth);
+            const isLoggedIn = !!auth;
+            const isOnSecret = nextUrl.pathname.startsWith('/secret');
+            console.log('isLoggedIn', isLoggedIn);
+
+            if (isOnSecret) {
+                return isLoggedIn;
+                 // Redirect unauthenticated users to login page
+            } else {
+                console.log("authorized redirecting to", new URL('/secret', nextUrl))
+                return NextResponse.redirect(new URL('/secret', nextUrl));
             }
-            return true;
+
+            // else if (isLoggedIn) {
+            //     return Response.redirect(new URL('/secret', nextUrl));
+            // }
+            // return true;
         },
+
     },
     providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;
