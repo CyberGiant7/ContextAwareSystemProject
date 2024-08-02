@@ -5,7 +5,9 @@ import {authenticate} from "@/app/lib/actions";
 
 export default function Login() {
     const [errorMessage, formAction, isPending] = useFormState(
-        authenticate,
+        (prevState: string | undefined, formData:FormData)=> {
+            return authenticate(prevState, formData)
+        },
         undefined,
     );
     return (
