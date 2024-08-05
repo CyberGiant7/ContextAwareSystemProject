@@ -11,7 +11,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx ./db/seed.tsx"
+    "db:seed": "tsx ./db/seed.tsx",
+    "generate immobili": "tsx ./src/lib/GenerateImmobili.tsx"
   },
   "dependencies": {
     "drizzle-orm": "^0.32.0",

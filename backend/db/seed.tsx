@@ -7,6 +7,7 @@ import fs from 'fs';
 import csvParser from "csv-parser";
 import {TableConfig} from "drizzle-orm";
 import {PgTable} from "drizzle-orm/pg-core";
+import {GenerateImmobili} from "@/lib/GenerateImmobili";
 
 
 dotenv.config({path: "./.env"});
@@ -24,7 +25,15 @@ const importData = async (db: PostgresJsDatabase<any>, filePath: string, tableNa
     await new Promise<void>((resolve, reject) => {
         stream.on('end', async () => {
             try {
-                await db.insert(tableName).values(results).onConflictDoNothing().execute();
+                if (results.length > 1000) {
+                    const chunkSize = 1000;
+                    for (let i = 0; i < results.length; i += chunkSize) {
+                        const chunk = results.slice(i, i + chunkSize);
+                        await db.insert(tableName).values(chunk).onConflictDoNothing().execute();
+                    }
+                } else {
+                    await db.insert(tableName).values(results).onConflictDoNothing().execute();
+                }
             } catch (e) {
                 console.log(e);
             } finally {
@@ -42,12 +51,29 @@ const main = async () => {
 
         const importTasks = [
             {
+                file: './data/quartieri.csv',
+                table: schema.quartieri,
+                transform: (row: any) => ({
+                    ...row,
+                    geo_shape: geomFromGeoJSON(JSON.parse(row.geo_shape))
+                })
+            },
+            {
                 file: './data/zone_urbanistiche.csv',
                 table: schema.zone_urbanistiche,
                 transform: (row: any) => ({
                     ...row,
                     geo_point: strToGeojsonPoint(row.geo_point),
                     geo_shape: geomFromGeoJSON(JSON.parse(row.geo_shape))
+                })
+            },
+            {
+                file: './data/indirizzi.csv',
+                table: schema.indirizzi,
+                transform: (row: any) => ({
+                    ...row,
+                    geo_point: strToGeojsonPoint(row.geo_point),
+                    zona_di_prossimita: row.zona_di_prossimita?.toUpperCase(),
                 })
             },
             {
@@ -153,9 +179,14 @@ const main = async () => {
         console.log("Seed start");
 
         for (const task of importTasks) {
+            console.log("Importing:", task.file);
             await importData(db, task.file, task.table, task.transform);
         }
-
+        console.log("Generating immobili");
+        let immobili = await db.select().from(schema.immobili).execute();
+        if (immobili.length < 500) {
+            await GenerateImmobili(500, db)
+        }
         console.log("Seed done");
 
         try {

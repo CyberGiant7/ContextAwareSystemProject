@@ -1,4 +1,15 @@
-import {customType, date, doublePrecision, geometry, integer, numeric, pgTable, text} from 'drizzle-orm/pg-core';
+import {
+    customType,
+    date,
+    doublePrecision,
+    geometry,
+    integer,
+    numeric,
+    pgTable,
+    text,
+    boolean,
+    smallint
+} from 'drizzle-orm/pg-core';
 import {sql} from "drizzle-orm";
 import c from 'wkx';
 
@@ -34,25 +45,54 @@ export const user = pgTable('user', {
     last_name: text('last_name').notNull(),
 });
 
+export const quartieri = pgTable('quartieri', {
+    codice_quartiere: numeric('codice_quartiere').notNull().primaryKey(),
+    quartiere: text('quartiere').notNull().unique(),
+    geo_shape: customPolygon('geo_shape').notNull(),
+});
+
 export const zone_urbanistiche = pgTable('zone_urbanistiche', {
     zona_di_prossimita: text('zona_di_prossimita').primaryKey(),
-    nome_quartiere: text('nome_quartiere').notNull(),
+    nome_quartiere: text('nome_quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     codice_quartiere: numeric('codice_quartiere').notNull(),
     geo_point: geometry('geo_point').notNull(),
     geo_shape: customPolygon('geo_shape').notNull(),
     area: doublePrecision('area').notNull()
 });
 
+export const indirizzi = pgTable('indirizzi', {
+    civ_key: text('civ_key').notNull().primaryKey(),
+    indirizzo: text('indirizzo').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    geo_point: geometry('geo_point').notNull(),
+});
+
 
 export const teatri_cinema = pgTable('teatri_cinema', {
-    civ_key: text('civ_key').notNull().primaryKey(),
+    civ_key: text('civ_key').primaryKey().references(() => indirizzi.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     geo_point: geometry('geo_point').notNull(),
     indirizzo: text('indirizzo').notNull(),
     nome: text('nome').notNull(),
     fonte: text('fonte').notNull(),
     tipologia: text('tipologia').notNull(),
     link: text('link').notNull(),
-    quartiere: text('quartiere').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
         onDelete: 'cascade',
         onUpdate: 'cascade'
@@ -65,7 +105,10 @@ export const bar_ristoranti = pgTable('bar_ristoranti', {
     tipologia: text('tipologia').notNull(),
     inizio_attivita: date('inizio_attivita').notNull(),
     ubicazione: text('ubicazione').notNull(),
-    quartiere: text('quartiere').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
         onDelete: 'cascade',
         onUpdate: 'cascade'
@@ -82,7 +125,10 @@ export const biblioteche = pgTable('biblioteche', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    quartiere: text('quartiere').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     rete_wi_fi: text('rete_wi_fi').notNull(),
     telefono: text('telefono').notNull(),
     email: text('email').notNull(),
@@ -100,7 +146,10 @@ export const biblioteche = pgTable('biblioteche', {
 });
 
 export const farmacie = pgTable('farmacie', {
-    civ_key: text('civ_key').notNull().primaryKey(),
+    civ_key: text('civ_key').primaryKey().references(() => indirizzi.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     farmacia: text('farmacia').notNull(),
     indirizzo: text('indirizzo').notNull(),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
@@ -141,25 +190,37 @@ export const parchi_e_giardini = pgTable('parchi_e_giardini', {
 });
 
 export const scuole = pgTable('scuole', {
-    civ_key: text('civ_key').notNull().primaryKey(),
+    civ_key: text('civ_key').primaryKey().references(() => indirizzi.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     nome: text('nome').notNull(),
     servizio: text('servizio').notNull(),
     gestione: text('gestione').notNull(),
     istituzione_scolastica: text('istituzione_scolastica').notNull(),
-    quartiere: text('quartiere').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     indirizzo: text('indirizzo').notNull(),
     numero_civico: text('numero_civico').notNull(),
     geo_point: geometry('geo_point').notNull(),
 });
 
 export const strutture_sanitarie = pgTable('strutture_sanitarie', {
-    civ_key: text('civ_key').primaryKey(),
+    civ_key: text('civ_key').primaryKey().references(() => indirizzi.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     denominazione_struttura: text('denominazione_struttura').notNull(),
     tipologia: text('tipologia').notNull(),
     titolarita: text('titolarita'),
     indirizzo: text('indirizzo').notNull(),
     numero_civico: text('numero_civico').notNull(),
-    quartiere: text('quartiere').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
         onDelete: 'cascade',
         onUpdate: 'cascade'
@@ -182,7 +243,10 @@ export const fermate_autobus = pgTable('fermate_autobus', {
     denominazione: text('denominazione').notNull(),
     numero_linee: integer('numero_linee').notNull(),
     ubicazione: text('ubicazione').notNull(),
-    quartiere: text('quartiere').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
         onDelete: 'cascade',
         onUpdate: 'cascade'
@@ -196,3 +260,26 @@ export const prezzi_agenzia_entrate = pgTable('prezzi_agenzia_entrate', {
     prezzo_max: integer('prezzo_max'),
     geo_shape: customMultiPolygon('geo_shape').notNull(),
 });
+
+export const immobili = pgTable('immobili', {
+    civ_key: text('civ_key').notNull().primaryKey(),
+    indirizzo: text('indirizzo').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    geo_point: geometry('geo_point').notNull(),
+    superficie: integer('superficie').notNull(),
+    piano: integer('piano').notNull(),
+    ascensore: boolean('ascensore').notNull(),
+    stato_immobile: text('stato_immobile').notNull(),
+    stato_finiture_esterne: text('stato_finiture_esterne').notNull(),
+    eta_costruzione: smallint('eta_costruzione').notNull(),
+    classe_energetica: text('classe_energetica').notNull(),
+    prezzo: integer('prezzo').notNull(),
+});
+
