@@ -1,6 +1,6 @@
 import {NextAuthConfig} from "next-auth"
 import {DefaultSession} from "@auth/core/types";
-import {User} from "@/app/lib/definitions";
+import {user} from "@/app/lib/definitions";
 import {NextResponse} from "next/server";
 
 
@@ -36,7 +36,7 @@ export const authConfig = {
         jwt({token, user}) {
             // console.log('jwt', {token, user});
             if (user) {
-                delete (user as User)["password"];
+                delete (user as user)["password"];
                 token.user = user;
             }
             return token;
@@ -46,7 +46,7 @@ export const authConfig = {
             // console.log('session return', {...session, user: token.user as User});
             return {
                 ...session,
-                user: token.user as User
+                user: token.user as user
             }
         },
         authorized({auth, request: {nextUrl}}) {

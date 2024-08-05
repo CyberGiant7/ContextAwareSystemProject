@@ -173,9 +173,6 @@ const main = async () => {
             },
         ];
 
-
-        // console.log(db);
-
         console.log("Seed start");
 
         for (const task of importTasks) {

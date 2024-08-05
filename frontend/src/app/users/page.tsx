@@ -3,13 +3,13 @@ import React, {useEffect, useState} from 'react';
 
 import CardComponent from '@/components/CardComponent';
 import {CardGroup, Row} from "react-bootstrap";
-import {User} from "@/app/lib/definitions";
+import {user} from "@/app/lib/definitions";
 
 
 
 export default function Home() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<user[]>([]);
     const [newUser, setNewUser] = useState({email: '', password: ''});
 
     // Fetch users

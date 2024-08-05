@@ -8,8 +8,6 @@ RUN npm install
 
 COPY . .
 
-RUN ls -al
-
 RUN npm run db:generate
 
 RUN npm run db:migrate

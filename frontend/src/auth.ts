@@ -2,7 +2,7 @@ import NextAuth, {AuthError, DefaultSession} from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import {authConfig} from './auth.config';
 import {z} from 'zod';
-import {User} from "@/app/lib/definitions";
+import {user} from "@/app/lib/definitions";
 import bcrypt from 'bcryptjs';
 
 import {getUser} from "@/queries/user";
