@@ -26,7 +26,7 @@ export default function SignUp() {
             return;
         }
         try {
-            const response = await fetch(`${apiUrl}/user/add`, {
+            const response = await fetch(`${apiUrl}/user`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -44,10 +44,6 @@ export default function SignUp() {
 
                 formAction(formdata);
 
-
-                // let sas = await authenticate(undefined, );
-                // console.log(sas);
-                // redirect('/secret');
             }
             if (response.status === 409) {
                 const email = document.getElementById('email') as HTMLInputElement;

@@ -1,32 +1,31 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {biblioteche as biblioteche_schema} from "../../../../db/schema";
+import {parchi_e_giardini as parchi_e_giardini_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
 
 export const dynamic = "force-dynamic";
 
-
 /**
  * @swagger
- *  /api/biblioteche:
+ *  /api/parchi_e_giardini:
  *     get:
- *       description: Returns a list of library in the city of Bologna
+ *       description: Returns a list of all the parks and gardens in the city of Bologna
  *       parameters:
  *         - in: query
- *           name: biblioteca
- *           description: The name of the library
+ *           name: codice
+ *           description: The code of the park or garden
  *           schema:
  *             type: string
  *           required: false
  *       tags:
- *         - Biblioteche
+ *         - Parchi e Giardini
  *       responses:
  *         200:
  *           description: OK
  *         404:
- *           description: Library not found
+ *           description: Park or garden not found
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
-    const nome_biblioteca = searchParams.get('nome');
-    return fetchData(biblioteche_schema, 'biblioteca', nome_biblioteca);
+    const codice = searchParams.get('codice');
+    return fetchData(parchi_e_giardini_schema, 'codice', codice);
 }

@@ -1,32 +1,31 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {biblioteche as biblioteche_schema} from "../../../../db/schema";
+import {farmacie as farmacie_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
 
 export const dynamic = "force-dynamic";
 
-
 /**
  * @swagger
- *  /api/biblioteche:
+ *  /api/farmacie:
  *     get:
- *       description: Returns a list of library in the city of Bologna
+ *       description: Returns a list of pharmacies in the city of Bologna
  *       parameters:
  *         - in: query
- *           name: biblioteca
- *           description: The name of the library
+ *           name: civ_key
+ *           description: The civ_key of the pharmacy
  *           schema:
  *             type: string
  *           required: false
  *       tags:
- *         - Biblioteche
+ *         - Farmacie
  *       responses:
  *         200:
  *           description: OK
  *         404:
- *           description: Library not found
+ *           description: Pharmacy not found
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
-    const nome_biblioteca = searchParams.get('nome');
-    return fetchData(biblioteche_schema, 'biblioteca', nome_biblioteca);
+    const civ_key = searchParams.get('civ_key');
+    return fetchData(farmacie_schema, 'civ_key', civ_key);
 }

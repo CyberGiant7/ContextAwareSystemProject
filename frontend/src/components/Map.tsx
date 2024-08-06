@@ -101,11 +101,11 @@ export default function Map(prop: LazyMapProps) {
             preferCanvas={true}
             center={[44.4934936536425, 11.335745752828108]}
             zoom={11}
+            maxZoom={18}
             scrollWheelZoom={true}
-            maxZoom={25}
             style={{width: prop.width, height: prop.height}}>
             {data.map((zone) => renderZone(zone))}
-            <MarkerClusterGroup >
+            <MarkerClusterGroup>
                 {immobili.map((immobile) => renderImmobile(immobile))}
             </MarkerClusterGroup>
             <TileLayer

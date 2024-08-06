@@ -1,32 +1,31 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {biblioteche as biblioteche_schema} from "../../../../db/schema";
+import {teatri_cinema as teatri_cinema_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
 
 export const dynamic = "force-dynamic";
 
-
 /**
  * @swagger
- *  /api/biblioteche:
+ *  /api/teatri_cinema:
  *     get:
- *       description: Returns a list of library in the city of Bologna
+ *       description: Returns a list of theaters and cinemas of the city of Bologna
  *       parameters:
  *         - in: query
- *           name: biblioteca
- *           description: The name of the library
+ *           name: civ_key
+ *           description: The code of the theater or cinema
  *           schema:
  *             type: string
  *           required: false
  *       tags:
- *         - Biblioteche
+ *         - Teatri e Cinema
  *       responses:
  *         200:
  *           description: OK
  *         404:
- *           description: Library not found
+ *           description: Theater or cinema not found
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
-    const nome_biblioteca = searchParams.get('nome');
-    return fetchData(biblioteche_schema, 'biblioteca', nome_biblioteca);
+    const civ_key = searchParams.get('civ_key');
+    return fetchData(teatri_cinema_schema, 'civ_key', civ_key);
 }
