@@ -2,8 +2,7 @@
 
 import {signIn} from '@/auth';
 import {AuthError} from '@auth/core/errors';
-import {redirect} from 'next/navigation'
-import {checkCredential} from "@/app/lib/checkCredential";
+import {checkCredential} from "@/lib/checkCredential";
 
 
 export async function authenticate(

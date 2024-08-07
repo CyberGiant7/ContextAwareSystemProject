@@ -5,27 +5,47 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 // END: Preserve spaces to avoid auto-sorting
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import {LayerGroup, LayersControl, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from "react-leaflet";
 import {GeoJSON} from 'react-leaflet/GeoJSON'
 import {useEffect, useState} from "react";
 import {getAllZone} from "@/queries/zone";
 import {getAllImmobili} from "@/queries/immobili";
-import {immobile, zona_urbanistica} from "@/app/lib/definitions";
-import {Icon} from "leaflet";
+import {getAllBarRistoranti} from "@/queries/bar_ristoranti";
+import {getAllBiblioteche} from "@/queries/biblioteche";
+import {getAllFarmacie} from "@/queries/farmacie";
+import {getAllFermateAutobus} from "@/queries/fermate_autobus";
+import {getAllPalestre} from "@/queries/palestre";
+import {getAllParcheggi} from "@/queries/parcheggi";
+import {getAllParchiEGiardini} from "@/queries/parchi_e_giardini";
+import {getAllScuole} from "@/queries/scuole";
+import {getAllStruttureSanitarie} from "@/queries/strutture_sanitarie";
+import {getAllSupermercati} from "@/queries/supermercati";
+import {
+    bar_ristoranti,
+    biblioteche,
+    farmacie,
+    fermate_autobus,
+    immobile,
+    palestre,
+    parcheggi,
+    parchi_e_giardini,
+    scuole,
+    strutture_sanitarie,
+    supermercati,
+    zona_urbanistica
+} from "@/lib/definitions";
+
+import {icons} from "@/components/Icons";
 import MarkerClusterGroup from "next-leaflet-cluster";
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
+import {Icon} from "leaflet";
 
 
 interface LazyMapProps {
     width: string;
     height: string;
 }
-
-const HomeIcon = new Icon({
-    iconUrl: "/images/home_icon.svg",
-    iconSize: [20, 20], // size of the icon
-})
 
 function renderZone(data: zona_urbanistica) {
     // infer the type of data.geo_shape
@@ -44,57 +64,75 @@ function renderZone(data: zona_urbanistica) {
     )
 }
 
-function renderImmobile(immobile: immobile) {
+function renderMarker(data: Record<string, any>, key: any, icon: Icon) {
+    const {geo_point, ...properties} = data;
+
     return (
-        // <GeoJSON data={immobile.geo_point} key={immobile.civ_key} >
-        <Marker position={[immobile.geo_point.coordinates[1], immobile.geo_point.coordinates[0]]} key={immobile.civ_key}
-                icon={HomeIcon}>
+        <Marker position={[geo_point.coordinates[1], geo_point.coordinates[0]]}
+                key={key} icon={icon}>
             <Popup>
                 <div>
-                    <h5>{immobile.indirizzo}</h5>
-                    <p>
-                        <strong>Quartiere: </strong> {immobile.quartiere}<br/>
-                        <strong>Zona di prossimità: </strong> {immobile.zona_di_prossimita}<br/>
-                        <strong>Superficie: </strong> {immobile.superficie} m<sup>2</sup><br/>
-                        <strong>Piano: </strong> {immobile.piano}<br/>
-                        <strong>Ascensore: </strong> {immobile.ascensore ? 'Si' : 'No'}<br/>
-                        <strong>Stato immobile: </strong> {immobile.stato_immobile}<br/>
-                        <strong>Stato finiture esterne: </strong> {immobile.stato_finiture_esterne}<br/>
-                        <strong>Età costruzione: </strong> {immobile.eta_costruzione}<br/>
-                        <strong>Classe energetica: </strong> {immobile.classe_energetica}<br/>
-                        <strong>Prezzo: </strong> {immobile.prezzo} €
-                    </p>
+                    {Object.keys(properties).map((key: string) => {
+                            if (properties[key]) {
+                                return (
+                                    <p key={key}>
+                                        <strong>{(key.charAt(0).toUpperCase() + key.slice(1)).replace(/_/g, ' ')}: </strong> {properties[key].toString()}
+                                    </p>
+                                )
+                            } else {
+                                return null;
+                            }
+                        }
+                    )}
                 </div>
             </Popup>
-
         </Marker>
-        // </GeoJSON>
-    )
+    );
 }
+
 
 export default function Map(prop: LazyMapProps) {
     const [data, setData] = useState<zona_urbanistica[]>([]);
     const [immobili, setImmobili] = useState<immobile[]>([]);
-    let loaded = false;
-    useEffect(() => {
-        getAllZone().then((data) => {
-            setData(data);
-            console.log(data);
-        }).catch(console.error);
-        if (data && immobili && !loaded) {
-            loaded = true;
-        }
-    }, [loaded]);
+    const [barRistoranti, setBarRistoranti] = useState<bar_ristoranti[]>([]);
+    const [biblioteche, setBiblioteche] = useState<biblioteche[]>([]);
+    const [farmacie, setFarmacie] = useState<farmacie[]>([]);
+    const [fermateAutobus, setFermateAutobus] = useState<fermate_autobus[]>([]);
+    const [palestre, setPalestre] = useState<palestre[]>([]);
+    const [parcheggi, setParcheggi] = useState<parcheggi[]>([]);
+    const [parchiEGiardini, setParchiEGiardini] = useState<parchi_e_giardini[]>([]);
+    const [scuole, setScuole] = useState<scuole[]>([]);
+    const [struttureSanitarie, setStruttureSanitarie] = useState<strutture_sanitarie[]>([]);
+    const [supermercati, setSupermercati] = useState<supermercati[]>([]);
+    const [Zoom, setZoom] = useState(9);
+
+
+    const MapEvents = () => {
+        const map = useMap();
+        useMapEvents({
+            zoomend() { // zoom event (when zoom animation ended)
+                const zoom = map.getZoom(); // get current Zoom of map
+                setZoom(zoom);
+                console.log(zoom);
+            },
+        });
+        return false;
+    };
 
     useEffect(() => {
-        getAllImmobili().then((immobili) => {
-            setImmobili(immobili);
-            console.log(immobili);
-        }).catch(console.error);
-        if (data && immobili && !loaded) {
-            loaded = true;
-        }
-    }, [loaded]);
+        getAllZone().then(setData).catch(console.error);
+        getAllImmobili().then(setImmobili).catch(console.error);
+        getAllBarRistoranti().then(setBarRistoranti).catch(console.error);
+        getAllBiblioteche().then(setBiblioteche).catch(console.error);
+        getAllFarmacie().then(setFarmacie).catch(console.error);
+        getAllFermateAutobus().then(setFermateAutobus).catch(console.error);
+        getAllPalestre().then(setPalestre).catch(console.error);
+        getAllParcheggi().then(setParcheggi).catch(console.error);
+        getAllParchiEGiardini().then(setParchiEGiardini).catch(console.error);
+        getAllScuole().then(setScuole).catch(console.error);
+        getAllStruttureSanitarie().then(setStruttureSanitarie).catch(console.error);
+        getAllSupermercati().then(setSupermercati).catch(console.error);
+    }, []);
 
     return (
         <MapContainer
@@ -103,15 +141,71 @@ export default function Map(prop: LazyMapProps) {
             zoom={11}
             maxZoom={18}
             scrollWheelZoom={true}
-            style={{width: prop.width, height: prop.height}}>
-            {data.map((zone) => renderZone(zone))}
-            <MarkerClusterGroup>
-                {immobili.map((immobile) => renderImmobile(immobile))}
-            </MarkerClusterGroup>
+            style={{width: prop.width, height: prop.height}}
+
+        >
+            <MapEvents/>
             <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+                url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+                // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            {/*{data.map(renderZone)}*/}
+            <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
+                {immobili.map(value => renderMarker(value, value.civ_key, icons.HomeIcon))}
+            </MarkerClusterGroup>
+            <LayersControl position="topright">
+                <LayersControl.Overlay name="Bar e Ristoranti">
+                    <LayerGroup>
+                        {Zoom >= 16 ? barRistoranti.map(value => renderMarker(value, value.codice, icons.RestaurantIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Biblioteche">
+                    <LayerGroup>
+                        {Zoom >= 16 ? biblioteche.map(value => renderMarker(value, value.codice, icons.LibraryIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Farmacie">
+                    <LayerGroup>
+                        {Zoom >= 16 ? farmacie.map(value => renderMarker(value, value.civ_key, icons.PharmacyIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Fermate Autobus">
+                    <LayerGroup>
+                        {Zoom >= 16 ? fermateAutobus.map(value => renderMarker(value, value.codice, icons.BusStopIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Palestre">
+                    <LayerGroup>
+                        {Zoom >= 16 ? palestre.map(value => renderMarker(value, value.codice, icons.GymIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Parcheggi">
+                    <LayerGroup>
+                        {Zoom >= 16 ? parcheggi.map(value => renderMarker(value, value.codice, icons.ParkingIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Parchi e Giardini">
+                    <LayerGroup>
+                        {Zoom >= 16 ? parchiEGiardini.map(value => renderMarker(value, value.codice, icons.ParkIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Scuole">
+                    <LayerGroup>
+                        {Zoom >= 16 ? scuole.map(value => renderMarker(value, value.civ_key, icons.SchoolIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Strutture sanitarie">
+                    <LayerGroup>
+                        {Zoom >= 16 ? struttureSanitarie.map(value => renderMarker(value, value.civ_key, icons.HospitalIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Supermercati">
+                    <LayerGroup>
+                        {Zoom >= 16 ? supermercati.map(value => renderMarker(value, value.codice, icons.SupermarketIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+            </LayersControl>
         </MapContainer>
     );
 }

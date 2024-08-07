@@ -95,10 +95,7 @@ const main = async () => {
                 table: schema.biblioteche,
                 transform: (row: any) => ({
                     ...row,
-                    geo_point: strToGeojsonPoint(row.geo_point),
-                    superficie_totale_mq: parseInt(row.superficie_totale_mq),
-                    superficie_accessibile_al_pubblico: parseInt(row.superficie_accessibile_al_pubblico),
-                    numero_postazioni_lettura: row.numero_postazioni_lettura ? parseInt(row.numero_postazioni_lettura) : null
+                    geo_point: geomFromGeoJSON(JSON.parse(row.geo_point)),
                 })
             },
             {
@@ -148,8 +145,7 @@ const main = async () => {
                 table: schema.supermercati,
                 transform: (row: any) => ({
                     ...row,
-                    geo_point: geomFromGeoJSON(JSON.parse(row.geo_point)),
-                    zona_di_prossimita: row.zona_di_prossimita || undefined
+                    geo_point: geomFromGeoJSON(JSON.parse(row.geo_point))
                 })
             },
             {
@@ -196,4 +192,9 @@ const main = async () => {
     }
 ;
 
-main();
+main().then(() => {
+    process.exit(0);
+}).catch((e) => {
+    console.log(e);
+    process.exit(1);
+});

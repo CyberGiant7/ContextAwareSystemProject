@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic"
-import {zona_urbanistica} from "@/app/lib/definitions";
+import {zona_urbanistica} from "@/lib/definitions";
 
 
 export async function getAllZone() {

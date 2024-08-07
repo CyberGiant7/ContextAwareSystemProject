@@ -1,4 +1,4 @@
-import {immobile} from "@/app/lib/definitions";
+import {immobile} from "@/lib/definitions";
 
 export async function getAllImmobili() {
     try {

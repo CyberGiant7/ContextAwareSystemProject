@@ -1,4 +1,4 @@
-import {user} from "@/app/lib/definitions";
+import {user} from "@/lib/definitions";
 
 
 

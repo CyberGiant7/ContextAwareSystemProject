@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import bcrypt from 'bcryptjs';
-import {redirect} from "next/navigation";
-import {authenticate} from "@/app/lib/actions";
+import {authenticate} from "@/lib/actions";
 import {useFormState} from "react-dom";
 
 

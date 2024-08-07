@@ -10,7 +10,6 @@ import {
     boolean,
     smallint
 } from 'drizzle-orm/pg-core';
-import {sql} from "drizzle-orm";
 import c from 'wkx';
 
 
@@ -118,9 +117,8 @@ export const bar_ristoranti = pgTable('bar_ristoranti', {
 });
 
 export const biblioteche = pgTable('biblioteche', {
-    biblioteca: text('biblioteca').primaryKey(),
-    tipologia: text('tipologia').notNull(),
-    indirizzo: text('indirizzo').notNull(),
+    codice: integer('codice').primaryKey(),
+    nome: text('nome').notNull(),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
         onDelete: 'cascade',
         onUpdate: 'cascade'
@@ -129,19 +127,6 @@ export const biblioteche = pgTable('biblioteche', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    rete_wi_fi: text('rete_wi_fi').notNull(),
-    telefono: text('telefono').notNull(),
-    email: text('email').notNull(),
-    pagina_web: text('pagina_web').notNull(),
-    descrizione: text('descrizione').notNull(),
-    superficie_totale_mq: integer('superficie_totale_mq').notNull(),
-    superficie_accessibile_al_pubblico: integer('superficie_accessibile_al_pubblico').notNull(),
-    numero_postazioni_lettura: integer('numero_postazioni_lettura'),
-    accessibilita: text('accessibilita').notNull(),
-    servizi_igienici: text('servizi_igienici').notNull(),
-    aria_condizionata: text('aria_condizionata').notNull(),
-    servizio_fotocopie: text('servizio_fotocopie').notNull(),
-    area_bambini: text('area_bambini').notNull(),
     geo_point: geometry('geo_point').notNull()
 });
 
@@ -232,6 +217,10 @@ export const supermercati = pgTable('supermercati', {
     codice: integer('codice').primaryKey(),
     nome: text('nome').notNull(),
     geo_point: geometry('geo_point').notNull(),
+    quartiere: text('quartiere').references(() => quartieri.quartiere, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
         onDelete: 'cascade',
         onUpdate: 'cascade'

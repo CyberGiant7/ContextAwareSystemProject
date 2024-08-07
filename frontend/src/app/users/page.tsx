@@ -2,8 +2,8 @@
 import React, {useEffect, useState} from 'react';
 
 import CardComponent from '@/components/CardComponent';
-import {CardGroup, Row} from "react-bootstrap";
-import {user} from "@/app/lib/definitions";
+import {Row} from "react-bootstrap";
+import {user} from "@/lib/definitions";
 
 
 

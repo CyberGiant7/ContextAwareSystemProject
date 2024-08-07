@@ -1,17 +1,10 @@
 import {NextAuthConfig} from "next-auth"
 import {DefaultSession} from "@auth/core/types";
-import {user} from "@/app/lib/definitions";
+import {user} from "@/lib/definitions";
 import {NextResponse} from "next/server";
 
 
 declare module "next-auth" {
-    interface Session {
-        user: {
-            email: string;
-            first_name: string;
-            last_name: string;
-        } & DefaultSession['user'];
-    }
 }
 
 export const authConfig = {
@@ -22,7 +15,7 @@ export const authConfig = {
     },
     trustHost: true,
     callbacks: {
-        async signIn({user, credentials}) {
+        async signIn({user}) {
             return !!user;
         },
         async redirect({url, baseUrl}) {

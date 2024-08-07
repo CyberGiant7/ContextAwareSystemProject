@@ -1,4 +1,4 @@
-import {NextRequest, NextResponse} from 'next/server';
+import {NextRequest} from 'next/server';
 import {biblioteche as biblioteche_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
 
@@ -12,8 +12,8 @@ export const dynamic = "force-dynamic";
  *       description: Returns a list of library in the city of Bologna
  *       parameters:
  *         - in: query
- *           name: biblioteca
- *           description: The name of the library
+ *           name: codice
+ *           description: The code of the library
  *           schema:
  *             type: string
  *           required: false
@@ -27,6 +27,6 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
-    const nome_biblioteca = searchParams.get('nome');
-    return fetchData(biblioteche_schema, 'biblioteca', nome_biblioteca);
+    const codice = searchParams.get('codice');
+    return fetchData(biblioteche_schema, 'codice', codice);
 }
