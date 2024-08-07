@@ -7,7 +7,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 // END: Preserve spaces to avoid auto-sorting
 import {LayerGroup, LayersControl, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from "react-leaflet";
 import {GeoJSON} from 'react-leaflet/GeoJSON'
-import {useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {getAllZone} from "@/queries/zone";
 import {getAllImmobili} from "@/queries/immobili";
 import {getAllBarRistoranti} from "@/queries/bar_ristoranti";
@@ -39,12 +39,14 @@ import {icons} from "@/components/Icons";
 import MarkerClusterGroup from "next-leaflet-cluster";
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
-import {Icon} from "leaflet";
+import L from 'leaflet';
 
 
 interface LazyMapProps {
     width: string;
     height: string;
+    immobili: immobile[];
+    setVisibleImmobili: Dispatch<SetStateAction<immobile[]>>
 }
 
 function renderZone(data: zona_urbanistica) {
@@ -64,7 +66,7 @@ function renderZone(data: zona_urbanistica) {
     )
 }
 
-function renderMarker(data: Record<string, any>, key: any, icon: Icon) {
+function renderMarker(data: Record<string, any>, key: any, icon: L.Icon) {
     const {geo_point, ...properties} = data;
 
     return (
@@ -92,8 +94,7 @@ function renderMarker(data: Record<string, any>, key: any, icon: Icon) {
 
 
 export default function Map(prop: LazyMapProps) {
-    const [data, setData] = useState<zona_urbanistica[]>([]);
-    const [immobili, setImmobili] = useState<immobile[]>([]);
+    const [zoneUrbanistiche, setZoneUrbanistiche] = useState<zona_urbanistica[]>([]);
     const [barRistoranti, setBarRistoranti] = useState<bar_ristoranti[]>([]);
     const [biblioteche, setBiblioteche] = useState<biblioteche[]>([]);
     const [farmacie, setFarmacie] = useState<farmacie[]>([]);
@@ -105,12 +106,19 @@ export default function Map(prop: LazyMapProps) {
     const [struttureSanitarie, setStruttureSanitarie] = useState<strutture_sanitarie[]>([]);
     const [supermercati, setSupermercati] = useState<supermercati[]>([]);
     const [Zoom, setZoom] = useState(9);
+    const [map, setMap] = useState<L.Map>();
+    const [visibleImmobiliMarkers, setVisibleImmobiliMarkers] = useState<immobile[]>([]);
 
+    let maxZoomLevelForMarkers = 16;
 
     const MapEvents = () => {
-        const map = useMap();
         useMapEvents({
+            dragend() { // drag event (when map is dragged)
+                updateVisibleMarkers();
+            },
             zoomend() { // zoom event (when zoom animation ended)
+                updateVisibleMarkers();
+                if (!map) return;
                 const zoom = map.getZoom(); // get current Zoom of map
                 setZoom(zoom);
                 console.log(zoom);
@@ -119,9 +127,28 @@ export default function Map(prop: LazyMapProps) {
         return false;
     };
 
+    const updateVisibleMarkers = () => {
+        if (!map) return;
+        const bounds = map.getBounds();
+        const newMarkers: immobile[] = [];
+        for (let immobile of prop.immobili) {
+            let point: L.LatLngExpression = [immobile.geo_point.coordinates[1], immobile.geo_point.coordinates[0]]
+            if (bounds.contains(point)) {
+                newMarkers.push(immobile);
+            }
+        }
+        console.log(
+            '!!! map bounds:',
+            map.getBounds(),
+            ' visible markers: ',
+            newMarkers
+        );
+        setVisibleImmobiliMarkers(newMarkers);
+        prop.setVisibleImmobili(newMarkers);
+    };
+
     useEffect(() => {
-        getAllZone().then(setData).catch(console.error);
-        getAllImmobili().then(setImmobili).catch(console.error);
+        getAllZone().then(setZoneUrbanistiche).catch(console.error);
         getAllBarRistoranti().then(setBarRistoranti).catch(console.error);
         getAllBiblioteche().then(setBiblioteche).catch(console.error);
         getAllFarmacie().then(setFarmacie).catch(console.error);
@@ -134,6 +161,7 @@ export default function Map(prop: LazyMapProps) {
         getAllSupermercati().then(setSupermercati).catch(console.error);
     }, []);
 
+
     return (
         <MapContainer
             preferCanvas={true}
@@ -142,7 +170,9 @@ export default function Map(prop: LazyMapProps) {
             maxZoom={18}
             scrollWheelZoom={true}
             style={{width: prop.width, height: prop.height}}
-
+            ref={(map: L.Map) => {
+                if (map) setMap(map)
+            }}
         >
             <MapEvents/>
             <TileLayer
@@ -152,57 +182,57 @@ export default function Map(prop: LazyMapProps) {
             />
             {/*{data.map(renderZone)}*/}
             <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
-                {immobili.map(value => renderMarker(value, value.civ_key, icons.HomeIcon))}
+                {visibleImmobiliMarkers.map(value => renderMarker(value, value.civ_key, icons.HomeIcon))}
             </MarkerClusterGroup>
             <LayersControl position="topright">
                 <LayersControl.Overlay name="Bar e Ristoranti">
                     <LayerGroup>
-                        {Zoom >= 16 ? barRistoranti.map(value => renderMarker(value, value.codice, icons.RestaurantIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? barRistoranti.map(value => renderMarker(value, value.codice, icons.RestaurantIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Biblioteche">
                     <LayerGroup>
-                        {Zoom >= 16 ? biblioteche.map(value => renderMarker(value, value.codice, icons.LibraryIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? biblioteche.map(value => renderMarker(value, value.codice, icons.LibraryIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Farmacie">
                     <LayerGroup>
-                        {Zoom >= 16 ? farmacie.map(value => renderMarker(value, value.civ_key, icons.PharmacyIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? farmacie.map(value => renderMarker(value, value.civ_key, icons.PharmacyIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Fermate Autobus">
                     <LayerGroup>
-                        {Zoom >= 16 ? fermateAutobus.map(value => renderMarker(value, value.codice, icons.BusStopIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? fermateAutobus.map(value => renderMarker(value, value.codice, icons.BusStopIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Palestre">
                     <LayerGroup>
-                        {Zoom >= 16 ? palestre.map(value => renderMarker(value, value.codice, icons.GymIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? palestre.map(value => renderMarker(value, value.codice, icons.GymIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Parcheggi">
                     <LayerGroup>
-                        {Zoom >= 16 ? parcheggi.map(value => renderMarker(value, value.codice, icons.ParkingIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? parcheggi.map(value => renderMarker(value, value.codice, icons.ParkingIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Parchi e Giardini">
                     <LayerGroup>
-                        {Zoom >= 16 ? parchiEGiardini.map(value => renderMarker(value, value.codice, icons.ParkIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? parchiEGiardini.map(value => renderMarker(value, value.codice, icons.ParkIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Scuole">
                     <LayerGroup>
-                        {Zoom >= 16 ? scuole.map(value => renderMarker(value, value.civ_key, icons.SchoolIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? scuole.map(value => renderMarker(value, value.civ_key, icons.SchoolIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Strutture sanitarie">
                     <LayerGroup>
-                        {Zoom >= 16 ? struttureSanitarie.map(value => renderMarker(value, value.civ_key, icons.HospitalIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? struttureSanitarie.map(value => renderMarker(value, value.civ_key, icons.HospitalIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Supermercati">
                     <LayerGroup>
-                        {Zoom >= 16 ? supermercati.map(value => renderMarker(value, value.codice, icons.SupermarketIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? supermercati.map(value => renderMarker(value, value.codice, icons.SupermarketIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
             </LayersControl>

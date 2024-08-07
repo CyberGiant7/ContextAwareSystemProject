@@ -21,7 +21,8 @@
     "leaflet": "^1.9.4",
     "leaflet-defaulticon-compatibility": "^0.1.2",
     "react-leaflet-heat-layer": "^1.1.1",
-    "next-leaflet-cluster": "^1.0.0"
+    "next-leaflet-cluster": "^1.0.0",
+    "react-bootstrap-pagination-control": "^1.0.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
