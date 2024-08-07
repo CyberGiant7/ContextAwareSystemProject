@@ -1,5 +1,5 @@
 // backend/src/app/api/utils/fetchData.ts
-import {NextRequest, NextResponse} from 'next/server';
+import {NextResponse} from 'next/server';
 import {db} from "@/../db";
 import {eq, sql, getTableColumns} from "drizzle-orm";
 

@@ -1,4 +1,4 @@
-import {NextRequest, NextResponse} from 'next/server';
+import {NextRequest} from 'next/server';
 import {parchi_e_giardini as parchi_e_giardini_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
 

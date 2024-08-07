@@ -1,4 +1,4 @@
-import {NextRequest, NextResponse} from 'next/server';
+import {NextRequest} from 'next/server';
 import {fermate_autobus as fermate_autobus_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
 

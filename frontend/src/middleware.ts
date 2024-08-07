@@ -1,9 +1,5 @@
 import NextAuth from 'next-auth';
 import {authConfig} from './auth.config';
-import AuthOptions from 'next-auth';
-import {NextRequest, NextResponse} from "next/server";
-import {getSession} from "next-auth/react";
-import {auth} from "@/auth";
 
 export default NextAuth(authConfig).auth;
 

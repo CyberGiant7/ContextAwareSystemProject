@@ -1,7 +1,7 @@
 import {z} from "zod";
 import bcrypt from "bcryptjs";
 import {getUser} from "@/queries/user";
-import {AccessDenied, CredentialsSignin} from "@auth/core/errors";
+import {AccessDenied} from "@auth/core/errors";
 
 
 
