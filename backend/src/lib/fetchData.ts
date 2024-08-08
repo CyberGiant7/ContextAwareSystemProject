@@ -4,27 +4,22 @@ import {db} from "@/../db";
 import {eq, sql, getTableColumns} from "drizzle-orm";
 
 export async function fetchData(schema: any, searchParamKey: string, searchParamValue: string | null) {
-    if (searchParamValue) {
-        const result = await db
-            .select({
-                ...getTableColumns(schema),
-                "geo_point": sql`ST_AsGeoJSON(${schema.geo_point})`,
-            })
-            .from(schema)
-            .where(eq(schema[searchParamKey], searchParamValue));
-
-        result[0].geo_point = JSON.parse(result[0].geo_point as string);
-        if (result.length === 0) {
-            return NextResponse.json({error: `${searchParamKey} not found`}, {status: 404});
-        }
-        return NextResponse.json(result);
-    }
-    const results = await db
+    const query = db
         .select({
             ...getTableColumns(schema),
             "geo_point": sql`ST_AsGeoJSON(${schema.geo_point})`,
         })
         .from(schema);
-    results.forEach((item) => { item.geo_point = JSON.parse(item.geo_point as string) });
-    return NextResponse.json(results);
+
+    if (searchParamValue) {
+        query.where(sql`${schema[searchParamKey]} = ${searchParamValue}`);
+    }
+
+    const results = await query;
+    if (results.length === 0 && searchParamValue) {
+        return NextResponse.json({ error: `${searchParamKey} not found` }, { status: 404 });
+    }
+
+    results.forEach(item => { item.geo_point = JSON.parse(item.geo_point as string) });
+    return results;
 }

@@ -20,9 +20,7 @@ export default function RootLayout({
         <html lang="en">
         <body>
         <NavbarComponent/>
-        <main style={{
-            width: "100%",
-            height: "-webkit-fill-available"}}>
+        <main style={{width: "100%", height: "-webkit-fill-available"}}>
             {children}
         </main>
         </body>

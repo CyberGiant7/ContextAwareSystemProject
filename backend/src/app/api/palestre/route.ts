@@ -1,4 +1,4 @@
-import {NextRequest} from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
 import {palestre as palestre_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
 
@@ -27,5 +27,5 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const codice = searchParams.get('codice');
-    return fetchData(palestre_schema, 'codice', codice);
+    return NextResponse.json(await fetchData(palestre_schema, 'codice', codice));
 }

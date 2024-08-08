@@ -9,7 +9,7 @@ import {LayerGroup, LayersControl, MapContainer, Marker, Popup, TileLayer, useMa
 import {GeoJSON} from 'react-leaflet/GeoJSON'
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {getAllZone} from "@/queries/zone";
-import {getAllImmobili} from "@/queries/immobili";
+import {getAllImmobiliInZone} from "@/queries/immobili";
 import {getAllBarRistoranti} from "@/queries/bar_ristoranti";
 import {getAllBiblioteche} from "@/queries/biblioteche";
 import {getAllFarmacie} from "@/queries/farmacie";
@@ -42,17 +42,22 @@ import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import L from 'leaflet';
 
 
-interface LazyMapProps {
+export interface MapProps {
     width: string;
     height: string;
     immobili: immobile[];
     setVisibleImmobili: Dispatch<SetStateAction<immobile[]>>
+    selectedZone: string[]
 }
 
 function renderZone(data: zona_urbanistica) {
     // infer the type of data.geo_shape
     return (
-        <GeoJSON data={data.geo_shape} key={data.zona_di_prossimita}>
+        <GeoJSON data={data.geo_shape} key={data.zona_di_prossimita} style={{
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.05
+        }}>
             <Popup>
                 <div>
                     <h5>{data.zona_di_prossimita}</h5>
@@ -93,7 +98,7 @@ function renderMarker(data: Record<string, any>, key: any, icon: L.Icon) {
 }
 
 
-export default function Map(prop: LazyMapProps) {
+export default function Map(prop: MapProps) {
     const [zoneUrbanistiche, setZoneUrbanistiche] = useState<zona_urbanistica[]>([]);
     const [barRistoranti, setBarRistoranti] = useState<bar_ristoranti[]>([]);
     const [biblioteche, setBiblioteche] = useState<biblioteche[]>([]);
@@ -132,6 +137,7 @@ export default function Map(prop: LazyMapProps) {
         const bounds = map.getBounds();
         const newMarkers: immobile[] = [];
         for (let immobile of prop.immobili) {
+            // console.log(immobile)
             let point: L.LatLngExpression = [immobile.geo_point.coordinates[1], immobile.geo_point.coordinates[0]]
             if (bounds.contains(point)) {
                 newMarkers.push(immobile);
@@ -148,7 +154,15 @@ export default function Map(prop: LazyMapProps) {
     };
 
     useEffect(() => {
-        getAllZone().then(setZoneUrbanistiche).catch(console.error);
+        getAllZone().then((zone) => {
+            if (prop.selectedZone.length == 0) {
+                setZoneUrbanistiche(zone)
+            } else {
+                setZoneUrbanistiche(zone.filter(z => prop.selectedZone.includes(z.zona_di_prossimita)))
+            }
+
+        }).catch(console.error);
+
         getAllBarRistoranti().then(setBarRistoranti).catch(console.error);
         getAllBiblioteche().then(setBiblioteche).catch(console.error);
         getAllFarmacie().then(setFarmacie).catch(console.error);
@@ -164,12 +178,13 @@ export default function Map(prop: LazyMapProps) {
 
     return (
         <MapContainer
+            id={'map'}
             preferCanvas={true}
             center={[44.4934936536425, 11.335745752828108]}
             zoom={11}
             maxZoom={18}
             scrollWheelZoom={true}
-            style={{width: prop.width, height: prop.height}}
+            style={{width: prop.width}}
             ref={(map: L.Map) => {
                 if (map) setMap(map)
             }}
@@ -180,7 +195,7 @@ export default function Map(prop: LazyMapProps) {
                 url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
                 // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {/*{data.map(renderZone)}*/}
+            {zoneUrbanistiche.map(renderZone)}
             <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
                 {visibleImmobiliMarkers.map(value => renderMarker(value, value.civ_key, icons.HomeIcon))}
             </MarkerClusterGroup>

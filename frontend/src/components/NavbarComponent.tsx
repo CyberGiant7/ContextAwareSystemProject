@@ -7,7 +7,7 @@ export default function NavbarComponent() {
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
             <div className="container">
                 <Link className="navbar-brand" href={'/'}>
-                    prova
+                    Home Zone Analyzer
                 </Link>
                 <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
                     <ul className="navbar-nav ml-auto">

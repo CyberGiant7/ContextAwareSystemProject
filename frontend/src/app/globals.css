@@ -113,7 +113,7 @@
 /*}*/
 
 body {
-  background: #1C8EF9 !important;
+  background: #ffffff !important;
   min-height: 100vh;
   display: flex;
   font-weight: 400;
@@ -132,7 +132,22 @@ body, html, .App, #root, .auth-wrapper {
 
 .navbar-light {
   background-color: #ffffff;
-  box-shadow: 0 14px 80px rgba(34, 35, 58, 0.2);
+  /*box-shadow: 0 14px 80px rgba(34, 35, 58, 0.2);*/
+  box-shadow: 0 14px 200px rgba(34, 35, 58, 0.2);
+}
+
+:root:not(i) {
+  --navbar-height:56px
+}
+
+nav {
+  height: var(--navbar-height);
+}
+
+#map {
+  height: calc(100vh - var(--navbar-height));
+  position: sticky;
+  top: var(--navbar-height);
 }
 
 .auth-wrapper {
