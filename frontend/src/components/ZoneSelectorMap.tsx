@@ -1,19 +1,27 @@
-import L from "leaflet";
+// START: Preserve spaces to avoid auto-sorting
+import "leaflet/dist/leaflet.css";
+import "leaflet-defaulticon-compatibility";
+import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
+// END: Preserve spaces to avoid auto-sorting
+
+import L from 'leaflet';
 import {MapContainer, Popup, TileLayer, Tooltip} from "react-leaflet";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {zona_urbanistica} from "@/lib/definitions";
 import {getAllZone} from "@/queries/zone";
 import {GeoJSON} from "react-leaflet/GeoJSON";
 
 export interface MapProps {
     width: string
+    selectedZoneUrbanistiche: Record<string, boolean>
+    setSelectedZoneUrbanistiche: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 }
 
 
 export default function ZoneSelectorMap(props: MapProps) {
     const [map, setMap] = useState<L.Map>();
     const [zoneUrbanistiche, setZoneUrbanistiche] = useState<zona_urbanistica[]>([]);
-    const [selectedZoneUrbanistiche, setSelectedZoneUrbanistiche] = useState<Record<string, boolean>>({});
+
     useEffect(() => {
         getAllZone().then(setZoneUrbanistiche).catch(console.error);
     }, []);
@@ -38,16 +46,14 @@ export default function ZoneSelectorMap(props: MapProps) {
                     );
                 }
             }
-        )
-        ;
-
+        );
 
         // create a map of selected zones with default value false
         const initialSelectedZones = zoneUrbanistiche.reduce((acc, zone) => {
             acc[zone.zona_di_prossimita] = false;
             return acc;
         }, {} as Record<string, boolean>);
-        setSelectedZoneUrbanistiche(initialSelectedZones);
+        props.setSelectedZoneUrbanistiche(initialSelectedZones);
     }, [zoneUrbanistiche]);
 
     function zonaEventHandlers(data: zona_urbanistica) {
@@ -55,10 +61,10 @@ export default function ZoneSelectorMap(props: MapProps) {
             click: (e: L.LeafletMouseEvent) => {
                 // log key
                 console.log(data.zona_di_prossimita);
-                console.log(!selectedZoneUrbanistiche[data.zona_di_prossimita]);
-                e.target.options.style.fillOpacity = !selectedZoneUrbanistiche[data.zona_di_prossimita] ? 0.2 : 0
+                console.log(!props.selectedZoneUrbanistiche[data.zona_di_prossimita]);
+                e.target.options.style.fillOpacity = !props.selectedZoneUrbanistiche[data.zona_di_prossimita] ? 0.2 : 0
 
-                setSelectedZoneUrbanistiche(prev => ({
+                props.setSelectedZoneUrbanistiche(prev => ({
                     ...prev,
                     [data.zona_di_prossimita]: !prev[data.zona_di_prossimita]
                 }));
@@ -83,8 +89,8 @@ export default function ZoneSelectorMap(props: MapProps) {
     }
 
     useEffect(() => {
-        console.log(selectedZoneUrbanistiche);
-    }, [selectedZoneUrbanistiche]);
+        console.log(props.selectedZoneUrbanistiche);
+    }, [props.selectedZoneUrbanistiche]);
 
 
     function renderZone(data: zona_urbanistica) {

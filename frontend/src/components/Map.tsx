@@ -114,6 +114,8 @@ export default function Map(prop: MapProps) {
     const [map, setMap] = useState<L.Map>();
     const [visibleImmobiliMarkers, setVisibleImmobiliMarkers] = useState<immobile[]>([]);
 
+    const [zoneGeoJson, setZoneGeoJson] = useState<any>(null);
+
     let maxZoomLevelForMarkers = 16;
 
     useEffect(() => {
@@ -165,7 +167,6 @@ export default function Map(prop: MapProps) {
             } else {
                 setZoneUrbanistiche(zone.filter(z => prop.selectedZone.includes(z.zona_di_prossimita)))
             }
-
         }).catch(console.error);
 
         getAllBarRistoranti().then(setBarRistoranti).catch(console.error);
@@ -179,6 +180,10 @@ export default function Map(prop: MapProps) {
         getAllStruttureSanitarie().then(setStruttureSanitarie).catch(console.error);
         getAllSupermercati().then(setSupermercati).catch(console.error);
     }, []);
+
+    useEffect(() => {
+        setZoneGeoJson(zoneUrbanistiche.map(renderZone));
+    }, [prop.selectedZone, zoneUrbanistiche]);
 
 
     return (
@@ -200,7 +205,7 @@ export default function Map(prop: MapProps) {
                 url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
                 // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {zoneUrbanistiche.map(renderZone)}
+            {zoneGeoJson}
             <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
                 {visibleImmobiliMarkers.map(value => renderMarker(value, value.civ_key, icons.HomeIcon))}
             </MarkerClusterGroup>
