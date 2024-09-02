@@ -35,7 +35,7 @@ import {
     zona_urbanistica
 } from "@/lib/definitions";
 
-import {icons} from "@/components/Icons";
+import {leafletIcons} from "@/components/LeafletIcons";
 import MarkerClusterGroup from "next-leaflet-cluster";
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
@@ -208,57 +208,57 @@ export default function Map(prop: MapProps) {
             />
             {zoneGeoJson}
             <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
-                {visibleImmobiliMarkers.map(value => renderMarker(value, value.civ_key, icons.HomeIcon))}
+                {visibleImmobiliMarkers.map(value => renderMarker(value, value.civ_key, leafletIcons.HomeIcon))}
             </MarkerClusterGroup>
             <LayersControl position="topright">
                 <LayersControl.Overlay name="Bar e Ristoranti">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? barRistoranti.map(value => renderMarker(value, value.codice, icons.RestaurantIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? barRistoranti.map(value => renderMarker(value, value.codice, leafletIcons.RestaurantIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Biblioteche">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? biblioteche.map(value => renderMarker(value, value.codice, icons.LibraryIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? biblioteche.map(value => renderMarker(value, value.codice, leafletIcons.LibraryIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Farmacie">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? farmacie.map(value => renderMarker(value, value.civ_key, icons.PharmacyIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? farmacie.map(value => renderMarker(value, value.civ_key, leafletIcons.PharmacyIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Fermate Autobus">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? fermateAutobus.map(value => renderMarker(value, value.codice, icons.BusStopIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? fermateAutobus.map(value => renderMarker(value, value.codice, leafletIcons.BusStopIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Palestre">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? palestre.map(value => renderMarker(value, value.codice, icons.GymIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? palestre.map(value => renderMarker(value, value.codice, leafletIcons.GymIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Parcheggi">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? parcheggi.map(value => renderMarker(value, value.codice, icons.ParkingIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? parcheggi.map(value => renderMarker(value, value.codice, leafletIcons.ParkingIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Parchi e Giardini">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? parchiEGiardini.map(value => renderMarker(value, value.codice, icons.ParkIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? parchiEGiardini.map(value => renderMarker(value, value.codice, leafletIcons.ParkIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Scuole">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? scuole.map(value => renderMarker(value, value.civ_key, icons.SchoolIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? scuole.map(value => renderMarker(value, value.civ_key, leafletIcons.SchoolIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Strutture sanitarie">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? struttureSanitarie.map(value => renderMarker(value, value.civ_key, icons.HospitalIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? struttureSanitarie.map(value => renderMarker(value, value.civ_key, leafletIcons.HospitalIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Supermercati">
                     <LayerGroup>
-                        {Zoom >= maxZoomLevelForMarkers ? supermercati.map(value => renderMarker(value, value.codice, icons.SupermarketIcon)) : null}
+                        {Zoom >= maxZoomLevelForMarkers ? supermercati.map(value => renderMarker(value, value.codice, leafletIcons.SupermarketIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
             </LayersControl>

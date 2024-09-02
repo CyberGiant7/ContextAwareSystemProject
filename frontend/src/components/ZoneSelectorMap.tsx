@@ -27,27 +27,6 @@ export default function ZoneSelectorMap(props: MapProps) {
     }, []);
 
     useEffect(() => {
-        // set all fillOpacity to 0 for all geojson zone
-        zoneUrbanistiche.forEach(zone => {
-                if (map) {
-                    map.eachLayer(layer => {
-                            if (layer instanceof L.GeoJSON) {
-                                layer.setStyle({
-                                    fillOpacity: 0
-                                });
-                                if (layer.options.style) {
-                                    layer.options.style = {
-                                        ...layer.options.style,
-                                        fillOpacity: 0
-                                    }
-                                }
-                            }
-                        }
-                    );
-                }
-            }
-        );
-
         // create a map of selected zones with default value false
         const initialSelectedZones = zoneUrbanistiche.reduce((acc, zone) => {
             acc[zone.zona_di_prossimita] = false;

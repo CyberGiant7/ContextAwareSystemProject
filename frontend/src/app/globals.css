@@ -187,3 +187,13 @@ main{
   margin-top: 56px;
 }
 
+.card-horizontal {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+}
+
+.card {
+  margin-bottom: 1rem;
+}
+

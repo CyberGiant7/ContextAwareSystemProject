@@ -1,6 +1,6 @@
 import { Icon } from "leaflet";
 
-export const icons = {
+export const leafletIcons = {
     HomeIcon: new Icon({ iconUrl: "/images/home_icon.svg", iconSize: [20, 20] }),
     BusStopIcon: new Icon({ iconUrl: "/images/bus_stop_icon.svg", iconSize: [14, 14] }),
     GymIcon: new Icon({ iconUrl: "/images/gym_icon.svg", iconSize: [14, 14] }),

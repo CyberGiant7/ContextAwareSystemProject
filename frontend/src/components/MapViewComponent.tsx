@@ -4,7 +4,7 @@ import {Col, Container, Row, Button} from "react-bootstrap";
 import dynamic from "next/dynamic";
 import {PaginationControl} from "react-bootstrap-pagination-control";
 import {immobile} from "@/lib/definitions";
-import {ImmobileList} from "@/components/ImmobiliList";
+import {ImmobileCardContainer} from "@/components/ImmobileCardContainerComponent";
 import {useRouter} from "next/navigation";
 
 
@@ -68,7 +68,7 @@ const MapView: React.FC<MapViewProps> = ({
                         changePage={setPage}
                         ellipsis={1}
                     />
-                    <ImmobileList immobili={slicedImmobili}/>
+                    <ImmobileCardContainer immobili={slicedImmobili}/>
                 </Col>
                 <Col>
                     {LazyMap}
