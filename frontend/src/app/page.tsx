@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useState} from 'react'
+import React, {Dispatch, SetStateAction, useEffect, useState} from 'react'
 import '@/../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './page.module.css'
 
@@ -8,15 +8,20 @@ import {Button, Col, Container, Row} from "react-bootstrap";
 import {ImmobileList} from "@/components/ImmobiliList";
 
 import {getAllImmobili, getAllImmobiliInZone} from "@/queries/immobili";
+import {getAllZone} from "@/queries/zone";
 
-import {immobile} from "@/lib/definitions";
+import {immobile, zona_urbanistica} from "@/lib/definitions";
 import {PaginationControl} from "react-bootstrap-pagination-control";
+import ZoneList from "@/components/ZoneList";
 
 import {useSearchParams} from "next/navigation";
 import {MapProps} from "@/components/Map";
 import {MapProps as ZoneSelectorMapProps} from "@/components/ZoneSelectorMap";
 
-let LazyMap = dynamic(() => import("@/components/Map"), {
+// let LazyMap: React.ComponentType<MapProps> = () => {
+//     return <p>Loading...</p>
+// };
+let LazyMap: React.ComponentType<MapProps> = dynamic(() => import("@/components/Map"), {
     ssr: false,
     loading: () => <p>Loading...</p>,
 });
@@ -26,21 +31,32 @@ let LazyZoneSelectorMap = dynamic(() => import("@/components/ZoneSelectorMap"), 
     loading: () => <p>Loading...</p>,
 });
 
+type SearchParams = {
+    zona?: string | string[];
+};
 
-export default function App() {
+type Props = {
+    searchParams: SearchParams;
+};
+
+export default function App({searchParams}: Props) {
     const [immobili, setImmobili] = useState<immobile[]>([]);
     const [page, setPage] = useState(1)
     const [visibleImmobili, setVisibleImmobili] = useState<immobile[]>([]);
     const [slicedImmobili, setSlicedImmobili] = useState(visibleImmobili.slice(0, 5));
     const [activeZoneSelector, setActiveZoneSelector] = useState(false);
+    const [selectedZone, setSelectedZone] = useState<string[]>([]);
+    const [zone, setZone] = useState<zona_urbanistica[]>([]);
     const element_per_page = 10;
 
-    const searchParams = useSearchParams()
-    const selected_zone = searchParams.getAll('zona')
+    console.log("search params:", searchParams)
+
+    useEffect(() => {
+        getAllZone().then(setZone).catch(console.error);
+    }, []);
 
     useEffect(() => {
         if (!activeZoneSelector) {
-
         } else {
             LazyZoneSelectorMap = dynamic(() => import("@/components/ZoneSelectorMap"), {
                 ssr: false,
@@ -50,13 +66,28 @@ export default function App() {
     }, [activeZoneSelector]);
 
     useEffect(() => {
-        if (selected_zone.length > 0) {
-            getAllImmobiliInZone(selected_zone).then(setImmobili).catch(console.error);
+        let selected_zone_param = searchParams['zona'] as string | string[] | undefined;
+        let local_selected_zone: string[] = [];
+        console.log("selected_zone:", selected_zone_param)
+        if (selected_zone_param instanceof Array) {
+            local_selected_zone = selected_zone_param;
+            setSelectedZone(selected_zone_param)
+        } else if (typeof selected_zone_param === "string") {
+            local_selected_zone = [selected_zone_param];
+            setSelectedZone([selected_zone_param])
+        }
+        console.log("selected zone:", selectedZone)
+        if (local_selected_zone.length > 0) {
+            getAllImmobiliInZone(local_selected_zone).then(setImmobili).catch(console.error);
         } else {
             getAllImmobili().then(setImmobili).catch(console.error);
         }
+    }, [searchParams]);
 
-    }, []);
+
+    useEffect(() => {
+
+    }, [immobili]);
 
     useEffect(() => {
         setPage(1);
@@ -96,15 +127,14 @@ export default function App() {
                         />
                         <ImmobileList immobili={slicedImmobili}/>
                     </Col>
-                    <Col className="col-2" style={{display: activeZoneSelector ? "block" : "none"}}>
-                        <p>listas</p>
+                    <Col className="col-3" style={{display: activeZoneSelector ? "block" : "none"}}>
+                        <ZoneList zone={zone}></ZoneList>
                     </Col>
                     <Col>
                         {activeZoneSelector ? <LazyZoneSelectorMap width="100%"/> :
                             <LazyMap width="100%" height="100%" immobili={immobili}
                                      setVisibleImmobili={setVisibleImmobili}
-                                     selectedZone={selected_zone}/>}
-
+                                     selectedZone={selectedZone}/>}
                     </Col>
                 </Row>
             </Container>

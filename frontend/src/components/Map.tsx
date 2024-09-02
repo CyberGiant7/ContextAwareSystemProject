@@ -116,6 +116,10 @@ export default function Map(prop: MapProps) {
 
     let maxZoomLevelForMarkers = 16;
 
+    useEffect(() => {
+        updateVisibleMarkers();
+    }, []);
+
     const MapEvents = () => {
         useMapEvents({
             dragend() { // drag event (when map is dragged)
@@ -155,6 +159,7 @@ export default function Map(prop: MapProps) {
 
     useEffect(() => {
         getAllZone().then((zone) => {
+            console.log("selected in map", prop.selectedZone)
             if (prop.selectedZone.length == 0) {
                 setZoneUrbanistiche(zone)
             } else {
