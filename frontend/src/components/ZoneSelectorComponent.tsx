@@ -30,7 +30,7 @@ const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone, setActiveZoneS
                 Seleziona zona
             </Button>
             <Row style={{height: "100%"}}>
-                <Col className="col-3">
+                <Col md="auto">
                     <ZoneList zone={zone} selectedZoneUrbanistiche={selectedZoneUrbanistiche} setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}></ZoneList>
                 </Col>
                 <Col>

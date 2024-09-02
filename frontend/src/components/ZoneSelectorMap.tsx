@@ -95,12 +95,18 @@ export default function ZoneSelectorMap(props: MapProps) {
 
     function renderZone(data: zona_urbanistica) {
         // infer the type of data.geo_shape
+        let fillOpacity = 0;
+        if (props.selectedZoneUrbanistiche[data.zona_di_prossimita]) {
+            console.log("selected", data.zona_di_prossimita);
+            fillOpacity = 0.2;
+        }
         return (
             <GeoJSON data={data.geo_shape} key={data.zona_di_prossimita}
                      eventHandlers={zonaEventHandlers(data)}
                      style={{
                          weight: 2,
-                         opacity: 1
+                         opacity: 1,
+                         fillOpacity: fillOpacity,
                      }}>
                 <Tooltip sticky>{data.zona_di_prossimita}</Tooltip>
             </GeoJSON>

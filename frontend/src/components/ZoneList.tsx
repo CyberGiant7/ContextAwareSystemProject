@@ -1,6 +1,7 @@
 // frontend/src/components/ZoneList.tsx
 import {zona_urbanistica} from "@/lib/definitions";
 import React from "react";
+import {toTitleCase} from "@/lib/utils";
 
 type ZoneListProps = {
     zone: zona_urbanistica[];
@@ -31,7 +32,7 @@ export default function ZoneList({zone, selectedZoneUrbanistiche, setSelectedZon
                         onChange={handleCheckboxChange}
                     />
                     <label htmlFor={zone.zona_di_prossimita} style={{marginLeft: "10pt", fontSize: "small"}}>
-                        {zone.zona_di_prossimita.toLowerCase()}
+                        {toTitleCase(zone.zona_di_prossimita)}
                     </label><br></br>
                 </div>
             ))}

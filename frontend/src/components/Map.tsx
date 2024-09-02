@@ -40,6 +40,7 @@ import MarkerClusterGroup from "next-leaflet-cluster";
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import L from 'leaflet';
+import {toTitleCase} from "@/lib/utils";
 
 
 export interface MapProps {
@@ -83,7 +84,7 @@ function renderMarker(data: Record<string, any>, key: any, icon: L.Icon) {
                             if (properties[key]) {
                                 return (
                                     <p key={key}>
-                                        <strong>{(key.charAt(0).toUpperCase() + key.slice(1)).replace(/_/g, ' ')}: </strong> {properties[key].toString()}
+                                        <strong>{(toTitleCase(key)).replace(/_/g, ' ')}: </strong> {properties[key].toString()}
                                     </p>
                                 )
                             } else {
