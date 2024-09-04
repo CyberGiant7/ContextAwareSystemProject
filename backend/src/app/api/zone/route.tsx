@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(zone);
     }
     const zone = await db.select().from(zone_urbanistiche)
-    console.log(zone)
+    // console.log(zone)
 
     return NextResponse.json(zone);
 }
