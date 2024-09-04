@@ -1,8 +1,12 @@
 "use client";
 import Link from "next/link";
 import React from "react";
+import {useSession} from "next-auth/react";
 
 export default function NavbarComponent() {
+    let session = useSession();
+    console.log("session: ", session);
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
             <div className="container">
@@ -28,6 +32,7 @@ export default function NavbarComponent() {
                         </li>
                     </ul>
                 </div>
+                    <a className="nav-link">{session.data?.user.first_name} {session.data?.user.last_name}</a>
             </div>
         </nav>
     );

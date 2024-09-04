@@ -52,9 +52,6 @@ export default function Login() {
                     </>
                 )}
             </div>
-            {/*<p className="forgot-password text-right">*/}
-            {/*    Forgot <a href="#">password?</a>*/}
-            {/*</p>*/}
         </form>
     )
 }

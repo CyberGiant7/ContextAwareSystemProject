@@ -5,6 +5,9 @@ import {NextResponse} from "next/server";
 
 
 declare module "next-auth" {
+    interface Session extends DefaultSession {
+        user: user;
+    }
 }
 
 export const authConfig = {
@@ -47,20 +50,19 @@ export const authConfig = {
             console.log(auth);
             const isLoggedIn = !!auth;
             const isOnSecret = nextUrl.pathname.startsWith('/secret');
+            const isOnSurvey = nextUrl.pathname.startsWith('/survey');
+            console.log('isOnSurvey', isOnSurvey);
             console.log('isLoggedIn', isLoggedIn);
 
             if (isOnSecret) {
                 return isLoggedIn;
                  // Redirect unauthenticated users to login page
-            } else {
+            } else if (isOnSurvey) {
+                return isLoggedIn;
+            }else {
                 console.log("authorized redirecting to", new URL('/secret', nextUrl))
                 return NextResponse.redirect(new URL('/secret', nextUrl));
             }
-
-            // else if (isLoggedIn) {
-            //     return Response.redirect(new URL('/secret', nextUrl));
-            // }
-            // return true;
         },
 
     },

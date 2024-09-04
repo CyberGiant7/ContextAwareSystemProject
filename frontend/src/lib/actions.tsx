@@ -16,12 +16,13 @@ export async function authenticate(
                 email: formData.get('email') as string,
                 password: formData.get('password') as string,
                 redirect: true,
-                redirectTo: "/secret",
+                redirectTo: "/survey",
             });
             console.log("signin response: ", response);
             return response;
         }
     } catch (error) {
+        console.log("error", error);
         if (error instanceof AuthError) {
             console.log("error Type", error.type);
             switch (error.type) {

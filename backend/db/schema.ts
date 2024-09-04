@@ -272,3 +272,29 @@ export const immobili = pgTable('immobili', {
     prezzo: integer('prezzo').notNull(),
 });
 
+export const user_preferences = pgTable('user_preferences', {
+    email: text('email').notNull().references(() => user.email, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    proximity_bar_ristoranti: smallint('proximity_bar_ristoranti').notNull(),
+    proximity_biblioteche: smallint('proximity_biblioteche').notNull(),
+    proximity_farmacie: smallint('proximity_farmacie').notNull(),
+    proximity_fermate_autobus: smallint('proximity_fermate_autobus').notNull(),
+    proximity_palestre: smallint('proximity_palestre').notNull(),
+    proximity_parcheggi: smallint('proximity_parcheggi').notNull(),
+    proximity_parchi_e_giardini: smallint('proximity_parchi_e_giardini').notNull(),
+    proximity_scuole: smallint('proximity_scuole').notNull(),
+    proximity_strutture_sanitarie: smallint('proximity_strutture_sanitarie').notNull(),
+    proximity_supermercati: smallint('proximity_supermercati').notNull(),
+    quantity_bar_ristoranti: smallint('quantity_bar_ristoranti').notNull(),
+    quantity_biblioteche: smallint('quantity_biblioteche').notNull(),
+    quantity_farmacie: smallint('quantity_farmacie').notNull(),
+    quantity_fermate_autobus: smallint('quantity_fermate_autobus').notNull(),
+    quantity_palestre: smallint('quantity_palestre').notNull(),
+    quantity_parcheggi: smallint('quantity_parcheggi').notNull(),
+    quantity_parchi_e_giardini: smallint('quantity_parchi_e_giardini').notNull(),
+    quantity_scuole: smallint('quantity_scuole').notNull(),
+    quantity_strutture_sanitarie: smallint('quantity_strutture_sanitarie').notNull(),
+    quantity_supermercati: smallint('quantity_supermercati').notNull(),
+});
