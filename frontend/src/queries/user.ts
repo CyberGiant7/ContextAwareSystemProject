@@ -1,7 +1,6 @@
 import {user} from "@/lib/definitions";
 
 
-
 export async function getUser(email: string) {
     try {
         const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/user?email=${email}`);
@@ -14,5 +13,20 @@ export async function getUser(email: string) {
     } catch (error) {
         console.error('Failed to fetch user:', error);
         throw new Error('Failed to fetch user.');
+    }
+}
+
+export async function createUser(user: user) {
+    try {
+        return await fetch(process.env.NEXT_PUBLIC_API_URL + '/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(user),
+        });
+    } catch (error) {
+        console.error('Failed to create user:', error);
+        throw new Error('Failed to create user.');
     }
 }

@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import bcrypt from 'bcryptjs';
 import {authenticate} from "@/lib/actions";
 import {useFormState} from "react-dom";
+import {user} from "@/lib/definitions";
+import {createUser} from "@/queries/user";
 
 
 export default function SignUp() {
@@ -16,7 +18,7 @@ export default function SignUp() {
         console.log(newUser);
     }
 
-    const createUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    const addUser = async (e: React.FormEvent<HTMLFormElement>) => {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
         e.preventDefault();
 
@@ -24,17 +26,16 @@ export default function SignUp() {
         if (!passwordInput.checkValidity()) {
             return;
         }
+
+        let new_user: user = {
+            email: newUser.email,
+            password: bcrypt.hashSync(newUser.password, 10),
+            first_name: newUser.first_name,
+            last_name: newUser.last_name,
+        }
+
         try {
-            const response = await fetch(`${apiUrl}/user`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    email: newUser.email,
-                    password: bcrypt.hashSync(newUser.password, 10),
-                    first_name: newUser.first_name,
-                    last_name: newUser.last_name,
-                }),
-            });
+            const response = await createUser(new_user);
 
             if (response.status === 200) {
                 let formdata = new FormData();
@@ -61,7 +62,7 @@ export default function SignUp() {
     );
     const [newUser, setNewUser] = useState({email: '', password: '', first_name: '', last_name: ''});
     return (
-        <form id="signup-form" onSubmit={createUser}>
+        <form id="signup-form" onSubmit={addUser}>
             <h3>Sign Up</h3>
             <div className="mb-3">
                 <label>First name</label>

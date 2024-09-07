@@ -124,3 +124,27 @@ export interface supermercati {
     zona_di_prossimita: string;
     geo_point: Point;
 }
+
+export interface user_preferences {
+    email: string;
+    proximity_bar_ristoranti: number;
+    proximity_biblioteche: number;
+    proximity_farmacie: number;
+    proximity_fermate_autobus: number;
+    proximity_palestre: number;
+    proximity_parcheggi: number;
+    proximity_parchi_e_giardini: number;
+    proximity_scuole: number;
+    proximity_strutture_sanitarie: number;
+    proximity_supermercati: number;
+    quantity_bar_ristoranti: number;
+    quantity_biblioteche: number;
+    quantity_farmacie: number;
+    quantity_fermate_autobus: number;
+    quantity_palestre: number;
+    quantity_parcheggi: number;
+    quantity_parchi_e_giardini: number;
+    quantity_scuole: number;
+    quantity_strutture_sanitarie: number;
+    quantity_supermercati: number;
+}

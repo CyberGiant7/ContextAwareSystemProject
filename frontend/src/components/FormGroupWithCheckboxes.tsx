@@ -24,7 +24,7 @@ export function FormGroupWithCheckboxes({name, labels, answers, setAnswers}: For
             {labels.map((label, index) => (
                 <Col key={index} className="d-flex flex-sm-column align-items-center p-3" style={{width: "fit-content"}}>
                     <FormCheckLabel className="control-label" htmlFor={`${name}-${index}`}>{label}</FormCheckLabel>
-                    <FormCheck type="radio" id={`${name}-${index}`} name={name} checked={answers[name] === index}
+                    <FormCheck required={true} type="radio" id={`${name}-${index}`} name={name} checked={answers[name] === index}
                                onChange={() => handleChange(index)}/>
                 </Col>
             ))}

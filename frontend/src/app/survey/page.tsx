@@ -3,11 +3,13 @@
 
 import {Button, Card, Container, Form, Row} from "react-bootstrap";
 import {FormGroupWithCheckboxes} from "@/components/FormGroupWithCheckboxes";
-import {useEffect, useState} from "react";
+import {FormEvent, FormEventHandler, useEffect, useState} from "react";
 import {auth} from "@/auth";
-import {user} from '@/lib/definitions';
+import {user, user_preferences} from '@/lib/definitions';
 import {Session} from "next-auth";
 import {SessionContext, SessionProvider, useSession} from "next-auth/react";
+import {json} from "node:stream/consumers";
+import {createUserPreferences} from "@/queries/user_preferences";
 
 const surveyQuestions = [
     {
@@ -151,10 +153,21 @@ export default function Page() {
     const user = session.data?.user as user;
 
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        alert(`You chose ${JSON.stringify(answers)}`);
-        alert(`User: ${ JSON.stringify(user) }`);
+        let userPreferences = {
+            email: user.email,
+            ...answers
+        } as user_preferences;
+
+        try {
+            await createUserPreferences(userPreferences);
+        } catch (error) {
+            console.error('Error creating user preferences:', error);
+        }
+
+        // alert(`You chose ${JSON.stringify(answers)}`);
+        alert(`${JSON.stringify(userPreferences)}`);
     };
 
     return (
