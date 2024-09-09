@@ -14,9 +14,8 @@ type MapViewProps = {
     slicedImmobili: immobile[];
     page: number;
     setPage: React.Dispatch<React.SetStateAction<number>>;
-    setActiveZoneSelector: React.Dispatch<React.SetStateAction<boolean>>;
     setVisibleImmobili: React.Dispatch<React.SetStateAction<immobile[]>>;
-    selectedZone: string[];
+    element_per_page: number;
 };
 
 const MapView: React.FC<MapViewProps> = ({
@@ -25,11 +24,9 @@ const MapView: React.FC<MapViewProps> = ({
                                              slicedImmobili,
                                              page,
                                              setPage,
-                                             setActiveZoneSelector,
                                              setVisibleImmobili,
-                                             selectedZone
+                                             element_per_page
                                          }) => {
-    const element_per_page = 10;
     const router = useRouter();
     const [LazyMap, setLazyMap] = React.useState<any>(<></>);
 
@@ -41,16 +38,14 @@ const MapView: React.FC<MapViewProps> = ({
         })
 
         setLazyMap(<Mappa width="100%" height="100%" immobili={immobili}
-                          setVisibleImmobili={setVisibleImmobili}
-                          selectedZone={selectedZone}/>
+                          setVisibleImmobili={setVisibleImmobili}/>
         )
-    }, [immobili, selectedZone, setVisibleImmobili]);
+    }, [immobili, setVisibleImmobili]);
 
     return (
         <Container fluid style={{height: "100%"}}>
             <Button onClick={() => {
                 router.push("/select-zone");
-                setActiveZoneSelector(true)
                 router.refresh()
             }}>
                 Seleziona zona

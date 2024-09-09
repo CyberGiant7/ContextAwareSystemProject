@@ -9,6 +9,8 @@ services:
     environment:
       - NODE_ENV=production
     restart: always
+    networks:
+      - internal-network
     depends_on:
       - backend
   backend:
@@ -23,7 +25,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
-        restart: true
+    restart: always
+    networks:
+      - internal-network
   db:
     container_name: db
     image: postgis/postgis:16-3.4-alpine
@@ -33,7 +37,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -42,5 +46,8 @@ services:
       retries: 5
       start_period: 30s
       timeout: 10s
+networks:
+  internal-network:
+    driver: bridge
 volumes:
-  pgdata: {}
+  pgdata: { }

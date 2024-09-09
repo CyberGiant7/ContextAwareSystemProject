@@ -39,7 +39,7 @@ const generatePrezzo = async (db: PostgresJsDatabase<any>, info: any) => {
 export const GenerateImmobili = async (nImmobili: number, db: PostgresJsDatabase<any>) => {
     const indirizziPrezzi = await db.select()
         .from(schema.indirizzi)
-        .innerJoin(schema.prezzi_agenzia_entrate, sql.raw(`ST_WITHIN(${schema.indirizzi.geo_point}, ${schema.prezzi_agenzia_entrate.geo_shape})`))
+        .innerJoin(schema.prezzi_agenzia_entrate, sql`ST_WITHIN(${schema.indirizzi.geo_point}, ${schema.prezzi_agenzia_entrate.geo_shape})`)
         .where(isNotNull(schema.prezzi_agenzia_entrate.prezzo_min))
         .orderBy(sql.raw("RANDOM()"))
         .limit(nImmobili).execute();

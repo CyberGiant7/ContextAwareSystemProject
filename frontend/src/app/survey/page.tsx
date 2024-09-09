@@ -9,7 +9,7 @@ import {user, user_preferences} from '@/lib/definitions';
 import {Session} from "next-auth";
 import {SessionContext, SessionProvider, useSession} from "next-auth/react";
 import {json} from "node:stream/consumers";
-import {createUserPreferences} from "@/queries/user_preferences";
+import {createUserPreferences, getUserPreferences} from "@/queries/user_preferences";
 
 const surveyQuestions = [
     {
@@ -147,14 +147,25 @@ const surveyQuestions = [
 
 export default function Page() {
     const [answers, setAnswers] = useState<{ [key: string]: number }>({});
-
+    const [user, setUser] = useState<user>();
 
     const session = useSession();
-    const user = session.data?.user as user;
 
+
+    useEffect(() => {
+        if (session.status === "authenticated") {
+            setUser(session.data.user);
+        }
+    }, [session]);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if (!user) {
+            alert("User not found");
+            return;
+        }
+
         let userPreferences = {
             email: user.email,
             ...answers
@@ -169,6 +180,26 @@ export default function Page() {
         // alert(`You chose ${JSON.stringify(answers)}`);
         alert(`${JSON.stringify(userPreferences)}`);
     };
+
+
+    useEffect(() => {
+        console.log("changed user", user);
+        if (user) {
+            getUserPreferences(user.email).then((userPreferences) => {
+                if (userPreferences) {
+                    console.log("userPreferences", userPreferences);
+                    for (let key in userPreferences) {
+                        if (key !== "email") {
+                            setAnswers((prev) => ({
+                                ...prev,
+                                [key]: userPreferences[key as keyof user_preferences] as number
+                            }));
+                        }
+                    }
+                }
+            });
+        }
+    }, [user]);
 
     return (
         <Container>

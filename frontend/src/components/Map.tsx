@@ -7,7 +7,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 // END: Preserve spaces to avoid auto-sorting
 import {LayerGroup, LayersControl, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from "react-leaflet";
 import {GeoJSON} from 'react-leaflet/GeoJSON'
-import {Dispatch, SetStateAction, useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import {getAllZone} from "@/queries/zone";
 import {getAllImmobiliInZone} from "@/queries/immobili";
 import {getAllBarRistoranti} from "@/queries/bar_ristoranti";
@@ -41,6 +41,7 @@ import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import L from 'leaflet';
 import {toTitleCase} from "@/lib/utils";
+import {SelectedZoneContext} from "@/components/HomepageComponent";
 
 
 export interface MapProps {
@@ -48,7 +49,6 @@ export interface MapProps {
     height: string;
     immobili: immobile[];
     setVisibleImmobili: Dispatch<SetStateAction<immobile[]>>
-    selectedZone: string[]
 }
 
 function renderZone(data: zona_urbanistica) {
@@ -119,6 +119,8 @@ export default function Map(prop: MapProps) {
 
     let maxZoomLevelForMarkers = 16;
 
+    const selectedZone = useContext(SelectedZoneContext);
+
     useEffect(() => {
         updateVisibleMarkers();
     }, []);
@@ -133,7 +135,7 @@ export default function Map(prop: MapProps) {
                 if (!map) return;
                 const zoom = map.getZoom(); // get current Zoom of map
                 setZoom(zoom);
-                console.log(zoom);
+                // console.log(zoom);
             },
         });
         return false;
@@ -150,23 +152,23 @@ export default function Map(prop: MapProps) {
                 newMarkers.push(immobile);
             }
         }
-        console.log(
-            '!!! map bounds:',
-            map.getBounds(),
-            ' visible markers: ',
-            newMarkers
-        );
+        // console.log(
+        //     '!!! map bounds:',
+        //     map.getBounds(),
+        //     ' visible markers: ',
+        //     newMarkers
+        // );
         setVisibleImmobiliMarkers(newMarkers);
         prop.setVisibleImmobili(newMarkers);
     };
 
     useEffect(() => {
         getAllZone().then((zone) => {
-            console.log("selected in map", prop.selectedZone)
-            if (prop.selectedZone.length == 0) {
+            console.log("selected in map", selectedZone)
+            if (selectedZone.length == 0) {
                 setZoneUrbanistiche(zone)
             } else {
-                setZoneUrbanistiche(zone.filter(z => prop.selectedZone.includes(z.zona_di_prossimita)))
+                setZoneUrbanistiche(zone.filter(z => selectedZone.includes(z.zona_di_prossimita)))
             }
         }).catch(console.error);
 
@@ -184,7 +186,7 @@ export default function Map(prop: MapProps) {
 
     useEffect(() => {
         setZoneGeoJson(zoneUrbanistiche.map(renderZone));
-    }, [prop.selectedZone, zoneUrbanistiche]);
+    }, [selectedZone, zoneUrbanistiche]);
 
 
     return (

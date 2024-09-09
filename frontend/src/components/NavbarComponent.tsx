@@ -5,7 +5,6 @@ import {useSession} from "next-auth/react";
 
 export default function NavbarComponent() {
     let session = useSession();
-    console.log("session: ", session);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
