@@ -81,23 +81,17 @@ export async function POST(request: NextRequest) {
 
     //validate the request body
     if (!body.email || !body.password || !body.first_name || !body.last_name) {
-        return NextResponse.json({}, {
-            status: 400,
-            statusText: 'Bad Request - email, password, first_name, last_name are required'
-        })
+        return NextResponse.json({error: 'Bad Request - email, password, first_name, last_name are required'}, {status: 400});
     }
     try {
         const res = await db.insert(user).values(body);
-        return NextResponse.json({}, {
-            status: 200,
-            statusText: 'OK',
-        });
+        return NextResponse.json({message: 'User created successfully'}, {status: 201});
     } catch (e: any) {
         // if email already exists
         console.log(e)
 
         if (e.code === '23505') {
-            return NextResponse.json({}, {status: 409, statusText: 'Conflict - email already exists'})
+            return NextResponse.json({error: 'Conflict - email already exists'}, {status: 409})
         }
 
     }

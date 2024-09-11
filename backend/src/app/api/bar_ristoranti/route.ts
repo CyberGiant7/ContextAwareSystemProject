@@ -32,6 +32,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(await fetchData(bar_ristoranti_schema, 'codice', codice));
     } catch (error) {
         if (error instanceof ApiError)
-            return NextResponse.json({error: error.message}, {status: 404});
+            return NextResponse.json({error: error.message}, {status: error.statusCode});
     }
 }
