@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx ./db/seed.tsx",
+    "prova": "tsx ./src/lib/prova.ts",
     "swagger": "next-swagger-doc-cli next-swagger-doc.json"
   },
   "dependencies": {

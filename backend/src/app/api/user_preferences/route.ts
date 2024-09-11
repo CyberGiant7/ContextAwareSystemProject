@@ -12,9 +12,7 @@ function handleErrorResponse(error: Error, message: string, statusCode: number =
 // Function to get user preferences by email
 async function getUserPreferencesByEmail(email: string) {
     try {
-        return await db.select().from(user_preferences).where(sql`email
-        =
-        ${email}`);
+        return await db.select().from(user_preferences).where(sql`email = ${email}`);
     } catch (error) {
         throw new Error('Failed to fetch user preferences');
     }
@@ -24,7 +22,7 @@ async function getUserPreferencesByEmail(email: string) {
 async function createUserPreferences(body: any) {
     try {
         await db.insert(user_preferences).values(body);
-        return NextResponse.json({status: 200, message: 'User preferences created'});
+        return NextResponse.json({message: 'User preferences created'}, {status: 201});
     } catch (error) {
         return handleErrorResponse(error as Error, 'Failed to create user preferences');
     }
@@ -33,10 +31,8 @@ async function createUserPreferences(body: any) {
 // Function to update user preferences
 async function updateUserPreferences(body: any) {
     try {
-        await db.update(user_preferences).set(body).where(sql`email
-        =
-        ${body.email}`);
-        return NextResponse.json({status: 200, message: 'User preferences updated'});
+        await db.update(user_preferences).set(body).where(sql`email = ${body.email}`);
+        return NextResponse.json({message: 'User preferences updated'}, {status: 200});
     } catch (error) {
         return handleErrorResponse(error as Error, 'Failed to update user preferences');
     }
