@@ -67,6 +67,7 @@ export interface immobile {
     eta_costruzione: number;
     classe_energetica: string;
     prezzo: number;
+    rank?: number;
 }
 
 export interface palestre {

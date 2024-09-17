@@ -4,10 +4,13 @@ import {getAllZone} from "@/queries/zone";
 import {immobile, zona_urbanistica} from "@/lib/definitions";
 import MapView from '@/components/MapViewComponent';
 import {SearchParamsContext} from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import {useSession} from "next-auth/react";
 
 export const SelectedZoneContext = createContext<string[]>([]);
 export const ImmobiliContext = createContext<immobile[]>([]);
 export const VisibleImmobiliContext = createContext<[immobile[], React.Dispatch<React.SetStateAction<immobile[]>>]>([[], () => {
+}]);
+export const SelectedImmobileContext = createContext<[string | null, React.Dispatch<React.SetStateAction<string | null>>]>([null, () => {
 }]);
 export const ZoneContext = createContext<zona_urbanistica[]>([]);
 
@@ -17,27 +20,31 @@ const HomepageComponent: React.FC = () => {
     const [visibleImmobili, setVisibleImmobili] = useState<immobile[]>([]);
     const [slicedImmobili, setSlicedImmobili] = useState<immobile[]>([]);
     const [mapView, setMapView] = useState<JSX.Element>();
+    const [selectedImmobile, setSelectedImmobile] = useState<string | null>(null);
 
     const searchParams = useContext(SearchParamsContext);
     const selected_zone_param = searchParams?.getAll('zona') as string | string[];
+    const order_param = searchParams?.get('order') as string;
     const [selectedZone, setSelectedZone] = useState<string[]>(Array.isArray(selected_zone_param) ? selected_zone_param : [selected_zone_param].filter(Boolean));
 
+    const session = useSession();
+    const user = session.data?.user;
     let element_per_page = 10;
 
-    // useEffect(() => {
-    //     // if (!searchParams) return;
-    //     // const selected_zone_param = searchParams.getAll('zona') as string | string[] ;
-    //     // setSelectedZone(Array.isArray(selected_zone_param) ? selected_zone_param : [selected_zone_param].filter(Boolean))
-    //     // const local_selected_zone = Array.isArray(selected_zone_param) ? selected_zone_param : [selected_zone_param].filter(Boolean);
-    //     // setSelectedZone(local_selected_zone);
-    //     // const fetchImmobili = local_selected_zone.length > 0 ? getAllImmobiliInZone : getAllImmobili;
-    //     // fetchImmobili(local_selected_zone).then(setImmobili).catch(console.error);
-    // }, [searchParams]);
-
     useEffect(() => {
-        const fetchImmobili = selectedZone.length > 0 ? getAllImmobiliInZone : getAllImmobili;
-        fetchImmobili(selectedZone).then(setImmobili).catch(console.error);
-    }, [selectedZone]);
+        if (user) {
+            if (selectedZone.length === 0) {
+                console.log('fetching all immobili' + order_param);
+                console.log(user?.email);
+                getAllImmobili(order_param === 'rank', user?.email).then(setImmobili).catch(console.error);
+            } else {
+                getAllImmobiliInZone(selectedZone, order_param === 'rank', user?.email).then(setImmobili).catch(console.error);
+            }
+        }
+        // const fetchImmobili = selectedZone.length > 0 ? getAllImmobiliInZone : getAllImmobili;
+        // fetchImmobili(selectedZone).then(setImmobili).catch(console.error);
+    }, [selectedZone, user?.email]);
+
 
     useEffect(() => {
         setMapView(
@@ -60,13 +67,15 @@ const HomepageComponent: React.FC = () => {
     }, [page]);
 
     return (
-        <VisibleImmobiliContext.Provider value={[visibleImmobili, setVisibleImmobili]}>
-            <ImmobiliContext.Provider value={immobili}>
-                <SelectedZoneContext.Provider value={selectedZone}>
-                    {mapView}
-                </SelectedZoneContext.Provider>
-            </ImmobiliContext.Provider>
-        </VisibleImmobiliContext.Provider>
+        <SelectedImmobileContext.Provider value={[selectedImmobile, setSelectedImmobile]}>
+            <VisibleImmobiliContext.Provider value={[visibleImmobili, setVisibleImmobili]}>
+                <ImmobiliContext.Provider value={immobili}>
+                    <SelectedZoneContext.Provider value={selectedZone}>
+                        {mapView}
+                    </SelectedZoneContext.Provider>
+                </ImmobiliContext.Provider>
+            </VisibleImmobiliContext.Provider>
+        </SelectedImmobileContext.Provider>
     );
 };
 

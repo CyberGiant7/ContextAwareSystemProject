@@ -3,6 +3,8 @@ import {Card, Container, Row} from "react-bootstrap";
 import {immobile} from "@/lib/definitions";
 import {numberWithCommas, toTitleCase} from "@/lib/utils";
 import {ImmobileDetails} from "@/components/ImmobileDetails";
+import {SelectedImmobileContext} from "@/components/HomepageComponent";
+import {useContext} from "react";
 
 export function ImmobileCard({immobile}: { immobile: immobile }) {
     const details = [
@@ -15,12 +17,14 @@ export function ImmobileCard({immobile}: { immobile: immobile }) {
         {icon: "energetic_class_icon.svg", label: "Anno costruzione", value: immobile.eta_costruzione}
     ];
 
+    const [_, setSelectedImmobile] = useContext(SelectedImmobileContext);
+
     return (
-        <Card className="card-horizontal" key={immobile.civ_key} style={{flexDirection: "row"}}>
+        <Card className="card-horizontal" key={immobile.civ_key} style={{flexDirection: "row"}} onMouseEnter={(e) => {setSelectedImmobile(immobile.civ_key)}}>
             <img
                 src="/images/house_placeholder.webp"
                 alt="house placeholder"
-                width="100%"
+                width="50%"
                 style={{objectFit: "cover"}}
             />
             <Card.Body>

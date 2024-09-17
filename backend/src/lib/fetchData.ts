@@ -4,7 +4,7 @@ import {db} from "@/../db";
 import {eq, sql, getTableColumns} from "drizzle-orm";
 import {ApiError} from "next/dist/server/api-utils";
 
-export async function fetchData(schema: any, searchParamKey: string, searchParamValue: string | null) {
+export async function fetchData(schema: any, searchParamKey?: string, searchParamValue?: string) {
     let query
     if (Object.hasOwn(schema, 'geo_point')) {
         query = db.select({
@@ -15,7 +15,7 @@ export async function fetchData(schema: any, searchParamKey: string, searchParam
         query = db.select(getTableColumns(schema)).from(schema);
     }
 
-    if (searchParamValue) {
+    if (searchParamValue && searchParamKey) {
         query.where(sql`${schema[searchParamKey]} = ${searchParamValue}`);
     }
 

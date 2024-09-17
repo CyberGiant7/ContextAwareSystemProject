@@ -1,12 +1,12 @@
 // frontend/src/app/MapView.tsx
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {Col, Container, Row, Button} from "react-bootstrap";
 import dynamic from "next/dynamic";
 import {PaginationControl} from "react-bootstrap-pagination-control";
 import {immobile} from "@/lib/definitions";
 import {ImmobileCardContainer} from "@/components/ImmobileCardContainerComponent";
 import {useRouter} from "next/navigation";
-import {VisibleImmobiliContext} from "@/components/HomepageComponent";
+import {SelectedImmobileContext, VisibleImmobiliContext} from "@/components/HomepageComponent";
 
 
 type MapViewProps = {
@@ -35,6 +35,7 @@ const MapView: React.FC<MapViewProps> = ({
         setLazyMap(<Mappa width="100%" height="100%"/>)
     }, [ setVisibleImmobili]);
 
+    const [selectedImmobile, setSelectedImmobile] = useContext(SelectedImmobileContext);
     return (
         <Container fluid style={{height: "100%"}}>
             <Button onClick={() => {
@@ -43,6 +44,7 @@ const MapView: React.FC<MapViewProps> = ({
             }}>
                 Seleziona zona
             </Button>
+            <p>${selectedImmobile}</p>
             <Row style={{height: "100%"}}>
                 <Col>
                     <p>
