@@ -38,37 +38,48 @@ export async function GET(request: NextRequest) {
     const orderByRank = searchParams.get('order') === 'rank';
     const email = searchParams.get('email');
 
-    if (zones.length > 0) {
-        // const results = zones.flatMap(zone => fetchData(immobili_schema, 'zona_di_prossimita', zone));
-        let results: any[] = []
-        for (const z of zones) {
-            results = results.concat(await fetchData(immobili_schema, 'zona_di_prossimita', z))
-        }
-
-        if (orderByRank) {
-            if (!email) {
-                return NextResponse.json({error: 'email not found'}, {status: 404});
-            }
-            let preferences: InferSelectModel<typeof schema.user_preferences>[] = [];
-            try {
-                preferences = await fetchData(schema.user_preferences, 'email', email) as InferSelectModel<typeof schema.user_preferences>[];
-                if (preferences.length === 0) {
-                    return NextResponse.json({error: 'preferences not found'}, {status: 404});
-                }
-            } catch (error) {
-                if (error instanceof ApiError)
-                    return NextResponse.json({error: error.message}, {status: error.statusCode});
-            }
-
-            const rankedResult = await rankImmobili(db, results as InferSelectModel<typeof schema.immobili>[], preferences[0]);
-            results.forEach(result => result.rank = rankedResult.get(result.civ_key));
-            results.sort((a, b) => b.rank - a.rank);
-
-            return NextResponse.json(results);
-        }
-
-        return NextResponse.json(results);
+    // Helper function to handle ranking logic
+    async function rankAndSortResults(results: InferSelectModel<typeof schema.immobili>[], preferences: InferSelectModel<typeof schema.user_preferences>) {
+        const rankedResult = await rankImmobili(db, results, preferences);
+        let newResults: any[] = [];
+        results.forEach(result => {
+            newResults.push({...result, rank: rankedResult.get(result.civ_key)});
+            // result.rank = rankedResult.get(result.civ_key)
+        });
+        newResults.sort((a, b) => b.rank - a.rank);
+        return newResults;
     }
 
-    return NextResponse.json(await fetchData(immobili_schema, 'civ_key', civKey));
+    let results: any[] = [];
+
+    // Fetch results based on zones or civKey
+    if (zones.length > 0) {
+        for (const z of zones) {
+            results = results.concat(await fetchData(immobili_schema, 'zona_di_prossimita', z));
+        }
+    } else if (civKey) {
+        results = await fetchData(immobili_schema, 'civ_key', civKey);
+    } else {
+        results = await fetchData(immobili_schema);
+    }
+
+    // If orderByRank is true, process ranking and preferences
+    if (orderByRank) {
+        if (!email) {
+            return NextResponse.json({error: 'email is required'}, {status: 400});
+        }
+        let preferences: InferSelectModel<typeof schema.user_preferences>[] = [];
+        try {
+            preferences = await fetchData(schema.user_preferences, 'email', email) as InferSelectModel<typeof schema.user_preferences>[];
+        } catch (error) {
+            if (error instanceof ApiError) {
+                return NextResponse.json({error: error.message}, {status: error.statusCode});
+            }
+        }
+
+        const rankedResults = await rankAndSortResults(results, preferences[0]);
+        return NextResponse.json(rankedResults);
+    }
+
+    return NextResponse.json(results);
 }
