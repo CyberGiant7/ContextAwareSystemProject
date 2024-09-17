@@ -6,30 +6,25 @@ import {PaginationControl} from "react-bootstrap-pagination-control";
 import {immobile} from "@/lib/definitions";
 import {ImmobileCardContainer} from "@/components/ImmobileCardContainerComponent";
 import {useRouter} from "next/navigation";
+import {VisibleImmobiliContext} from "@/components/HomepageComponent";
 
 
 type MapViewProps = {
-    immobili: immobile[];
-    visibleImmobili: immobile[];
     slicedImmobili: immobile[];
     page: number;
     setPage: React.Dispatch<React.SetStateAction<number>>;
-    setVisibleImmobili: React.Dispatch<React.SetStateAction<immobile[]>>;
     element_per_page: number;
 };
 
 const MapView: React.FC<MapViewProps> = ({
-                                             immobili,
-                                             visibleImmobili,
                                              slicedImmobili,
                                              page,
                                              setPage,
-                                             setVisibleImmobili,
                                              element_per_page
                                          }) => {
     const router = useRouter();
     const [LazyMap, setLazyMap] = React.useState<any>(<></>);
-
+    const [visibleImmobili, setVisibleImmobili] = React.useContext(VisibleImmobiliContext);
 
     useEffect(() => {
         let Mappa = dynamic(() => import("@/components/Map"), {
@@ -37,10 +32,8 @@ const MapView: React.FC<MapViewProps> = ({
             loading: () => <p>Loading...</p>,
         })
 
-        setLazyMap(<Mappa width="100%" height="100%" immobili={immobili}
-                          setVisibleImmobili={setVisibleImmobili}/>
-        )
-    }, [immobili, setVisibleImmobili]);
+        setLazyMap(<Mappa width="100%" height="100%"/>)
+    }, [ setVisibleImmobili]);
 
     return (
         <Container fluid style={{height: "100%"}}>

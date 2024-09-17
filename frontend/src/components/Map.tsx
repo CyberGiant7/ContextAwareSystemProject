@@ -41,14 +41,12 @@ import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import L from 'leaflet';
 import {toTitleCase} from "@/lib/utils";
-import {SelectedZoneContext} from "@/components/HomepageComponent";
+import {SelectedZoneContext, ImmobiliContext, VisibleImmobiliContext} from "@/components/HomepageComponent";
 
 
 export interface MapProps {
     width: string;
     height: string;
-    immobili: immobile[];
-    setVisibleImmobili: Dispatch<SetStateAction<immobile[]>>
 }
 
 function renderZone(data: zona_urbanistica) {
@@ -120,10 +118,12 @@ export default function Map(prop: MapProps) {
     let maxZoomLevelForMarkers = 16;
 
     const selectedZone = useContext(SelectedZoneContext);
+    const immobili = useContext(ImmobiliContext);
+    const [_, setVisibleImmobili] = useContext(VisibleImmobiliContext);
 
     useEffect(() => {
         updateVisibleMarkers();
-    }, []);
+    }, [map, immobili]);
 
     const MapEvents = () => {
         useMapEvents({
@@ -145,7 +145,7 @@ export default function Map(prop: MapProps) {
         if (!map) return;
         const bounds = map.getBounds();
         const newMarkers: immobile[] = [];
-        for (let immobile of prop.immobili) {
+        for (let immobile of immobili) {
             // console.log(immobile)
             let point: L.LatLngExpression = [immobile.geo_point.coordinates[1], immobile.geo_point.coordinates[0]]
             if (bounds.contains(point)) {
@@ -159,7 +159,7 @@ export default function Map(prop: MapProps) {
         //     newMarkers
         // );
         setVisibleImmobiliMarkers(newMarkers);
-        prop.setVisibleImmobili(newMarkers);
+        setVisibleImmobili(newMarkers);
     };
 
     useEffect(() => {

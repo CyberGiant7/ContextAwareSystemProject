@@ -52,6 +52,9 @@ export async function GET(request: NextRequest) {
             let preferences: InferSelectModel<typeof schema.user_preferences>[] = [];
             try {
                 preferences = await fetchData(schema.user_preferences, 'email', email) as InferSelectModel<typeof schema.user_preferences>[];
+                if (preferences.length === 0) {
+                    return NextResponse.json({error: 'preferences not found'}, {status: 404});
+                }
             } catch (error) {
                 if (error instanceof ApiError)
                     return NextResponse.json({error: error.message}, {status: error.statusCode});
