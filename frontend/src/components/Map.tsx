@@ -5,7 +5,17 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 // END: Preserve spaces to avoid auto-sorting
-import {LayerGroup, LayersControl, MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents} from "react-leaflet";
+import {
+    LayerGroup,
+    LayersControl,
+    MapContainer,
+    Marker,
+    Popup,
+    TileLayer,
+    Tooltip,
+    useMap,
+    useMapEvents
+} from "react-leaflet";
 import {GeoJSON} from 'react-leaflet/GeoJSON'
 import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import {getAllZone} from "@/queries/zone";
@@ -39,9 +49,14 @@ import {leafletIcons} from "@/components/LeafletIcons";
 import MarkerClusterGroup from "next-leaflet-cluster";
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
-import L from 'leaflet';
-import {toTitleCase} from "@/lib/utils";
-import {SelectedZoneContext, ImmobiliContext, VisibleImmobiliContext} from "@/components/HomepageComponent";
+import L, {Icon} from 'leaflet';
+import {numberToK, numberWithCommas, toTitleCase} from "@/lib/utils";
+import {
+    SelectedZoneContext,
+    ImmobiliContext,
+    VisibleImmobiliContext,
+    SelectedImmobileContext
+} from "@/components/HomepageComponent";
 
 
 export interface MapProps {
@@ -70,32 +85,6 @@ function renderZone(data: zona_urbanistica) {
     )
 }
 
-function renderMarker(data: Record<string, any>, key: any, icon: L.Icon) {
-    const {geo_point, ...properties} = data;
-
-    return (
-        <Marker position={[geo_point.coordinates[1], geo_point.coordinates[0]]}
-                key={key} icon={icon}>
-            <Popup>
-                <div>
-                    {Object.keys(properties).map((key: string) => {
-                            if (properties[key]) {
-                                return (
-                                    <p key={key}>
-                                        <strong>{(toTitleCase(key)).replace(/_/g, ' ')}: </strong> {properties[key].toString()}
-                                    </p>
-                                )
-                            } else {
-                                return null;
-                            }
-                        }
-                    )}
-                </div>
-            </Popup>
-        </Marker>
-    );
-}
-
 
 export default function Map(prop: MapProps) {
     const [zoneUrbanistiche, setZoneUrbanistiche] = useState<zona_urbanistica[]>([]);
@@ -120,10 +109,75 @@ export default function Map(prop: MapProps) {
     const selectedZone = useContext(SelectedZoneContext);
     const immobili = useContext(ImmobiliContext);
     const [_, setVisibleImmobili] = useContext(VisibleImmobiliContext);
+    const [selectedImmobile, setSelectedImmobile] = useContext(SelectedImmobileContext);
 
     useEffect(() => {
         updateVisibleMarkers();
     }, [map, immobili]);
+
+    function renderImmobiliMarkers(data: immobile, key: string, icon: L.Icon) {
+        const {geo_point, ...properties} = data;
+        if (key == selectedImmobile) {
+            let icon = new Icon({iconUrl: "/images/home_icon.svg", iconSize: [60, 60]});
+
+            return (
+                <Marker position={[data.geo_point.coordinates[1], data.geo_point.coordinates[0]]}
+                        key={key} icon={icon}>
+                    <Popup>
+                        <div>
+                            <h5>{data.indirizzo}</h5>
+                            <p>
+                                <strong>Prezzo: </strong> € {numberToK(data.prezzo)}<br/>
+                                <strong>Superficie: </strong> {data.superficie} m<sup>2</sup><br/>
+                            </p>
+                        </div>
+                    </Popup>
+                    <Tooltip direction="top">€ {numberToK(data.prezzo)} </Tooltip>
+                </Marker>
+            );
+        }
+
+
+        return (
+            <Marker position={[geo_point.coordinates[1], geo_point.coordinates[0]]}
+                    key={key} icon={icon} riseOnHover={true}
+                    eventHandlers={{
+                        mouseover: (event) => setSelectedImmobile(key),
+                    }}>
+            </Marker>
+        );
+    }
+
+    function renderMarker(data: Record<string, any>, key: any, icon: L.Icon) {
+        const {geo_point, ...properties} = data;
+
+        return (
+            <Marker position={[geo_point.coordinates[1], geo_point.coordinates[0]]}
+                    key={key} icon={icon} riseOnHover={true}
+                    eventHandlers={{
+                        mouseover: (event) => setSelectedImmobile(key),
+                    }}>
+                <Popup>
+                    <div>
+                        {Object.keys(properties).map((key: string) => {
+                                if (properties[key]) {
+                                    return (
+                                        <p key={key}>
+                                            <strong>{(toTitleCase(key)).replace(/_/g, ' ')}: </strong> {properties[key].toString()}
+                                        </p>
+                                    )
+                                } else {
+                                    return null;
+                                }
+                            }
+                        )}
+                    </div>
+                </Popup>
+
+            </Marker>
+        );
+    }
+
 
     const MapEvents = () => {
         useMapEvents({
@@ -210,7 +264,7 @@ export default function Map(prop: MapProps) {
             />
             {zoneGeoJson}
             <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
-                {visibleImmobiliMarkers.map(value => renderMarker(value, value.civ_key, leafletIcons.HomeIcon))}
+                {visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon))}
             </MarkerClusterGroup>
             <LayersControl position="topright">
                 <LayersControl.Overlay name="Bar e Ristoranti">

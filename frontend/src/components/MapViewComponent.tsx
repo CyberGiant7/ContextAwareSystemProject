@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {SelectedImmobileContext, VisibleImmobiliContext} from "@/components/HomepageComponent";
 
 
+
 type MapViewProps = {
     slicedImmobili: immobile[];
     page: number;

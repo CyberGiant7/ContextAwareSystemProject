@@ -1,6 +1,10 @@
 import type {Metadata} from "next";
+// import 'bootstrap/dist/css/bootstrap.min.css';
+
+import '../scss/mdb.free.scss';
 import "./globals.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 import NavbarComponent from "@/components/NavbarComponent";
 import React from "react";

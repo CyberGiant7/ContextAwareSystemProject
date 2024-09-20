@@ -1,7 +1,7 @@
 import { Icon } from "leaflet";
 
 export const leafletIcons = {
-    HomeIcon: new Icon({ iconUrl: "/images/home_icon.svg", iconSize: [20, 20] }),
+    HomeIcon: new Icon({ iconUrl: "/images/home_icon.svg", iconSize: [40, 40] }),
     BusStopIcon: new Icon({ iconUrl: "/images/bus_stop_icon.svg", iconSize: [14, 14] }),
     GymIcon: new Icon({ iconUrl: "/images/gym_icon.svg", iconSize: [14, 14] }),
     HospitalIcon: new Icon({ iconUrl: "/images/hospital_icon.png", iconSize: [14, 14] }),
