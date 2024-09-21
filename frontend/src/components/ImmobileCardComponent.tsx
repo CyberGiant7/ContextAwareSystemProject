@@ -5,6 +5,7 @@ import {numberWithCommas, toTitleCase} from "@/lib/utils";
 import {ImmobileDetails} from "@/components/ImmobileDetails";
 import {SelectedImmobileContext} from "@/components/HomepageComponent";
 import {useContext} from "react";
+import Image from "next/image"
 
 export function ImmobileCard({immobile}: { immobile: immobile }) {
     const details = [
@@ -20,13 +21,25 @@ export function ImmobileCard({immobile}: { immobile: immobile }) {
     const [_, setSelectedImmobile] = useContext(SelectedImmobileContext);
 
     return (
-        <Card className="card-horizontal" key={immobile.civ_key} style={{flexDirection: "row"}} onMouseEnter={(e) => {setSelectedImmobile(immobile.civ_key)}}>
-            <img
-                src="/images/house_placeholder.webp"
-                alt="house placeholder"
-                width="50%"
-                style={{objectFit: "cover"}}
-            />
+        <Card className="card-horizontal hover-shadow" key={immobile.civ_key}
+              style={{flexDirection: "row"}}
+              onMouseEnter={(e) => {
+                  setSelectedImmobile(immobile.civ_key)
+                  // e.currentTarget.style.boxShadow = "0 0 10px #000000!important";
+              }}
+              onMouseLeave={(e) => {
+                  setSelectedImmobile(null)
+                  // e.currentTarget.style.boxShadow = "0 0 0px #000000!important";
+              }}>
+            <div style={{width: "100%", position: "relative"}}>
+                <Image
+                    src="/images/house_placeholder.webp"
+                    alt="house placeholder"
+                    style={{objectFit: "cover"}}
+                    fill
+                    // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+            </div>
             <Card.Body>
                 <Card.Title>€ {numberWithCommas(immobile.prezzo)}</Card.Title>
                 <strong>
@@ -34,7 +47,7 @@ export function ImmobileCard({immobile}: { immobile: immobile }) {
                     Bologna
                 </strong>
                 <Container>
-                    <Row md={4}>
+                    <Row md={3} sm={2}>
                         <ImmobileDetails details={details}/>
                     </Row>
                 </Container>

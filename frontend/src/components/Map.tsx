@@ -98,7 +98,7 @@ export default function Map(prop: MapProps) {
     const [scuole, setScuole] = useState<scuole[]>([]);
     const [struttureSanitarie, setStruttureSanitarie] = useState<strutture_sanitarie[]>([]);
     const [supermercati, setSupermercati] = useState<supermercati[]>([]);
-    const [Zoom, setZoom] = useState(9);
+    const [Zoom, setZoom] = useState(8);
     const [map, setMap] = useState<L.Map>();
     const [visibleImmobiliMarkers, setVisibleImmobiliMarkers] = useState<immobile[]>([]);
 
@@ -116,13 +116,11 @@ export default function Map(prop: MapProps) {
     }, [map, immobili]);
 
     function renderImmobiliMarkers(data: immobile, key: string, icon: L.Icon) {
-        const {geo_point, ...properties} = data;
         if (key == selectedImmobile) {
-            let icon = new Icon({iconUrl: "/images/home_icon.svg", iconSize: [60, 60]});
-
+            let bigger_icon = new Icon({iconUrl: icon.options.iconUrl, iconSize: [60, 60]});
             return (
                 <Marker position={[data.geo_point.coordinates[1], data.geo_point.coordinates[0]]}
-                        key={key} icon={icon}>
+                        key={key} icon={bigger_icon}>
                     <Popup>
                         <div>
                             <h5>{data.indirizzo}</h5>
@@ -136,10 +134,8 @@ export default function Map(prop: MapProps) {
                 </Marker>
             );
         }
-
-
         return (
-            <Marker position={[geo_point.coordinates[1], geo_point.coordinates[0]]}
+            <Marker position={[data.geo_point.coordinates[1], data.geo_point.coordinates[0]]}
                     key={key} icon={icon} riseOnHover={true}
                     eventHandlers={{
                         mouseover: (event) => setSelectedImmobile(key),
@@ -248,7 +244,7 @@ export default function Map(prop: MapProps) {
             id={'map'}
             preferCanvas={true}
             center={[44.4934936536425, 11.335745752828108]}
-            zoom={11}
+            zoom={12}
             maxZoom={18}
             scrollWheelZoom={true}
             style={{width: prop.width}}

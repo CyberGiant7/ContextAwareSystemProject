@@ -3,7 +3,6 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 // END: Preserve spaces to avoid auto-sorting
-
 import L from 'leaflet';
 import {MapContainer, Popup, TileLayer, Tooltip} from "react-leaflet";
 import React, {useEffect, useState} from "react";
