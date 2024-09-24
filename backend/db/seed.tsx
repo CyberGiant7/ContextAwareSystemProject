@@ -8,14 +8,11 @@ import csvParser from "csv-parser";
 import {TableConfig} from "drizzle-orm";
 import {PgTable} from "drizzle-orm/pg-core";
 import {GenerateImmobili} from "@/lib/GenerateImmobili";
+import {strToGeometryPoint} from "@/lib/utils";
 
 
 dotenv.config({path: "./.env"});
 
-const strToGeojsonPoint = (geoPoint: string) => {
-    const geopoints = geoPoint.split(",").map(Number).reverse();
-    return geomFromGeoJSON({"type": "Point", "coordinates": geopoints});
-}
 
 const importData = async (db: PostgresJsDatabase<any>, filePath: string, tableName: PgTable<TableConfig>, transformRow: (row: any) => any) => {
     const results: any[] = [];
@@ -63,7 +60,7 @@ const main = async () => {
                 table: schema.zone_urbanistiche,
                 transform: (row: any) => ({
                     ...row,
-                    geo_point: strToGeojsonPoint(row.geo_point),
+                    geo_point: strToGeometryPoint(row.geo_point),
                     geo_shape: geomFromGeoJSON(JSON.parse(row.geo_shape))
                 })
             },
@@ -72,7 +69,7 @@ const main = async () => {
                 table: schema.indirizzi,
                 transform: (row: any) => ({
                     ...row,
-                    geo_point: strToGeojsonPoint(row.geo_point),
+                    geo_point: strToGeometryPoint(row.geo_point),
                     zona_di_prossimita: row.zona_di_prossimita?.toUpperCase(),
                 })
             },
@@ -101,7 +98,7 @@ const main = async () => {
             {
                 file: './data/farmacie.csv',
                 table: schema.farmacie,
-                transform: (row: any) => ({...row, geo_point: strToGeojsonPoint(row.geo_point)})
+                transform: (row: any) => ({...row, geo_point: strToGeometryPoint(row.geo_point)})
             },
             {
                 file: './data/palestre.csv',
@@ -117,7 +114,7 @@ const main = async () => {
                 table: schema.parcheggi,
                 transform: (row: any) => ({
                     ...row,
-                    geo_point: strToGeojsonPoint(row.geo_point),
+                    geo_point: strToGeometryPoint(row.geo_point),
                     numero_posti: parseInt(row.numero_posti)
                 })
             },
@@ -136,7 +133,7 @@ const main = async () => {
                 table: schema.strutture_sanitarie,
                 transform: (row: any) => ({
                     ...row,
-                    geo_point: strToGeojsonPoint(row.geo_point),
+                    geo_point: strToGeometryPoint(row.geo_point),
                     titolarita: row.titolarita || null
                 })
             },
@@ -153,7 +150,7 @@ const main = async () => {
                 table: schema.fermate_autobus,
                 transform: (row: any) => ({
                     ...row,
-                    geo_point: strToGeojsonPoint(row.geo_point),
+                    geo_point: strToGeometryPoint(row.geo_point),
                     numero_linee: parseInt(row.numero_linee)
                 })
             },

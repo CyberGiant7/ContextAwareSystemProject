@@ -13,29 +13,29 @@ import {
 import c from 'wkx';
 
 
-const customPolygon = customType<{ data: string; }>(
+interface PostgisGeometryConfig {
+    type: string;
+    srid?: number;
+}
+
+const postgisGeometry = customType<{ data: string; }>(
     {
-        dataType() {
-            return 'geometry(Polygon)';
+        dataType(config) {
+            let config_casted = config as PostgisGeometryConfig;
+            return config_casted.srid ? `geometry(${config_casted.type}, ${config_casted.srid})` : `geometry(${config_casted.type})`;
         },
+        
         fromDriver(value: any) {
-            let t = Buffer.from(value, "hex");
-            return c.Geometry.parse(t).toGeoJSON({shortCrs: !0}) as any;
+            const buffer = Buffer.from(value, "hex");
+            return c.Geometry.parse(buffer).toGeoJSON({shortCrs: true}) as any;
+        },
+        toDriver(value: any) {
+            return c.Geometry.parseGeoJSON(value).toWkb().toString("hex");
         }
-    },
+
+    }
 );
 
-const customMultiPolygon = customType<{ data: string; }>(
-    {
-        dataType() {
-            return 'geometry(MultiPolygon)';
-        },
-        fromDriver(value: any) {
-            let t = Buffer.from(value, "hex");
-            return c.Geometry.parse(t).toGeoJSON({shortCrs: !0}) as any;
-        }
-    },
-);
 
 export const user = pgTable('user', {
     email: text('email').notNull().primaryKey(),
@@ -47,7 +47,7 @@ export const user = pgTable('user', {
 export const quartieri = pgTable('quartieri', {
     codice_quartiere: numeric('codice_quartiere').notNull().primaryKey(),
     quartiere: text('quartiere').notNull().unique(),
-    geo_shape: customPolygon('geo_shape').notNull(),
+    geo_shape: postgisGeometry('geo_shape', {type: "Polygon", srid:4326}).notNull(),
 });
 
 export const zone_urbanistiche = pgTable('zone_urbanistiche', {
@@ -57,8 +57,8 @@ export const zone_urbanistiche = pgTable('zone_urbanistiche', {
         onUpdate: 'cascade'
     }),
     codice_quartiere: numeric('codice_quartiere').notNull(),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
-    geo_shape: customPolygon('geo_shape').notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
+    geo_shape: postgisGeometry('geo_shape', {type: "Polygon"}).notNull(),
     area: doublePrecision('area').notNull()
 });
 
@@ -73,7 +73,7 @@ export const indirizzi = pgTable('indirizzi', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 
@@ -82,7 +82,7 @@ export const teatri_cinema = pgTable('teatri_cinema', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
     indirizzo: text('indirizzo').notNull(),
     nome: text('nome').notNull(),
     fonte: text('fonte').notNull(),
@@ -113,7 +113,7 @@ export const bar_ristoranti = pgTable('bar_ristoranti', {
         onUpdate: 'cascade'
     }),
     attivita_secondaria: text('attivita_secondaria'),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 export const biblioteche = pgTable('biblioteche', {
@@ -141,13 +141,13 @@ export const farmacie = pgTable('farmacie', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 export const palestre = pgTable('palestre', {
     codice: integer('codice').primaryKey(),
     nome: text('nome').notNull(),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
     zona_di_prossimita: text('zona_di_prossimita').references(() => zone_urbanistiche.zona_di_prossimita, {
         onDelete: 'cascade',
         onUpdate: 'cascade'
@@ -164,14 +164,14 @@ export const parcheggi = pgTable('parcheggi', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 export const parchi_e_giardini = pgTable('parchi_e_giardini', {
     codice: integer('codice').primaryKey(),
     denominazione: text('denominazione').notNull(),
     tipologia: text('tipologia').notNull(),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 export const scuole = pgTable('scuole', {
@@ -189,7 +189,7 @@ export const scuole = pgTable('scuole', {
     }),
     indirizzo: text('indirizzo').notNull(),
     numero_civico: text('numero_civico').notNull(),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 export const strutture_sanitarie = pgTable('strutture_sanitarie', {
@@ -210,13 +210,13 @@ export const strutture_sanitarie = pgTable('strutture_sanitarie', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 export const supermercati = pgTable('supermercati', {
     codice: integer('codice').primaryKey(),
     nome: text('nome').notNull(),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
     quartiere: text('quartiere').references(() => quartieri.quartiere, {
         onDelete: 'cascade',
         onUpdate: 'cascade'
@@ -240,14 +240,14 @@ export const fermate_autobus = pgTable('fermate_autobus', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
 });
 
 export const prezzi_agenzia_entrate = pgTable('prezzi_agenzia_entrate', {
     codice: text('codice').primaryKey(),
     prezzo_min: integer('prezzo_min'),
     prezzo_max: integer('prezzo_max'),
-    geo_shape: customMultiPolygon('geo_shape').notNull(),
+    geo_shape: postgisGeometry('geo_shape', {type: "MultiPolygon", srid:4326}).notNull(),
 });
 
 export const immobili = pgTable('immobili', {
@@ -261,7 +261,7 @@ export const immobili = pgTable('immobili', {
         onDelete: 'cascade',
         onUpdate: 'cascade'
     }),
-    geo_point: geometry('geo_point', {srid: 4326, type: 'Point'}).notNull(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid:4326}).notNull(),
     superficie: integer('superficie').notNull(),
     piano: integer('piano').notNull(),
     ascensore: boolean('ascensore').notNull(),
