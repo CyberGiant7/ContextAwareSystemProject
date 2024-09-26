@@ -8,7 +8,6 @@ export function ImmobileCardContainer({ immobili }: { immobili: immobile[] }) {
             {immobili.map((immobile) => (
                 <>
                 <ImmobileCard key={immobile.civ_key} immobile={immobile} />
-                <div className={"divider-horizontal"} />
                 </>
             ))}
         </div>

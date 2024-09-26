@@ -2,6 +2,7 @@
 import React from 'react'
 import {useFormState} from "react-dom";
 import {authenticate} from "@/lib/actions";
+import {Form} from "react-bootstrap";
 
 export default function Login() {
     const [errorMessage, formAction, isPending] = useFormState(
@@ -11,7 +12,7 @@ export default function Login() {
         undefined,
     );
     return (
-        <form action={formAction}>
+        <Form action={formAction}>
             <h3>Sign In</h3>
             <div className="mb-3">
                 <label>Email address</label>
@@ -52,6 +53,6 @@ export default function Login() {
                     </>
                 )}
             </div>
-        </form>
+        </Form>
     )
 }

@@ -1,7 +1,7 @@
 import {z} from "zod";
 import bcrypt from "bcryptjs";
 import {getUser} from "@/queries/user";
-import {AccessDenied} from "@auth/core/errors";
+import {AccessDenied, AuthError} from "@auth/core/errors";
 
 
 
@@ -13,7 +13,13 @@ export async function checkCredential(formData: FormData) {
 
     if (parsedCredentials.success) {
         const {email, password} = parsedCredentials.data;
-        const user = await getUser(email);
+        let user;
+        try {
+            user = await getUser(email);
+        } catch (error) {
+            throw new AuthError('Failed to fetch user.');
+        }
+
 
         if (!user) return null;
 

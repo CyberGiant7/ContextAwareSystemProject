@@ -32,7 +32,6 @@ const postgisGeometry = customType<{ data: string; }>(
         toDriver(value: any) {
             return c.Geometry.parseGeoJSON(value).toWkb().toString("hex");
         }
-
     }
 );
 

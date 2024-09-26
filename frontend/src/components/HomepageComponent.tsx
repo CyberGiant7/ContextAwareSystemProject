@@ -40,6 +40,13 @@ const HomepageComponent: React.FC = () => {
             } else {
                 getAllImmobiliInZone(selectedZone, order_param === 'rank', user?.email).then(setImmobili).catch(console.error);
             }
+        } else {
+            if (selectedZone.length === 0) {
+                console.log('fetching all immobili' + order_param);
+                getAllImmobili(false).then(setImmobili).catch(console.error);
+            } else {
+                getAllImmobiliInZone(selectedZone, false).then(setImmobili).catch(console.error);
+            }
         }
         // const fetchImmobili = selectedZone.length > 0 ? getAllImmobiliInZone : getAllImmobili;
         // fetchImmobili(selectedZone).then(setImmobili).catch(console.error);
