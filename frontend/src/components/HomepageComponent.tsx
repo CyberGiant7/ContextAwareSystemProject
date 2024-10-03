@@ -25,6 +25,7 @@ const HomepageComponent: React.FC = () => {
     const searchParams = useContext(SearchParamsContext);
     const selected_zone_param = searchParams?.getAll('zona') as string | string[];
     const order_param = searchParams?.get('order') as string;
+    const radius_param = searchParams?.get('radius') as string;
     const [selectedZone, setSelectedZone] = useState<string[]>(Array.isArray(selected_zone_param) ? selected_zone_param : [selected_zone_param].filter(Boolean));
 
     const session = useSession();
@@ -36,7 +37,7 @@ const HomepageComponent: React.FC = () => {
             if (selectedZone.length === 0) {
                 console.log('fetching all immobili' + order_param);
                 console.log(user?.email);
-                getAllImmobili(order_param === 'rank', user?.email).then(setImmobili).catch(console.error);
+                getAllImmobili(order_param === 'rank', user?.email, radius_param).then(setImmobili).catch(console.error);
             } else {
                 getAllImmobiliInZone(selectedZone, order_param === 'rank', user?.email).then(setImmobili).catch(console.error);
             }

@@ -31,7 +31,7 @@ export default function ZoneList({zone, selectedZoneUrbanistiche, setSelectedZon
                         checked={selectedZoneUrbanistiche[zone.zona_di_prossimita] || false}
                         onChange={handleCheckboxChange}
                     />
-                    <label htmlFor={zone.zona_di_prossimita} style={{marginLeft: "10pt", fontSize: "small"}}>
+                    <label htmlFor={zone.zona_di_prossimita} style={{marginLeft: "10pt", fontSize: "large", fontWeight: "lighter"}}>
                         {toTitleCase(zone.zona_di_prossimita)}
                     </label><br></br>
                 </div>

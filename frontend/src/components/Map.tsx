@@ -57,6 +57,7 @@ import {
     VisibleImmobiliContext,
     SelectedImmobileContext
 } from "@/components/HomepageComponent";
+import {ButtonOnMap} from "@/components/ButtonOnMap";
 
 
 export interface MapProps {
@@ -122,22 +123,24 @@ export default function Map(prop: MapProps) {
         // newIcon.options.html = `<div class="leaflet-div-icon2" style="background: #0d6efd"/>`;
         let newIcon = new Icon({iconUrl: icon.options.iconUrl, iconSize: [30, 30]});
         let newIcon2
-        if(data.rank){
+        if(data.rank !== undefined){
             const markerColor = getColorFromRank(data.rank, maxRank);
             newIcon2 = new DivIcon({
                 className: 'custom-div-icon', // Add a custom class
-                html: `<div style="background-color:${markerColor}; width:30px; height:30px; border-radius:50%; border: 2px solid white; position:inherit; left: -15px; top: -15px;" class="custom-div-icon"></div>`,
+                html: `<div style="background-color:${markerColor}; width:20px; height:20px; border-radius:50%; border: 2px solid white; position:inherit; left: -15px; top: -15px;" class="custom-div-icon"></div>`,
             });
+        } else {
+
         }
 
         if (key == selectedImmobile) {
             let bigger_icon = new Icon({iconUrl: icon.options.iconUrl, iconSize: [60, 60]});
             let bigger_icon2;
-            if(data.rank){
+            if(data.rank !== undefined){
                 const markerColor = getColorFromRank(data.rank, maxRank);
                 bigger_icon2 = new DivIcon({
                     className: 'custom-div-icon', // Add a custom class
-                    html: `<div style="background-color:${markerColor}; width:60px; height:60px; border-radius:50%; border: 2px solid white; position:inherit; left: -24px; top: -32px;" class="custom-div-icon"></div>`,
+                    html: `<div style="background-color:${markerColor}; width:40px; height:40px; border-radius:50%; border: 2px solid white; position:inherit; left: -24px; top: -32px;" class="custom-div-icon"></div>`,
                 });
             }
             return (
@@ -149,6 +152,7 @@ export default function Map(prop: MapProps) {
                             <p>
                                 <strong>Prezzo: </strong> € {numberToK(data.prezzo)}<br/>
                                 <strong>Superficie: </strong> {data.superficie} m<sup>2</sup><br/>
+                                {data.rank ? <strong>Rank: </strong> : null}
                             </p>
                         </div>
                     </Popup>
@@ -279,10 +283,11 @@ export default function Map(prop: MapProps) {
                 if (map) setMap(map)
             }}>
             <MapEvents/>
+            <ButtonOnMap position={"bottomcenter"}/>
             <TileLayer
                 attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
-                url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
-                // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                // url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {zoneGeoJson}
             {/*<MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>*/}

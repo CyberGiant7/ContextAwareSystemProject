@@ -97,7 +97,7 @@ export default function ZoneSelectorMap(props: MapProps) {
             id={'map'}
             preferCanvas={true}
             center={[44.4934936536425, 11.335745752828108]}
-            zoom={11}
+            zoom={12}
             maxZoom={18}
             scrollWheelZoom={true}
             style={{width: props.width}}

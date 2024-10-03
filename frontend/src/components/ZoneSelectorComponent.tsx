@@ -1,11 +1,12 @@
 // frontend/src/components/ZoneSelectorComponent.tsx
 "use client";
 import React, {useState} from 'react';
-import {Col, Container, Row, Button} from "react-bootstrap";
+import {Col, Container, Row, Button, Card} from "react-bootstrap";
 import dynamic from "next/dynamic";
 import ZoneList from "@/components/ZoneList";
 import {zona_urbanistica} from "@/lib/definitions";
-import { useRouter } from 'next/navigation'
+import {useRouter} from 'next/navigation'
+import {MDBBtn, MDBCard, MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
 
 const LazyZoneSelectorMap = dynamic(() => import("@/components/ZoneSelectorMap"), {
     ssr: false,
@@ -20,24 +21,25 @@ type ZoneSelectorViewProps = {
 const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone, setActiveZoneSelector}) => {
     const [selectedZoneUrbanistiche, setSelectedZoneUrbanistiche] = useState<Record<string, boolean>>({});
 
-    const router = useRouter()
+    // const router = useRouter()
     return (
-        <Container fluid style={{height: "100%"}}>
-            <Button onClick={() => {
-                let url = "/?" + Object.keys(selectedZoneUrbanistiche).filter(key => selectedZoneUrbanistiche[key]).map(key => "zona=" + key).join("&");
-                router.push(url);
-            }}>
-                Seleziona zona
-            </Button>
-            <Row style={{height: "100%"}}>
-                <Col md="auto">
-                    <ZoneList zone={zone} selectedZoneUrbanistiche={selectedZoneUrbanistiche} setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}></ZoneList>
-                </Col>
-                <Col>
-                    <LazyZoneSelectorMap width="100%" selectedZoneUrbanistiche={selectedZoneUrbanistiche} setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}/>
-                </Col>
-            </Row>
-        </Container>
+        <MDBContainer fluid style={{height: "100%"}}>
+            <MDBRow>
+                <MDBCol style={{height: "100%"}} md="auto">
+                    <MDBRow>
+                        <ZoneList zone={zone} selectedZoneUrbanistiche={selectedZoneUrbanistiche}
+                                  setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}></ZoneList>
+                    </MDBRow>
+                    <MDBRow>
+                        <MDBBtn color="primary" onClick={() => setActiveZoneSelector(false)}>Conferma</MDBBtn>
+                    </MDBRow>
+                </MDBCol>
+                <MDBCol style={{height: "100%"}}>
+                    <LazyZoneSelectorMap width="100%" selectedZoneUrbanistiche={selectedZoneUrbanistiche}
+                                         setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}/>
+                </MDBCol>
+            </MDBRow>
+        </MDBContainer>
     );
 };
 
