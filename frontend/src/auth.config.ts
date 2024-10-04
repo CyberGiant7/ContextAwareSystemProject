@@ -8,6 +8,7 @@ declare module "next-auth" {
     interface Session extends DefaultSession {
         user: user;
     }
+    function getCsrfToken(): Promise<string>
 }
 
 export const authConfig = {
@@ -49,19 +50,19 @@ export const authConfig = {
             // console.log('authorized', {auth, nextUrl});
             console.log(auth);
             const isLoggedIn = !!auth;
-            const isOnSecret = nextUrl.pathname.startsWith('/secret');
+            const isOnProfile = nextUrl.pathname.startsWith('/profile');
             const isOnSurvey = nextUrl.pathname.startsWith('/survey');
             console.log('isOnSurvey', isOnSurvey);
             console.log('isLoggedIn', isLoggedIn);
 
-            if (isOnSecret) {
+            if (isOnProfile) {
                 return isLoggedIn;
                  // Redirect unauthenticated users to login page
             } else if (isOnSurvey) {
                 return isLoggedIn;
             }else {
-                console.log("authorized redirecting to", new URL('/secret', nextUrl))
-                return NextResponse.redirect(new URL('/secret', nextUrl));
+                console.log("authorized redirecting to", new URL('/profile', nextUrl))
+                return NextResponse.redirect(new URL('/profile', nextUrl));
             }
         },
 

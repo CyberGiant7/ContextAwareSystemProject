@@ -3,13 +3,12 @@
 
 import {Button, Card, Container, Form, Row} from "react-bootstrap";
 import {FormGroupWithCheckboxes} from "@/components/FormGroupWithCheckboxes";
-import {FormEvent, FormEventHandler, useEffect, useState} from "react";
-import {auth} from "@/auth";
+import {FormEvent, useEffect, useState} from "react";
 import {user, user_preferences} from '@/lib/definitions';
-import {Session} from "next-auth";
-import {SessionContext, SessionProvider, useSession} from "next-auth/react";
-import {json} from "node:stream/consumers";
+// import { useSession} from "next-auth/react";
 import {createUserPreferences, getUserPreferences} from "@/queries/user_preferences";
+import {useRouter} from "next/navigation";
+import {useSessionData} from "@/lib/useSessionData";
 
 const surveyQuestions = [
     {
@@ -149,12 +148,13 @@ export default function Page() {
     const [answers, setAnswers] = useState<{ [key: string]: number }>({});
     const [user, setUser] = useState<user>();
 
-    const session = useSession();
+    const session = useSessionData();
+    const router = useRouter();
 
 
     useEffect(() => {
         if (session.status === "authenticated") {
-            setUser(session.data.user);
+            setUser(session?.data?.user);
         }
     }, [session]);
 
@@ -198,6 +198,10 @@ export default function Page() {
                     }
                 }
             });
+        }else {
+            console.log("user not found");
+            router.push("/survey");
+            router.refresh();
         }
     }, [user]);
 

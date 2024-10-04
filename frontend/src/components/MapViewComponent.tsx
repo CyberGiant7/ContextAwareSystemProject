@@ -36,7 +36,6 @@ const MapView: React.FC<MapViewProps> = ({
 
     return (
         <Container fluid style={{height: "100%"}}>
-
             <Row style={{height: "100%"}}>
                 <Col>
                     <p>

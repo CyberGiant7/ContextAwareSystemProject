@@ -18,10 +18,17 @@ type ZoneSelectorViewProps = {
     setActiveZoneSelector: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+
 const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone, setActiveZoneSelector}) => {
     const [selectedZoneUrbanistiche, setSelectedZoneUrbanistiche] = useState<Record<string, boolean>>({});
 
-    // const router = useRouter()
+    const router = useRouter()
+
+    const handleSubmit = () => {
+        let url = "/?" + Object.keys(selectedZoneUrbanistiche).filter(key => selectedZoneUrbanistiche[key]).map(key => "zona=" + key).join("&");
+        router.push(url);
+    };
+
     return (
         <MDBContainer fluid style={{height: "100%"}}>
             <MDBRow>
@@ -31,7 +38,7 @@ const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone, setActiveZoneS
                                   setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}></ZoneList>
                     </MDBRow>
                     <MDBRow>
-                        <MDBBtn color="primary" onClick={() => setActiveZoneSelector(false)}>Conferma</MDBBtn>
+                        <MDBBtn color="primary" onClick={handleSubmit}>Conferma</MDBBtn>
                     </MDBRow>
                 </MDBCol>
                 <MDBCol style={{height: "100%"}}>

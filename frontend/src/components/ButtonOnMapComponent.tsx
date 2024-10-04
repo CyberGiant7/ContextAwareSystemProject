@@ -13,7 +13,7 @@ const POSITION_CLASSES = {
 }
 
 
-export function ButtonOnMap({position}: { position?: keyof typeof POSITION_CLASSES }) {
+export function ButtonOnMapComponent({position}: { position?: keyof typeof POSITION_CLASSES }) {
     const parentMap = useMap()
     const router = useRouter()
 

@@ -2,9 +2,11 @@ import {immobile} from "@/lib/definitions";
 
 export async function getAllImmobili(orderByRank: boolean, email?: string, radius?: string) {
     try {
-        console.log(`${process.env.NEXT_PUBLIC_API_URL}/immobili?${orderByRank ? '&order=rank&email=' + email : ''}`)
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/immobili?${orderByRank ? '&order=rank&email=' + email : ''}${radius ? '&radius=' + radius : ''}`);
-        // const response = await fetch(process.env.NEXT_PUBLIC_API_URL +  '/immobili');
+        let url = `${process.env.NEXT_PUBLIC_API_URL}/immobili`;
+        if (orderByRank) {
+            url += `?order=rank&email=${email}${radius ? '&radius=' + radius : ''}`
+        }
+        const response = await fetch(url);
         return await response.json() as immobile[];
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -12,11 +14,13 @@ export async function getAllImmobili(orderByRank: boolean, email?: string, radiu
     }
 }
 
-//TODO add order by rank
-export async function getAllImmobiliInZone(zone: string[], orderByRank: boolean, email?: string) {
+export async function getAllImmobiliInZone(zone: string[], orderByRank: boolean, email?: string, radius?: string) {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/immobili?${zone.map(z => `zona=${z}`).join('&')}`);
-        console.log(`${process.env.NEXT_PUBLIC_API_URL}/immobili?${zone.map(z => `zona=${z}`).join('&')}`)
+        let url = `${process.env.NEXT_PUBLIC_API_URL}/immobili?${zone.map(z => `zona=${z}`).join('&')}`
+        if (orderByRank) {
+            url += `&order=rank&email=${email}${radius ? '&radius=' + radius : ''}`
+        }
+        const response = await fetch(url);
         return await response.json() as immobile[];
     } catch (error) {
         console.error('Error fetching data:', error);

@@ -5,21 +5,10 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 // END: Preserve spaces to avoid auto-sorting
-import {
-    LayerGroup,
-    LayersControl,
-    MapContainer,
-    Marker,
-    Popup,
-    TileLayer,
-    Tooltip,
-    useMap,
-    useMapEvents
-} from "react-leaflet";
+import {LayerGroup, LayersControl, MapContainer, Marker, Popup, TileLayer, Tooltip, useMapEvents} from "react-leaflet";
 import {GeoJSON} from 'react-leaflet/GeoJSON'
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {getAllZone} from "@/queries/zone";
-import {getAllImmobiliInZone} from "@/queries/immobili";
 import {getAllBarRistoranti} from "@/queries/bar_ristoranti";
 import {getAllBiblioteche} from "@/queries/biblioteche";
 import {getAllFarmacie} from "@/queries/farmacie";
@@ -46,19 +35,22 @@ import {
 } from "@/lib/definitions";
 
 import {leafletIcons} from "@/components/LeafletIcons";
-import MarkerClusterGroup from "next-leaflet-cluster";
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import L, {DivIcon, Icon} from 'leaflet';
-import {getColorFromRank, numberToK, numberWithCommas, toTitleCase} from "@/lib/utils";
+import {getColorFromRank, numberToK, toTitleCase} from "@/lib/utils";
 import {
-    SelectedZoneContext,
     ImmobiliContext,
-    VisibleImmobiliContext,
-    SelectedImmobileContext
+    SelectedImmobileContext,
+    SelectedZoneContext,
+    VisibleImmobiliContext
 } from "@/components/HomepageComponent";
-import {ButtonOnMap} from "@/components/ButtonOnMap";
+import {ButtonOnMapComponent} from "@/components/ButtonOnMapComponent";
 
+import * as turf from "@turf/turf";
+import MarkerClusterGroup from "next-leaflet-cluster";
+import _distanceweight from "@turf/distance-weight";
+import {pNormDistance} from "@turf/distance-weight";
 
 export interface MapProps {
     width: string;
@@ -123,7 +115,7 @@ export default function Map(prop: MapProps) {
         // newIcon.options.html = `<div class="leaflet-div-icon2" style="background: #0d6efd"/>`;
         let newIcon = new Icon({iconUrl: icon.options.iconUrl, iconSize: [30, 30]});
         let newIcon2
-        if(data.rank !== undefined){
+        if (data.rank !== undefined) {
             const markerColor = getColorFromRank(data.rank, maxRank);
             newIcon2 = new DivIcon({
                 className: 'custom-div-icon', // Add a custom class
@@ -136,7 +128,7 @@ export default function Map(prop: MapProps) {
         if (key == selectedImmobile) {
             let bigger_icon = new Icon({iconUrl: icon.options.iconUrl, iconSize: [60, 60]});
             let bigger_icon2;
-            if(data.rank !== undefined){
+            if (data.rank !== undefined) {
                 const markerColor = getColorFromRank(data.rank, maxRank);
                 bigger_icon2 = new DivIcon({
                     className: 'custom-div-icon', // Add a custom class
@@ -145,14 +137,14 @@ export default function Map(prop: MapProps) {
             }
             return (
                 <Marker position={[data.geo_point.coordinates[1], data.geo_point.coordinates[0]]}
-                        key={key} icon={bigger_icon2 ? bigger_icon2 : bigger_icon }>
+                        key={key} icon={bigger_icon2 ? bigger_icon2 : bigger_icon}>
                     <Popup>
                         <div>
                             <h5>{data.indirizzo}</h5>
                             <p>
                                 <strong>Prezzo: </strong> € {numberToK(data.prezzo)}<br/>
                                 <strong>Superficie: </strong> {data.superficie} m<sup>2</sup><br/>
-                                {data.rank ? <strong>Rank: </strong> : null}
+                                {data.rank ? <><strong>Rank: </strong> {data.rank}</> : null}
                             </p>
                         </div>
                     </Popup>
@@ -267,7 +259,102 @@ export default function Map(prop: MapProps) {
     useEffect(() => {
         setMaxRank(Math.max(...immobili.map(i => i.rank ? i.rank : 0)));
         console.log(maxRank);
+        getMoransI();
     }, [immobili]);
+
+
+    // const getClusterColors = (number_of_cluster:number) => {
+    //     // generate random color
+    //     let colors = [];
+    //     for (var i = 0; i < number_of_cluster; i++) {
+    //         colors.push(`rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`);
+    //     }
+    //     return colors;
+    // }
+    //
+    // const getCluster = () => {
+    //     const numberOfClusters = 2;
+    //     var clustered = turf.clustersKmeans(turf.featureCollection(immobili.map(i => turf.point(i.geo_point.coordinates))), {numberOfClusters: numberOfClusters});
+    //     console.log(clustered);
+    //     const colors = getClusterColors(numberOfClusters);
+    //     // console.log(colors);
+    //     return clustered.features.map((feature, index) => {
+    //         return (
+    //             <Marker key={index} position={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
+    //                     icon={new DivIcon({
+    //                         className: 'custom-div-icon', // Add a custom class
+    //                         html: `<div style="background-color:${colors[feature.properties.cluster ? feature.properties.cluster : 0]}; width:20px; height:20px; border-radius:50%; border: 2px solid white; position:inherit; left: -15px; top: -15px;" class="custom-div-icon"></div>`,
+    //                     })}>
+    //                 <Popup>
+    //                     <div>
+    //                         <h5>Cluster {feature.properties.cluster}</h5>
+    //                         <p>
+    //                             <strong>Numero di immobili: </strong> {clustered.features.length} <br/>
+    //                         </p>
+    //                     </div>
+    //                 </Popup>
+    //             </Marker>
+    //         )
+    //     }, []);
+    // }
+
+    // moran's I
+    const getMoransI = () => {
+        // calculate the spatial weight matrix
+        const immobili_points = immobili.map(i => turf.point(i.geo_point.coordinates, {...i}));
+        // console.log(immobili_points);
+        const immobili_fc = turf.featureCollection(immobili_points);
+
+        // const weight = turf.distanceWeight(immobili_fc, {
+        //     alpha: -1,
+        //     binary: false,
+        //     p: 2,
+        //     standardization: false,
+        //     threshold: turf.lengthToDegrees(1000, 'meters'),
+        // });
+        // const weight2 = turf.distanceWeight(immobili_fc, {
+        //     alpha: -1,
+        //     binary: false,
+        //     p: 2,
+        //     standardization: false,
+        //     threshold: turf.lengthToDegrees(500, 'meters'),
+        // });
+
+        //check if weight matrix are different
+        // for (let i = 0; i < weight.length; i++) {
+        //     for (let j = 0; j < weight[i].length; j++) {
+        //         if (weight[i][j] !== weight2[i][j]) {
+        //             console.log("different" + i + " " + j);
+        //         }
+        //     }
+        // }
+        // // Create a distance matrix between each point using pNormDistance
+        // let distanceMatrix = [];
+        // for (let i = 0; i < immobili_fc.features.length; i++) {
+        //     let row = [];
+        //     for (let j = 0; j < immobili_fc.features.length; j++) {
+        //         row.push(turf.radiansToLength(turf.degreesToRadians(pNormDistance(immobili_fc.features[i], immobili_fc.features[j], 2)),"meters"));
+        //     }
+        //     distanceMatrix.push(row);
+        // }
+        // console.log(distanceMatrix);
+
+
+        console.log(immobili_fc);
+        const index = turf.moranIndex(immobili_fc, {
+            inputField: "prezzo",
+            threshold: turf.lengthToDegrees(1000, 'meters')
+        });
+        console.log("100m in degree:"+turf.lengthToDegrees(1000, 'meters'))
+        console.log(index);
+
+        const index2 = turf.moranIndex(immobili_fc, {
+            inputField: "prezzo",
+            threshold: turf.lengthToDegrees(10000, 'meters')
+        });
+        console.log("10000m in degree:"+turf.lengthToDegrees(10000, 'meters'))
+        console.log(index2);
+    }
 
 
     return (
@@ -283,16 +370,22 @@ export default function Map(prop: MapProps) {
                 if (map) setMap(map)
             }}>
             <MapEvents/>
-            <ButtonOnMap position={"bottomcenter"}/>
+            <ButtonOnMapComponent position={"bottomcenter"}/>
             <TileLayer
                 attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
-                // url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+                // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {zoneGeoJson}
-            {/*<MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>*/}
-                {visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, maxRank))}
-            {/*</MarkerClusterGroup>*/}
+            {/*show cluster marker colored based on cluster*/}
+            {/*{getCluster()}*/}
+            {Zoom <= 13 ?
+                <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
+                    {visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, maxRank))}
+                </MarkerClusterGroup> :
+                visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, maxRank))
+            }
+
             <LayersControl position="topright">
                 <LayersControl.Overlay name="Bar e Ristoranti">
                     <LayerGroup>

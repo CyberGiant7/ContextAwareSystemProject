@@ -12,6 +12,7 @@ export default function Home() {
     const [users, setUsers] = useState<user[]>([]);
     const [newUser, setNewUser] = useState({email: '', password: ''});
 
+
     // Fetch users
     useEffect(() => {
         const fetchData = async () => {

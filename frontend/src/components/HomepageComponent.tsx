@@ -4,7 +4,7 @@ import {getAllZone} from "@/queries/zone";
 import {immobile, zona_urbanistica} from "@/lib/definitions";
 import MapView from '@/components/MapViewComponent';
 import {SearchParamsContext} from "next/dist/shared/lib/hooks-client-context.shared-runtime";
-import {useSession} from "next-auth/react";
+import {useSessionData} from "@/lib/useSessionData";
 
 export const SelectedZoneContext = createContext<string[]>([]);
 export const ImmobiliContext = createContext<immobile[]>([]);
@@ -12,7 +12,6 @@ export const VisibleImmobiliContext = createContext<[immobile[], React.Dispatch<
 }]);
 export const SelectedImmobileContext = createContext<[string | null, React.Dispatch<React.SetStateAction<string | null>>]>([null, () => {
 }]);
-export const ZoneContext = createContext<zona_urbanistica[]>([]);
 
 const HomepageComponent: React.FC = () => {
     const [immobili, setImmobili] = useState<immobile[]>([]);
@@ -28,29 +27,17 @@ const HomepageComponent: React.FC = () => {
     const radius_param = searchParams?.get('radius') as string;
     const [selectedZone, setSelectedZone] = useState<string[]>(Array.isArray(selected_zone_param) ? selected_zone_param : [selected_zone_param].filter(Boolean));
 
-    const session = useSession();
+    const session = useSessionData()
     const user = session.data?.user;
     let element_per_page = 10;
 
+
     useEffect(() => {
-        if (user) {
-            if (selectedZone.length === 0) {
-                console.log('fetching all immobili' + order_param);
-                console.log(user?.email);
-                getAllImmobili(order_param === 'rank', user?.email, radius_param).then(setImmobili).catch(console.error);
-            } else {
-                getAllImmobiliInZone(selectedZone, order_param === 'rank', user?.email).then(setImmobili).catch(console.error);
-            }
+        if (selectedZone.length === 0) {
+            getAllImmobili(user !== undefined && order_param === 'rank', user?.email, radius_param).then(setImmobili).catch(console.error);
         } else {
-            if (selectedZone.length === 0) {
-                console.log('fetching all immobili' + order_param);
-                getAllImmobili(false).then(setImmobili).catch(console.error);
-            } else {
-                getAllImmobiliInZone(selectedZone, false).then(setImmobili).catch(console.error);
-            }
+            getAllImmobiliInZone(selectedZone, user !== undefined && order_param === 'rank', user?.email, radius_param).then(setImmobili).catch(console.error);
         }
-        // const fetchImmobili = selectedZone.length > 0 ? getAllImmobiliInZone : getAllImmobili;
-        // fetchImmobili(selectedZone).then(setImmobili).catch(console.error);
     }, [selectedZone, user?.email]);
 
 

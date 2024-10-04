@@ -1,3 +1,4 @@
+import { SessionDataProvider } from '@/components/wrapper/SessionDataWrapper'
 import type {Metadata} from "next";
 import '../scss/mdb.free.scss';
 import "./globals.css";
@@ -17,12 +18,12 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
     return (
         <html lang="en">
         <body>
-        <SessionProvider>
+        <SessionDataProvider>
             <NavbarComponent/>
             <main style={{width: "100%", height: "-webkit-fill-available"}}>
                 {children}
             </main>
-        </SessionProvider>
+        </SessionDataProvider>
         </body>
         </html>
     );

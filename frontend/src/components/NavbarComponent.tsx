@@ -4,8 +4,6 @@ import React from "react";
 import {useSession} from "next-auth/react";
 
 export default function NavbarComponent() {
-    let session = useSession();
-
     return (
         <nav className="navbar navbar-expand-lg navbar-light fixed-top">
             <div className="container">
@@ -16,22 +14,25 @@ export default function NavbarComponent() {
                     <ul className="navbar-nav ml-auto">
                         <li className="nav-item">
                             <Link className="nav-link" href={'/sign-in'}>
-                                Login
+                                Accedi
                             </Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" href={'/sign-up'}>
-                                Sign up
+                                Registrati
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" href={'/secret'}>
-                                Secret
-                            </Link>
+                            <Link href={'/profile'}
+                                  className="nav-link">Profilo</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link href={'/survey'}
+                                  className="nav-link">Questionario</Link>
                         </li>
                     </ul>
                 </div>
-                    <a className="nav-link">{session.data?.user.first_name} {session.data?.user.last_name}</a>
+
             </div>
         </nav>
     );
