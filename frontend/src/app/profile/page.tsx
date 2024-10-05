@@ -13,15 +13,14 @@ export default async function Home() {
 
     if (!session) return null
     if (!session.user) return null
-    console.log("secret session:", session);
 
     let user = session.user as user;
 
 
     return (
         <div>
-            <h1>segreto</h1>
-            <p>Welcome, {user.email}</p>
+            <h1>Profilo</h1>
+            <p>Benvenuto, {user.email}</p>
             <p>name {user.first_name}</p>
             <p>last name {user.last_name}</p>
             <p>Here is your secret content.</p>

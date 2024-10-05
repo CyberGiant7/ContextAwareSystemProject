@@ -30,6 +30,10 @@ export default function NavbarComponent() {
                             <Link href={'/survey'}
                                   className="nav-link">Questionario</Link>
                         </li>
+                        <li className="nav-item">
+                            <Link href={'/moran-index'}
+                                  className="nav-link">Moran Index</Link>
+                        </li>
                     </ul>
                 </div>
 

@@ -5,7 +5,7 @@ import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 const generateInformazioniImmobile = () => ({
     ascensore: Math.random() > 0.5,
     piano: Math.floor(Math.random() * 10),
-    superficie: Math.floor(Math.random() * 172) + 28,
+    superficie: Math.floor(Math.random() * 322) + 28, // 28 - 350 mq
     stato_immobile: ['Da ristrutturare', 'Buono stato', 'Ristrutturato', 'Finemente ristrutturato'][Math.floor(Math.random() * 4)],
     classe_energetica: ['A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G'][Math.floor(Math.random() * 8)],
     eta_costruzione: Math.floor(Math.random() * 124) + 1900,
@@ -15,7 +15,9 @@ const generateInformazioniImmobile = () => ({
 const generatePrezzo = async (db: PostgresJsDatabase<any>, info: any) => {
     if (!info.prezzo_min || !info.prezzo_max) throw new Error('Prezzo per mq zona non trovato');
 
-    const prezzoPerMq = (info.prezzo_min + info.prezzo_max) / 2;
+    // random price between min and max
+    const prezzoPerMq = Math.floor(Math.random() * (info.prezzo_max - info.prezzo_min)) + info.prezzo_min;
+
     const prezzoBase = prezzoPerMq * info.superficie;
     const etaCostruzioneList = ["1 – 20 anni", "20 – 40 anni", "Oltre 40 anni"];
     const etaEStato = [[-5, 0, 0], [-10, 0, 5], [-15, 0, 10]];

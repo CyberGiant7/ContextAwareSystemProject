@@ -1,5 +1,6 @@
 @import './variables.scss';
 
+
 .custom-div-icon {
   display: flex;
   justify-content: center;
@@ -9,5 +10,9 @@
 .leaflet-center {
   left: 50%;
   transform: translate(-50%, 0%);
+}
+
+body {
+  color: rgb(0,0,0,0.8)!important;
 }
 

@@ -20,7 +20,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
         <body>
         <SessionDataProvider>
             <NavbarComponent/>
-            <main style={{width: "100%", height: "-webkit-fill-available"}}>
+            <main style={{width: "100%", height: "auto"}}>
                 {children}
             </main>
         </SessionDataProvider>
