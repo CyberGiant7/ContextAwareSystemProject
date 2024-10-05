@@ -5,9 +5,7 @@ import dynamic from "next/dynamic";
 import {PaginationControl} from "react-bootstrap-pagination-control";
 import {immobile} from "@/lib/definitions";
 import {ImmobileCardContainer} from "@/components/ImmobileCardContainerComponent";
-import {SelectedImmobileContext, VisibleImmobiliContext} from "@/components/HomepageComponent";
-
-
+import {VisibleImmobiliContext} from "@/components/wrapper/DataWrapper";
 
 type MapViewProps = {
     slicedImmobili: immobile[];

@@ -3,7 +3,7 @@ import {Card, Container, Row} from "react-bootstrap";
 import {immobile} from "@/lib/definitions";
 import {numberWithCommas, toTitleCase} from "@/lib/utils";
 import {ImmobileDetails} from "@/components/ImmobileDetails";
-import {SelectedImmobileContext} from "@/components/HomepageComponent";
+import {SelectedImmobileContext} from "@/components/wrapper/DataWrapper";
 import {useContext} from "react";
 import Image from "next/image"
 

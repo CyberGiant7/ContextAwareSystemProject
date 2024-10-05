@@ -39,18 +39,15 @@ import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import L, {DivIcon, Icon} from 'leaflet';
 import {getColorFromRank, numberToK, toTitleCase} from "@/lib/utils";
+import {ButtonOnMapComponent} from "@/components/ButtonOnMapComponent";
 import {
     ImmobiliContext,
-    SelectedImmobileContext,
     SelectedZoneContext,
+    SelectedImmobileContext,
     VisibleImmobiliContext
-} from "@/components/HomepageComponent";
-import {ButtonOnMapComponent} from "@/components/ButtonOnMapComponent";
-
-import * as turf from "@turf/turf";
+} from "@/components/wrapper/DataWrapper";
 import MarkerClusterGroup from "next-leaflet-cluster";
-import _distanceweight from "@turf/distance-weight";
-import {pNormDistance} from "@turf/distance-weight";
+
 
 export interface MapProps {
     width: string;
@@ -232,7 +229,7 @@ export default function Map(prop: MapProps) {
 
     useEffect(() => {
         getAllZone().then((zone) => {
-            console.log("selected in map", selectedZone)
+            console.log("zone selected in map", selectedZone)
             if (selectedZone.length == 0) {
                 setZoneUrbanistiche(zone)
             } else {
@@ -258,7 +255,7 @@ export default function Map(prop: MapProps) {
 
     useEffect(() => {
         setMaxRank(Math.max(...immobili.map(i => i.rank ? i.rank : 0)));
-        console.log(maxRank);
+        console.log("maxrank:" + maxRank);
     }, [immobili]);
 
 

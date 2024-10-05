@@ -1,27 +1,27 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {immobile, zona_urbanistica} from "@/lib/definitions";
 import MapView from '@/components/MapViewComponent';
 import {
     ImmobiliContext,
     SelectedZoneContext,
-    SortedByContext,
-    VisibleImmobiliContext
+    VisibleImmobiliContext,
+    SortedByContext
 } from "@/components/wrapper/DataWrapper";
 
 
-const HomepageComponent: React.FC = () => {
+const RecommendedComponent: React.FC = () => {
     const immobili = useContext(ImmobiliContext);
     const [selectedZone, setSelectedZone] = useContext(SelectedZoneContext);
-    const [visibleImmobili, setVisibleImmobili] = useContext(VisibleImmobiliContext);
+    const [visibleImmobili, setVisibleImmobili] = useContext(VisibleImmobiliContext)
     const [sortedBy, setSortedBy] = useContext(SortedByContext);
 
-
     const [slicedImmobili, setSlicedImmobili] = useState<immobile[]>([]);
+
     const [page, setPage] = useState(1);
     const [mapView, setMapView] = useState<JSX.Element>();
 
     useEffect(() => {
-        setSortedBy("default");
+        setSortedBy("rank");
     }, []);
 
     let element_per_page = 10;
@@ -46,6 +46,7 @@ const HomepageComponent: React.FC = () => {
         );
     }, [immobili, page, selectedZone, slicedImmobili]);
 
+
     return (
         <>
             {mapView}
@@ -53,4 +54,4 @@ const HomepageComponent: React.FC = () => {
     );
 };
 
-export default HomepageComponent;
+export default RecommendedComponent;
