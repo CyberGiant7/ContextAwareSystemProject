@@ -5,8 +5,10 @@ import {Col, Container, Row, Button, Card} from "react-bootstrap";
 import dynamic from "next/dynamic";
 import ZoneList from "@/components/ZoneList";
 import {zona_urbanistica} from "@/lib/definitions";
-import {useRouter} from 'next/navigation'
+
+
 import {MDBBtn, MDBCard, MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
 
 const LazyZoneSelectorMap = dynamic(() => import("@/components/ZoneSelectorMap"), {
     ssr: false,
@@ -14,39 +16,69 @@ const LazyZoneSelectorMap = dynamic(() => import("@/components/ZoneSelectorMap")
 });
 
 type ZoneSelectorViewProps = {
-    zone: zona_urbanistica[];
-    setActiveZoneSelector: React.Dispatch<React.SetStateAction<boolean>>;
+    zone: zona_urbanistica[]
 };
 
 
-const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone, setActiveZoneSelector}) => {
+const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone}) => {
     const [selectedZoneUrbanistiche, setSelectedZoneUrbanistiche] = useState<Record<string, boolean>>({});
-
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const prevUrl = searchParams.get("prevUrl")
+    const currentUrl = usePathname();
+    // window.history.replaceState({}, '', currentUrl);
 
+    // TODO: redirect to the previous page but with the selected zone
     const handleSubmit = () => {
-        let url = "/?" + Object.keys(selectedZoneUrbanistiche).filter(key => selectedZoneUrbanistiche[key]).map(key => "zona=" + key).join("&");
-        router.push(url);
+        // Filtra le zone selezionate
+
+        // console.log( headers().get("referer"))
+        const selectedZones = Object.keys(selectedZoneUrbanistiche)
+            .filter(key => selectedZoneUrbanistiche[key]);
+
+        // Costruisci la query string con le zone selezionate
+        const searchParams = selectedZones.map(zone => `zona=${zone}`).join("&");
+
+        // Ottieni l'URL della pagina precedente o usa un fallback
+         const previousUrl = prevUrl ? prevUrl : '/';
+
+        // Fai il redirect alla pagina precedente con i parametri selezionati
+        router.push(`${previousUrl}?${searchParams}`);
     };
 
     return (
-        <MDBContainer fluid style={{height: "100%"}}>
-            <MDBRow>
-                <MDBCol style={{height: "100%"}} md="auto">
-                    <MDBRow>
-                        <ZoneList zone={zone} selectedZoneUrbanistiche={selectedZoneUrbanistiche}
-                                  setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}></ZoneList>
-                    </MDBRow>
-                    <MDBRow>
-                        <MDBBtn color="primary" onClick={handleSubmit}>Conferma</MDBBtn>
-                    </MDBRow>
-                </MDBCol>
-                <MDBCol style={{height: "100%"}}>
-                    <LazyZoneSelectorMap width="100%" selectedZoneUrbanistiche={selectedZoneUrbanistiche}
-                                         setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}/>
-                </MDBCol>
-            </MDBRow>
+        <MDBContainer fluid style={{height: "100%", display: "flex", flexDirection: "row", padding: '0px'}}>
+            <MDBCol lg="auto" style={{
+                display: "flex",
+                flexDirection: "column",
+                minWidth: "300px",
+                maxWidth: "fit-content",
+                backgroundColor: '#eee'
+            }}>
+                <MDBRow className="m-2">
+                    <h2>Zone su mappa</h2>
+                </MDBRow>
+                <MDBRow className="m-2 card" style={{flex: 1, overflowY: "scroll", maxHeight: "calc(100vh - 100px)"}}>
+                    <ZoneList
+                        zone={zone}
+                        selectedZoneUrbanistiche={selectedZoneUrbanistiche}
+                        setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}
+                    />
+                </MDBRow>
+                <MDBRow className="m-2">
+                    <MDBBtn color="primary" onClick={handleSubmit}>Conferma</MDBBtn>
+                </MDBRow>
+            </MDBCol>
+
+            <MDBCol style={{flex: 1, height: "100%"}}>
+                <LazyZoneSelectorMap
+                    width="100%"
+                    selectedZoneUrbanistiche={selectedZoneUrbanistiche}
+                    setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}
+                />
+            </MDBCol>
         </MDBContainer>
+
     );
 };
 

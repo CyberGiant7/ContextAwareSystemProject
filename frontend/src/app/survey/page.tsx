@@ -7,8 +7,9 @@ import {FormEvent, useEffect, useState} from "react";
 import {user, user_preferences} from '@/lib/definitions';
 // import { useSession} from "next-auth/react";
 import {createUserPreferences, getUserPreferences} from "@/queries/user_preferences";
-import {useRouter} from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
 import {useSessionData} from "@/lib/useSessionData";
+import {MDBContainer, MDBRow} from "mdb-react-ui-kit";
 
 const surveyQuestions = [
     {
@@ -172,13 +173,14 @@ export default function Page() {
         } as user_preferences;
 
         try {
-            await createUserPreferences(userPreferences);
+            let res = await createUserPreferences(userPreferences);
+            if (res.ok) {
+                alert("Questionario compilato con successo");
+                router.push("/profile");
+            }
         } catch (error) {
             console.error('Error creating user preferences:', error);
         }
-
-        // alert(`You chose ${JSON.stringify(answers)}`);
-        alert(`${JSON.stringify(userPreferences)}`);
     };
 
 
@@ -198,7 +200,7 @@ export default function Page() {
                     }
                 }
             });
-        }else {
+        } else {
             console.log("user not found");
             router.push("/survey");
             router.refresh();
@@ -206,31 +208,40 @@ export default function Page() {
     }, [user]);
 
     return (
-        <Container>
-            <h1>Survey</h1>
-            <Form onSubmit={handleSubmit}>
-                {surveyQuestions.map((category, catIndex) => (
-                    <div className="m-3" key={catIndex}>
-                        <h4 style={{textAlign: "center"}}>{category.category}</h4>
-                        <Row style={{flexDirection: "column", alignItems: "center"}}>
-                            {category.questions.map(({label, question}, qIndex) => (
-                                <Card className="m-2 col-xl-8" key={qIndex}>
-                                    <Card.Body style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
-                                        <p style={{width: "100%"}}>{question}</p>
-                                        <FormGroupWithCheckboxes
-                                            name={`${label}`}
-                                            labels={["1", "2", "3", "4", "5"]}
-                                            answers={answers}
-                                            setAnswers={setAnswers}
-                                        />
-                                    </Card.Body>
-                                </Card>
-                            ))}
-                        </Row>
-                    </div>
-                ))}
-                <Button type="submit">Submit</Button>
-            </Form>
-        </Container>
+        <section style={{backgroundColor: '#eee', height: 'fit-content'}}>
+            <MDBContainer>
+                <MDBRow>
+                    <h1 className="text-center py-3">Questionario</h1>
+                    <p className="text-center">
+                        Compila il seguente questionario per avere una visualizzazione personalizzata degli immobili che
+                        ti potrebbero interessare.
+                    </p>
+                </MDBRow>
+                <Form onSubmit={handleSubmit} style={{display: "flex", flexDirection: "column", alignItems: "center"}}>
+                    {surveyQuestions.map((category, catIndex) => (
+                        <div className="m-3 col-10" key={catIndex}>
+                            <h4 style={{textAlign: "center"}}>{category.category}</h4>
+                            <Row style={{flexDirection: "column", alignItems: "center"}}>
+                                {category.questions.map(({label, question}, qIndex) => (
+                                    <Card className="m-2 col-xl-8" key={qIndex}>
+                                        <Card.Body
+                                            style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
+                                            <p style={{width: "100%"}}>{question}</p>
+                                            <FormGroupWithCheckboxes
+                                                name={`${label}`}
+                                                labels={["1", "2", "3", "4", "5"]}
+                                                answers={answers}
+                                                setAnswers={setAnswers}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+                                ))}
+                            </Row>
+                        </div>
+                    ))}
+                    <Button className="my-3 col-4" type="submit">Invia</Button>
+                </Form>
+            </MDBContainer>
+        </section>
     );
 }

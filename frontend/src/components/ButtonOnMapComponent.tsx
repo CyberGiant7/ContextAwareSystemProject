@@ -1,7 +1,7 @@
 import {useMap} from "react-leaflet";
 import {Button} from "react-bootstrap";
 import React, {useMemo} from "react";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 
 const POSITION_CLASSES = {
     bottomleft: 'leaflet-bottom leaflet-left',
@@ -16,12 +16,13 @@ const POSITION_CLASSES = {
 export function ButtonOnMapComponent({position}: { position?: keyof typeof POSITION_CLASSES }) {
     const parentMap = useMap()
     const router = useRouter()
+    let pathname = usePathname()
 
     // Memoize the minimap so it's not affected by position changes
     const button = useMemo(
         () => (
             <Button type={"reset"} onClick={() => {
-                router.push("/select-zone");
+                router.push("/select-zone?prevUrl=" + pathname);
                 // router.refresh()
             }}>
                 Seleziona zona

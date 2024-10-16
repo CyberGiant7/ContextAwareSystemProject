@@ -29,6 +29,12 @@ export default function DataWrapper({children}: Readonly<{ children: React.React
     const session = useSessionData()
     const user = session.data?.user;
 
+    useEffect(() => {
+        const selected_zone_param = searchParams?.getAll('zona') as string | string[];
+        // radius_param = searchParams?.get('radius') as string;
+        setSelectedZone(Array.isArray(selected_zone_param) ? selected_zone_param : [selected_zone_param].filter(Boolean));
+    }, [searchParams]);
+
 
     useEffect(() => {
         if (selectedZone.length === 0) {

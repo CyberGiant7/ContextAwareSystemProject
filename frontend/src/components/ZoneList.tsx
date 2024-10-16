@@ -2,6 +2,7 @@
 import {zona_urbanistica} from "@/lib/definitions";
 import React from "react";
 import {toTitleCase} from "@/lib/utils";
+import {MDBCard} from "mdb-react-ui-kit";
 
 type ZoneListProps = {
     zone: zona_urbanistica[];
@@ -20,8 +21,7 @@ export default function ZoneList({zone, selectedZoneUrbanistiche, setSelectedZon
     };
 
     return (
-        <div>
-            <h2>Zone su mappa</h2>
+        <div style={{width:"-webkit-fit-content"}}>
             {zone.map((zone) => (
                 <div key={zone.zona_di_prossimita}>
                     <input
