@@ -281,11 +281,11 @@ export default function Map(prop: MapProps) {
             {zoneGeoJson}
             {/*show cluster marker colored based on cluster*/}
             {/*{getCluster()}*/}
-            {Zoom <= 13 ?
+            {Zoom <= 13 && visibleImmobiliMarkers[0] && !Object.hasOwn(visibleImmobiliMarkers[0], 'rank') ?
                 <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
-                    {visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, maxRank))}
+                    {visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, 100))}
                 </MarkerClusterGroup> :
-                visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, maxRank))
+                visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, 100))
             }
 
             <LayersControl position="topright">
