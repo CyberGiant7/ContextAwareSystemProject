@@ -6,7 +6,7 @@ import {PgDialect} from 'drizzle-orm/pg-core';
 
 const TABLE_NAMES = ['bar_ristoranti', 'biblioteche', 'farmacie', 'fermate_autobus', 'palestre', 'parcheggi', 'parchi_e_giardini', 'scuole', 'strutture_sanitarie', 'supermercati'];
 
-interface rankedZona extends InferSelectModel<typeof schema.zone_urbanistiche>{
+interface RankedZona extends InferSelectModel<typeof schema.zone_urbanistiche>{
     rank: number;
 }
 
@@ -14,8 +14,8 @@ export const rankZone = async (
     db: PostgresJsDatabase<typeof schema>,
     zone_list: InferSelectModel<typeof schema.zone_urbanistiche>[],
     preferences: InferSelectModel<typeof schema.user_preferences>,
-): Promise<any> => {
-    let sorted_zone: Record<string, any>[] = [];
+): Promise<RankedZona[]> => {
+    let sorted_zone: RankedZona[] = [];
     for (let zona of zone_list) {
         let score = 0;
         for (const tableName of TABLE_NAMES) {
@@ -31,7 +31,7 @@ export const rankZone = async (
             score += result[0].value * quantityPreference;
         }
 
-        let ranked_zona: rankedZona = {...zona, rank: score}
+        let ranked_zona: RankedZona = {...zona, rank: score}
         add(ranked_zona, sorted_zone);
     }
     // normalize rank values to a range between 0 and 100

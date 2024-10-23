@@ -1,4 +1,4 @@
-import {asc, avg, count, desc, eq, inArray, InferSelectModel, sql} from "drizzle-orm";
+import {asc, eq, InferSelectModel, sql} from "drizzle-orm";
 // import {db} from "../../db"
 import {PostgresJsDatabase} from "drizzle-orm/postgres-js";
 import * as schema from "../../db/schema";
@@ -19,10 +19,9 @@ const DESIRED_QUANTITY = {
     supermercati: 3
 }
 
-// interface RankedProperty {
-//     immobile: string;
-//     score: number;
-// }
+interface RankedImmobile extends InferSelectModel<typeof schema.immobili> {
+    rank: number;
+}
 
 async function getPOIDistances(db: PostgresJsDatabase<typeof schema>,
                                immobile: InferSelectModel<typeof schema.immobili>,
@@ -53,18 +52,11 @@ function calculateProximityScoreSigmoid(distance: number, maxDistance: number) {
 }
 
 function calculateQuantityScore(poiCount: number, desiredQuantity: number) {
-    // L'utente ha espresso una preferenza sul numero di POI (da 1 a 5)
-    //Punteggio da 0 a 100
+    // score between 0 and 100
     return 100 * Math.min(poiCount / desiredQuantity, 1);
 }
 
-
 function calculateProximityScore(poiDistances: number[], maxDistance: number) {
-    // Seleziona i N POI più vicini
-
-    const N = Math.ceil(poiDistances.length / 4);
-    const topNClosestDistances = poiDistances.slice(0, N);
-
     let quantity = 0;
     let totalScore = 0;
     for (let i = 0; i < poiDistances.length; i++) {
@@ -74,21 +66,7 @@ function calculateProximityScore(poiDistances: number[], maxDistance: number) {
             totalScore += proximityScore;
         }
     }
-    const normalizedProximityScore = quantity ? totalScore / quantity : 0;
-    // console.log(normalizedProximityScore);
-
-    // Calcola il punteggio medio per i POI più vicini
-    // let totalScore = 0;
-    // topNClosestDistances.forEach(distance => {
-    //     const proximityScore = calculateProximityScoreSigmoid(distance, maxDistance);
-    //     totalScore += proximityScore;
-    // });
-
-    // Normalizza sul numero di POI considerati
-    // const normalizedProximityScore = totalScore / N;
-
-    // Applica il peso delle preferenze dell'utente (da 1 a 5) per la vicinanza
-    return normalizedProximityScore;
+    return quantity ? totalScore / quantity : 0;
 }
 
 
@@ -97,9 +75,9 @@ export const rankImmobili = async (
     immobili_list: InferSelectModel<typeof schema.immobili>[],
     preferences: InferSelectModel<typeof schema.user_preferences>,
     radius: number = RADIUS_METERS
-): Promise<Record<string, any>[]> => {
+): Promise<RankedImmobile[]> => {
 
-    let sorted_immobili: Record<string, any>[] = [];
+    let sorted_immobili: RankedImmobile[] = [];
     for (let immobile of immobili_list) {
         let score = 0;
         for (const tableName of TABLE_NAMES) {
@@ -113,20 +91,18 @@ export const rankImmobili = async (
         }
         score = score / TABLE_NAMES.length;
 
-        // @ts-ignore
-        immobile = {...immobile, rank: score}
-
-        add(immobile, sorted_immobili);
+        let ranked_immobile: RankedImmobile = {...immobile, rank: score}
+        add(ranked_immobile, sorted_immobili);
     }
     return sorted_immobili;
 }
 
-function add(element:any, array: any[]) {
+function add(element: any, array: any[]) {
     array.splice(findLoc(element, array) + 1, 0, element);
     return array;
 }
 
-function findLoc(element: any, array:any[], st?:number, en?:number) {
+function findLoc(element: any, array: any[], st?: number, en?: number) {
     st = st || 0;
     en = en || array.length;
     for (let i = 0; i < array.length; i++) {
