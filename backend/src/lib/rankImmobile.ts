@@ -97,9 +97,10 @@ export const rankImmobili = async (
     immobili_list: InferSelectModel<typeof schema.immobili>[],
     preferences: InferSelectModel<typeof schema.user_preferences>,
     radius: number = RADIUS_METERS
-): Promise<Map<string, number>> => {
-    const ranks: Map<string, number> = new Map<string, number>();
-    for (const immobile of immobili_list) {
+): Promise<Record<string, any>[]> => {
+
+    let sorted_immobili: Record<string, any>[] = [];
+    for (let immobile of immobili_list) {
         let score = 0;
         for (const tableName of TABLE_NAMES) {
             let distances = await getPOIDistances(db, immobile, tableName, radius);
@@ -111,11 +112,29 @@ export const rankImmobili = async (
             score += proximityPreference * (proximityScore / 5) + quantityPreference * (quantityScore / 5);
         }
         score = score / TABLE_NAMES.length;
-        ranks.set(immobile.civ_key, score);
+
+        // @ts-ignore
+        immobile = {...immobile, rank: score}
+
+        add(immobile, sorted_immobili);
     }
-    return ranks;
+    return sorted_immobili;
 }
 
+function add(element:any, array: any[]) {
+    array.splice(findLoc(element, array) + 1, 0, element);
+    return array;
+}
+
+function findLoc(element: any, array:any[], st?:number, en?:number) {
+    st = st || 0;
+    en = en || array.length;
+    for (let i = 0; i < array.length; i++) {
+        if (array[i].rank < element.rank)
+            return i - 1;
+    }
+    return en;
+}
 
 // export const rankImmobili2 = async (
 //     db: PostgresJsDatabase<typeof schema>,

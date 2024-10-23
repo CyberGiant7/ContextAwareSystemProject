@@ -39,17 +39,6 @@ export async function GET(request: NextRequest) {
     const email = searchParams.get('email');
     const radius = searchParams.get('radius');
 
-    // Helper function to handle ranking logic
-    async function rankAndSortResults(results: InferSelectModel<typeof schema.immobili>[], preferences: InferSelectModel<typeof schema.user_preferences>) {
-        const rankedResult = await rankImmobili(db, results, preferences,  radius ? parseInt(radius) : undefined);
-        let newResults: any[] = [];
-        results.forEach(result => {
-            newResults.push({...result, rank: rankedResult.get(result.civ_key)});
-            // result.rank = rankedResult.get(result.civ_key)
-        });
-        newResults.sort((a, b) => b.rank - a.rank);
-        return newResults;
-    }
 
     let results: any[] = [];
 
@@ -78,7 +67,7 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        const rankedResults = await rankAndSortResults(results, preferences[0]);
+        const rankedResults = await rankImmobili(db, results, preferences[0], radius ? Number(radius) : undefined);
         return NextResponse.json(rankedResults);
     }
 
