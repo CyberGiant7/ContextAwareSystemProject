@@ -14,25 +14,23 @@ export interface MapProps {
     width: string
     selectedZoneUrbanistiche: Record<string, boolean>
     setSelectedZoneUrbanistiche: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
+    zone: zona_urbanistica[]
+    setZone: React.Dispatch<React.SetStateAction<zona_urbanistica[]>>
 }
 
 
 export default function ZoneSelectorMap(props: MapProps) {
     const [map, setMap] = useState<L.Map>();
-    const [zoneUrbanistiche, setZoneUrbanistiche] = useState<zona_urbanistica[]>([]);
 
-    useEffect(() => {
-        getAllZone().then(setZoneUrbanistiche).catch(console.error);
-    }, []);
 
     useEffect(() => {
         // create a map of selected zones with default value false
-        const initialSelectedZones = zoneUrbanistiche.reduce((acc, zone) => {
+        const initialSelectedZones = props.zone.reduce((acc, zone) => {
             acc[zone.zona_di_prossimita] = false;
             return acc;
         }, {} as Record<string, boolean>);
         props.setSelectedZoneUrbanistiche(initialSelectedZones);
-    }, [zoneUrbanistiche]);
+    }, [props.zone]);
 
     function zonaEventHandlers(data: zona_urbanistica) {
         return {
@@ -84,7 +82,7 @@ export default function ZoneSelectorMap(props: MapProps) {
                      style={{
                          weight: 2,
                          opacity: 1,
-                         fillOpacity: fillOpacity,
+                         fillOpacity: fillOpacity
                      }}>
                 <Tooltip sticky>{data.zona_di_prossimita}</Tooltip>
             </GeoJSON>
@@ -109,7 +107,7 @@ export default function ZoneSelectorMap(props: MapProps) {
                 url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
                 // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {zoneUrbanistiche.map(renderZone)}
+            {props.zone.map(renderZone)}
         </MapContainer>
     );
 }

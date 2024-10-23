@@ -14,6 +14,7 @@ export interface zona_urbanistica {
     geo_point: GeoJSON;
     geo_shape: GeoJSON;
     area: number;
+    rank?: number;
 }
 
 export interface bar_ristoranti {

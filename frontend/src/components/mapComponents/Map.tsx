@@ -107,7 +107,6 @@ export default function Map(prop: MapProps) {
     }, [map, immobili]);
 
     function renderImmobiliMarkers(data: immobile, key: string, icon: L.Icon, maxRank: number) {
-
         // let newIcon = new DivIcon({iconUrl: icon.options.iconUrl, iconSize: [30, 30]});
         // newIcon.options.html = `<div class="leaflet-div-icon2" style="background: #0d6efd"/>`;
         let newIcon = new Icon({iconUrl: icon.options.iconUrl, iconSize: [30, 30]});
@@ -118,8 +117,6 @@ export default function Map(prop: MapProps) {
                 className: 'custom-div-icon', // Add a custom class
                 html: `<div style="background-color:${markerColor}; width:20px; height:20px; border-radius:50%; border: 2px solid white; position:inherit; left: -15px; top: -15px;" class="custom-div-icon"></div>`,
             });
-        } else {
-
         }
 
         if (key == selectedImmobile) {
@@ -188,7 +185,6 @@ export default function Map(prop: MapProps) {
             </Marker>
         );
     }
-
 
     const MapEvents = () => {
         useMapEvents({

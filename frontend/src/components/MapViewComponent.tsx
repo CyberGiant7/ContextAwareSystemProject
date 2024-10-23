@@ -24,7 +24,7 @@ const MapView: React.FC<MapViewProps> = ({
     const [visibleImmobili, setVisibleImmobili] = React.useContext(VisibleImmobiliContext);
 
     useEffect(() => {
-        let Mappa = dynamic(() => import("@/components/Map"), {
+        let Mappa = dynamic(() => import("@/components/mapComponents/Map"), {
             ssr: false,
             loading: () => <p>Loading...</p>,
         })

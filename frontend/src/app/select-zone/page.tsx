@@ -15,7 +15,7 @@ export default function Page() {
 
     return (
         <div className="App">
-            <ZoneSelectorView zone={zone}/>
+            <ZoneSelectorView zone={zone} setZone={setZone}/>
         </div>
     );
 }

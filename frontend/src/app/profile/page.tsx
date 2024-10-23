@@ -39,6 +39,11 @@ export default async function Home() {
                                         Immobili consigliati
                                     </button>
                                 </a>
+                                <a href={"/recommended-zones"}>
+                                    <button type="button" className="btn btn-outline-primary ms-1">
+                                        Zone consigliate
+                                    </button>
+                                </a>
                                 <Form action={handleSignOut}>
                                     <Button type={"submit"} className="btn btn-outline-primary ms-1">
                                         Logout
@@ -51,7 +56,7 @@ export default async function Home() {
                         <div className="card-body">
                             <div className="row">
                                 <div className="col-sm-3">
-                                    <p className="mb-0">Nome</p>
+                                <p className="mb-0">Nome</p>
                                 </div>
                                 <div className="col-sm-9">
                                     <p className="mb-0">{user.first_name + ' ' + user.last_name}</p>

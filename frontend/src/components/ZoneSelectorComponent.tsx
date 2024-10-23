@@ -1,6 +1,6 @@
 // frontend/src/components/ZoneSelectorComponent.tsx
 "use client";
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Col, Container, Row, Button, Card} from "react-bootstrap";
 import dynamic from "next/dynamic";
 import ZoneList from "@/components/ZoneList";
@@ -9,30 +9,28 @@ import {zona_urbanistica} from "@/lib/definitions";
 
 import {MDBBtn, MDBCard, MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
 import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import {getAllZone} from "@/queries/zone";
 
-const LazyZoneSelectorMap = dynamic(() => import("@/components/ZoneSelectorMap"), {
+const LazyZoneSelectorMap = dynamic(() => import("@/components/mapComponents/ZoneSelectorMap"), {
     ssr: false,
     loading: () => <p>Loading...</p>,
 });
 
 type ZoneSelectorViewProps = {
     zone: zona_urbanistica[]
+    setZone: React.Dispatch<React.SetStateAction<zona_urbanistica[]>>
 };
 
 
-const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone}) => {
+const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone, setZone}) => {
     const [selectedZoneUrbanistiche, setSelectedZoneUrbanistiche] = useState<Record<string, boolean>>({});
+
     const router = useRouter()
     const searchParams = useSearchParams()
     const prevUrl = searchParams.get("prevUrl")
-    const currentUrl = usePathname();
-    // window.history.replaceState({}, '', currentUrl);
 
-    // TODO: redirect to the previous page but with the selected zone
+
     const handleSubmit = () => {
-        // Filtra le zone selezionate
-
-        // console.log( headers().get("referer"))
         const selectedZones = Object.keys(selectedZoneUrbanistiche)
             .filter(key => selectedZoneUrbanistiche[key]);
 
@@ -40,7 +38,7 @@ const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone}) => {
         const searchParams = selectedZones.map(zone => `zona=${zone}`).join("&");
 
         // Ottieni l'URL della pagina precedente o usa un fallback
-         const previousUrl = prevUrl ? prevUrl : '/';
+        const previousUrl = prevUrl ? prevUrl : '/';
 
         // Fai il redirect alla pagina precedente con i parametri selezionati
         router.push(`${previousUrl}?${searchParams}`);
@@ -75,6 +73,8 @@ const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone}) => {
                     width="100%"
                     selectedZoneUrbanistiche={selectedZoneUrbanistiche}
                     setSelectedZoneUrbanistiche={setSelectedZoneUrbanistiche}
+                    zone={zone}
+                    setZone={setZone}
                 />
             </MDBCol>
         </MDBContainer>
