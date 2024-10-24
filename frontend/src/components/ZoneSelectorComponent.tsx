@@ -1,15 +1,13 @@
 // frontend/src/components/ZoneSelectorComponent.tsx
 "use client";
-import React, {useEffect, useState} from 'react';
-import {Col, Container, Row, Button, Card} from "react-bootstrap";
+import React, {useState} from 'react';
 import dynamic from "next/dynamic";
 import ZoneList from "@/components/ZoneList";
 import {zona_urbanistica} from "@/lib/definitions";
 
 
-import {MDBBtn, MDBCard, MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {getAllZone} from "@/queries/zone";
+import {MDBBtn, MDBCol, MDBContainer, MDBRow} from "mdb-react-ui-kit";
+import {useRouter, useSearchParams} from "next/navigation";
 
 const LazyZoneSelectorMap = dynamic(() => import("@/components/mapComponents/ZoneSelectorMap"), {
     ssr: false,
@@ -24,11 +22,9 @@ type ZoneSelectorViewProps = {
 
 const ZoneSelectorView: React.FC<ZoneSelectorViewProps> = ({zone, setZone}) => {
     const [selectedZoneUrbanistiche, setSelectedZoneUrbanistiche] = useState<Record<string, boolean>>({});
-
     const router = useRouter()
     const searchParams = useSearchParams()
     const prevUrl = searchParams.get("prevUrl")
-
 
     const handleSubmit = () => {
         const selectedZones = Object.keys(selectedZoneUrbanistiche)
