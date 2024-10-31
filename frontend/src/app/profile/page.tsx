@@ -44,6 +44,11 @@ export default async function Home() {
                                         Zone consigliate
                                     </button>
                                 </a>
+                                <a href={"/recommended-positions"}>
+                                    <button type="button" className="btn btn-outline-primary ms-1">
+                                        Posizioni consigliate
+                                    </button>
+                                </a>
                                 <Form action={handleSignOut}>
                                     <Button type={"submit"} className="btn btn-outline-primary ms-1">
                                         Logout

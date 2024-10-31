@@ -1,4 +1,4 @@
-import {GeoJSON, Point} from "geojson";
+import {Point, Polygon} from "geojson";
 
 export interface user {
     email: string;
@@ -11,8 +11,8 @@ export interface zona_urbanistica {
     zona_di_prossimita: string;
     nome_quartiere: string;
     codice_quartiere: string;
-    geo_point: GeoJSON;
-    geo_shape: GeoJSON;
+    geo_point: Point;
+    geo_shape: Polygon;
     area: number;
     rank?: number;
 }
@@ -127,6 +127,18 @@ export interface supermercati {
     geo_point: Point;
 }
 
+export interface teatri_cinema {
+    civ_key: string;
+    geo_point: Point;
+    indirizzo: string;
+    nome: string;
+    fonte: string;
+    tipologia: string;
+    link: string;
+    quartiere: string;
+    zona_di_prossimita: string;
+}
+
 export interface user_preferences {
     email: string;
     proximity_bar_ristoranti: number;
@@ -139,6 +151,7 @@ export interface user_preferences {
     proximity_scuole: number;
     proximity_strutture_sanitarie: number;
     proximity_supermercati: number;
+    proximity_teatri_cinema: number;
     quantity_bar_ristoranti: number;
     quantity_biblioteche: number;
     quantity_farmacie: number;
@@ -149,4 +162,11 @@ export interface user_preferences {
     quantity_scuole: number;
     quantity_strutture_sanitarie: number;
     quantity_supermercati: number;
+    quantity_teatri_cinema: number;
+}
+
+export interface equidistant_points {
+    codice: number;
+    geo_point: Point;
+    rank?: number;
 }

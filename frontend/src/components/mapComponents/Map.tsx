@@ -30,7 +30,7 @@ import {
     parchi_e_giardini,
     scuole,
     strutture_sanitarie,
-    supermercati,
+    supermercati, teatri_cinema,
     zona_urbanistica
 } from "@/lib/definitions";
 
@@ -47,6 +47,7 @@ import {
     VisibleImmobiliContext
 } from "@/components/wrapper/DataWrapper";
 import MarkerClusterGroup from "next-leaflet-cluster";
+import {getAllTeatriCinema} from "@/queries/teatri_cinema";
 
 
 export interface MapProps {
@@ -88,6 +89,7 @@ export default function Map(prop: MapProps) {
     const [scuole, setScuole] = useState<scuole[]>([]);
     const [struttureSanitarie, setStruttureSanitarie] = useState<strutture_sanitarie[]>([]);
     const [supermercati, setSupermercati] = useState<supermercati[]>([]);
+    const [teatriCinema, setTeatriCinema] = useState<teatri_cinema[]>([]);
     const [Zoom, setZoom] = useState(8);
     const [map, setMap] = useState<L.Map>();
     const [visibleImmobiliMarkers, setVisibleImmobiliMarkers] = useState<immobile[]>([]);
@@ -98,7 +100,7 @@ export default function Map(prop: MapProps) {
     let maxZoomLevelForMarkers = 16;
 
     const selectedZone = useContext(SelectedZoneContext);
-    const immobili = useContext(ImmobiliContext);
+    const [immobili, setImmobili] = useContext(ImmobiliContext);
     const [_, setVisibleImmobili] = useContext(VisibleImmobiliContext);
     const [selectedImmobile, setSelectedImmobile] = useContext(SelectedImmobileContext);
 
@@ -115,7 +117,7 @@ export default function Map(prop: MapProps) {
             const markerColor = getColorFromRank(data.rank, maxRank);
             newIcon2 = new DivIcon({
                 className: 'custom-div-icon', // Add a custom class
-                html: `<div style="background-color:${markerColor}; width:20px; height:20px; border-radius:50%; border: 2px solid white; position:inherit; left: -15px; top: -15px;" class="custom-div-icon"></div>`,
+                html: `<div style="background-color:${markerColor}; width:20px; height:20px; border-radius:50%; border: 2px solid white; position:inherit; left: -4px; top: -4px;" class="custom-div-icon"></div>`,
             });
         }
 
@@ -126,7 +128,7 @@ export default function Map(prop: MapProps) {
                 const markerColor = getColorFromRank(data.rank, maxRank);
                 bigger_icon2 = new DivIcon({
                     className: 'custom-div-icon', // Add a custom class
-                    html: `<div style="background-color:${markerColor}; width:40px; height:40px; border-radius:50%; border: 2px solid white; position:inherit; left: -24px; top: -32px;" class="custom-div-icon"></div>`,
+                    html: `<div style="background-color:${markerColor}; width:40px; height:40px; border-radius:50%; border: 2px solid white; position:inherit; left: -15px; top: -15px;" class="custom-div-icon"></div>`,
                 });
             }
             return (
@@ -243,13 +245,15 @@ export default function Map(prop: MapProps) {
         getAllScuole().then(setScuole).catch(console.error);
         getAllStruttureSanitarie().then(setStruttureSanitarie).catch(console.error);
         getAllSupermercati().then(setSupermercati).catch(console.error);
-    }, []);
+        getAllTeatriCinema().then(setTeatriCinema).catch(console.error);
+        }, []);
 
     useEffect(() => {
         setZoneGeoJson(zoneUrbanistiche.map(renderZone));
     }, [selectedZone, zoneUrbanistiche]);
 
     useEffect(() => {
+        console.log("immobili", immobili);
         setMaxRank(Math.max(...immobili.map(i => i.rank ? i.rank : 0)));
         console.log("maxrank:" + maxRank);
     }, [immobili]);
@@ -277,8 +281,8 @@ export default function Map(prop: MapProps) {
             {zoneGeoJson}
             {/*show cluster marker colored based on cluster*/}
             {/*{getCluster()}*/}
-            {Zoom <= 13 && visibleImmobiliMarkers[0] && !Object.hasOwn(visibleImmobiliMarkers[0], 'rank') ?
-                <MarkerClusterGroup showCoverageOnHover={false} maxClusterRadius={20}>
+            {visibleImmobiliMarkers[0] && !Object.hasOwn(visibleImmobiliMarkers[0], 'rank') ?
+                <MarkerClusterGroup showCoverageOnHover={true} maxClusterRadius={20} disableClusteringAtZoom={15}>
                     {visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, 100))}
                 </MarkerClusterGroup> :
                 visibleImmobiliMarkers.map(value => renderImmobiliMarkers(value, value.civ_key, leafletIcons.HomeIcon, 100))
@@ -333,6 +337,11 @@ export default function Map(prop: MapProps) {
                 <LayersControl.Overlay name="Supermercati">
                     <LayerGroup>
                         {Zoom >= maxZoomLevelForMarkers ? supermercati.map(value => renderMarker(value, value.codice, leafletIcons.SupermarketIcon)) : null}
+                    </LayerGroup>
+                </LayersControl.Overlay>
+                <LayersControl.Overlay name="Teatri e cinema">
+                    <LayerGroup>
+                        {Zoom >= maxZoomLevelForMarkers ? teatriCinema.map(value => renderMarker(value, value.civ_key, leafletIcons.CinemaIcon)) : null}
                     </LayerGroup>
                 </LayersControl.Overlay>
             </LayersControl>

@@ -1,11 +1,10 @@
-import {asc, eq, InferSelectModel, sql} from "drizzle-orm";
-// import {db} from "../../db"
+import {count, InferSelectModel, min, sql} from "drizzle-orm";
 import {PostgresJsDatabase} from "drizzle-orm/postgres-js";
 import * as schema from "../../db/schema";
 
 
 const RADIUS_METERS = 500;
-const TABLE_NAMES = ['bar_ristoranti', 'biblioteche', 'farmacie', 'fermate_autobus', 'palestre', 'parcheggi', 'parchi_e_giardini', 'scuole', 'strutture_sanitarie', 'supermercati'];
+const TABLE_NAMES = ['bar_ristoranti', 'biblioteche', 'farmacie', 'fermate_autobus', 'palestre', 'parcheggi', 'parchi_e_giardini', 'scuole', 'strutture_sanitarie', 'supermercati', 'teatri_cinema'];
 const DESIRED_QUANTITY = {
     bar_ristoranti: 5,
     biblioteche: 3,
@@ -16,33 +15,32 @@ const DESIRED_QUANTITY = {
     parchi_e_giardini: 2,
     scuole: 2,
     strutture_sanitarie: 2,
-    supermercati: 3
+    supermercati: 3,
+    teatri_cinema: 2
 }
 
-interface RankedImmobile extends InferSelectModel<typeof schema.immobili> {
+export interface RankedImmobile extends InferSelectModel<typeof schema.immobili> {
     rank: number;
 }
 
 async function getPOIDistances(db: PostgresJsDatabase<typeof schema>,
                                immobile: InferSelectModel<typeof schema.immobili>,
-                               tableName: string, radius: number): Promise<number[]> {
-    const query = db.select(
-        {
-            distance: sql.raw(`ST_Distance(ST_Transform(immobili.geo_point, 32611), ST_Transform(${tableName + '.geo_point'},32611))`).as('distance'),
-        }
-    )
-        .from(schema.immobili)
-        .leftJoin(sql.raw(`${tableName}`),
-            sql.raw(`ST_DWithin(ST_Transform(immobili.geo_point, 32611), ST_Transform(${tableName + '.geo_point'},32611), ${radius})`))
-        .where(eq(schema.immobili.civ_key, immobile.civ_key))
-        .orderBy(asc(sql.identifier('distance')));
-
-    let result = await query.execute()
+                               tableName: string,
+                               radius: number): Promise<number[]> {
+    const distance_table = sql.identifier('distance_from_immobili_to_' + tableName);
+    const query = sql`select ${distance_table}.distance
+                      from ${distance_table}
+                      where immobili = ${immobile.civ_key}
+                        and distance <= ${radius}
+                      order by distance`;
+    let result = await db.execute(query);
+    // console.log(result);
     if (result.length === 1 && result[0]['distance'] === null) {
         return [];
     }
     return result.map(res => res['distance'] as number);
 }
+
 
 function calculateProximityScoreSigmoid(distance: number, maxDistance: number) {
     if (distance > maxDistance) return 0;
@@ -70,203 +68,123 @@ function calculateProximityScore(poiDistances: number[], maxDistance: number) {
 }
 
 
+export const rankImmobili2 = async (
+    db: PostgresJsDatabase<typeof schema>,
+    immobili_list: InferSelectModel<typeof schema.immobili>[],
+    preferences: InferSelectModel<typeof schema.user_preferences>,
+    radius: number = RADIUS_METERS
+): Promise<RankedImmobile[]> => {
+    const rankedImmobiliPromises = immobili_list.map(async (immobile) => {
+        let score = 0;
+        for (const tableName of TABLE_NAMES) {
+            const distances = await getPOIDistances(db, immobile, tableName, radius);
+            const proximityScore = calculateProximityScore(distances, radius);
+            const quantityScore = calculateQuantityScore(distances.length, DESIRED_QUANTITY[tableName as keyof typeof DESIRED_QUANTITY]);
+            // console.log(tableName, proximityScore, quantityScore);
+
+            const proximityPreference = preferences[('proximity_' + tableName) as keyof typeof preferences] as number +1;
+            const quantityPreference = preferences[('quantity_' + tableName) as keyof typeof preferences] as number +1;
+            score += (proximityScore * proximityPreference + quantityScore * quantityPreference) / (proximityPreference + quantityPreference)
+        }
+        score = score / TABLE_NAMES.length;
+
+        return {...immobile, rank: score} as RankedImmobile;
+    });
+
+    // Resolve all promises concurrently and then sort the results
+    const rankedImmobili = await Promise.all(rankedImmobiliPromises);
+    return rankedImmobili.sort((a, b) => b.rank - a.rank);
+};
+
 export const rankImmobili = async (
     db: PostgresJsDatabase<typeof schema>,
     immobili_list: InferSelectModel<typeof schema.immobili>[],
     preferences: InferSelectModel<typeof schema.user_preferences>,
     radius: number = RADIUS_METERS
 ): Promise<RankedImmobile[]> => {
+    try {
+        const ranks: Map<string, number> = new Map<string, number>();
+        const poiData = await Promise.all(TABLE_NAMES.map(tableName => getPOIData(db, tableName, radius)));
 
-    let sorted_immobili: RankedImmobile[] = [];
-    for (let immobile of immobili_list) {
-        let score = 0;
-        for (const tableName of TABLE_NAMES) {
-            let distances = await getPOIDistances(db, immobile, tableName, radius);
-            let proximityScore = calculateProximityScore(distances, radius);
-            let quantityScore = calculateQuantityScore(distances.length, DESIRED_QUANTITY[tableName as keyof typeof DESIRED_QUANTITY]);
+        const mergedData = new Map<string, any>();
+        poiData.forEach(data => {
+            data.forEach((value, key) => {
+                mergedData.set(key, { ...mergedData.get(key), ...value });
+            });
+        });
 
-            let proximityPreference = preferences[('proximity_' + tableName) as keyof typeof preferences] as number;
-            let quantityPreference = preferences[('quantity_' + tableName) as keyof typeof preferences] as number;
-            score += proximityPreference * (proximityScore / 5) + quantityPreference * (quantityScore / 5);
-        }
-        score = score / TABLE_NAMES.length;
+        const maxCountMap = new Map<string, number>();
+        mergedData.forEach(value => {
+            Object.keys(value).forEach(key => {
+                if (key.includes('count')) {
+                    maxCountMap.set(key, Math.max(maxCountMap.get(key) || 0, value[key]));
+                }
+            });
+        });
 
-        let ranked_immobile: RankedImmobile = {...immobile, rank: score}
-        add(ranked_immobile, sorted_immobili);
+        mergedData.forEach((value, civ_key) => {
+            const totalScore = TABLE_NAMES.reduce((score, tableName) => {
+                const minDistKey = `${tableName}_min_distance`;
+                const countKey = `${tableName}_count`;
+                return score + calculateScore(
+                    { min_distance: value[minDistKey], count: value[countKey] },
+                    preferences[`proximity_${tableName}` as keyof typeof preferences] as number,
+                    preferences[`quantity_${tableName}`as keyof typeof preferences] as number,
+                    maxCountMap.get(countKey as string) || 0,
+                    radius
+                );
+            }, 0);
+            ranks.set(civ_key, totalScore / TABLE_NAMES.length);
+        });
+
+        return immobili_list.map(immobile => ({
+            ...immobile,
+            rank: ranks.get(immobile.civ_key) || 0
+        })).sort((a, b) => b.rank - a.rank);
+    } catch (e) {
+        console.log(e);
+        return [];
     }
-    return sorted_immobili;
-}
+};
 
-function add(element: any, array: any[]) {
-    array.splice(findLoc(element, array) + 1, 0, element);
-    return array;
-}
+const calculateScore = (
+    poiData: { min_distance: number, count: number },
+    proximityWeight: number,
+    quantityWeight: number,
+    maxCount: number,
+    radius: number = RADIUS_METERS
+): number => {
+    proximityWeight += 1;
+    quantityWeight += 1;
 
-function findLoc(element: any, array: any[], st?: number, en?: number) {
-    st = st || 0;
-    en = en || array.length;
-    for (let i = 0; i < array.length; i++) {
-        if (array[i].rank < element.rank)
-            return i - 1;
-    }
-    return en;
-}
+    if (poiData.count === 0) return 0;
 
-// export const rankImmobili2 = async (
-//     db: PostgresJsDatabase<typeof schema>,
-//     immobili_list: InferSelectModel<typeof schema.immobili>[],
-//     preferences: InferSelectModel<typeof schema.user_preferences>,
-//     radius: number = RADIUS_METERS
-// ): Promise<Map<string, number>> => {
-//
-//     try {
-//         // const ranks: RankedProperty[] = [];
-//         const ranks: Map<string, number> = new Map<string, number>();
-//
-//         // Calcolare le distanze e le quantità per ogni PoI
-//         const [
-//             barRistoranti,
-//             biblioteche,
-//             farmacie,
-//             fermateAutobus,
-//             palestre,
-//             parcheggi,
-//             parchiGiardini,
-//             scuole,
-//             struttureSanitarie,
-//             supermercati,
-//         ] = await Promise.all([
-//             getPOIData(db, immobili_list, 'bar_ristoranti', radius),
-//             getPOIData(db, immobili_list, 'biblioteche', radius),
-//             getPOIData(db, immobili_list, 'farmacie', radius),
-//             getPOIData(db, immobili_list, 'fermate_autobus', radius),
-//             getPOIData(db, immobili_list, 'palestre', radius),
-//             getPOIData(db, immobili_list, 'parcheggi', radius),
-//             getPOIData(db, immobili_list, 'parchi_e_giardini', radius),
-//             getPOIData(db, immobili_list, 'scuole', radius),
-//             getPOIData(db, immobili_list, 'strutture_sanitarie', radius),
-//             getPOIData(db, immobili_list, 'supermercati', radius),
-//         ]);
-//
-//         // merge all map in one where the key is the same
-//         let map = new Map();
-//
-//         barRistoranti.forEach((value, key) => map.set(key, value));
-//         biblioteche.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         farmacie.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         fermateAutobus.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         palestre.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         parcheggi.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         parchiGiardini.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         scuole.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         struttureSanitarie.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//         supermercati.forEach((value, key) => map.set(key, {...map.get(key), ...value}));
-//
-//         map.forEach((value, civ_key) => {
-//             // Calcolare i punteggi ponderati
-//             const totalScore =
-//                 calculateScore({
-//                     average_distance: value.bar_ristoranti_average_distance,
-//                     count: value.bar_ristoranti_count
-//                 }, preferences.proximity_bar_ristoranti, preferences.quantity_bar_ristoranti, radius) +
-//                 calculateScore({
-//                     average_distance: value.biblioteche_average_distance,
-//                     count: value.biblioteche_count
-//                 }, preferences.proximity_biblioteche, preferences.quantity_biblioteche, radius) +
-//                 calculateScore({
-//                     average_distance: value.farmacie_average_distance,
-//                     count: value.farmacie_count
-//                 }, preferences.proximity_farmacie, preferences.quantity_farmacie, radius) +
-//                 calculateScore({
-//                     average_distance: value.fermate_autobus_average_distance,
-//                     count: value.fermate_autobus_count
-//                 }, preferences.proximity_fermate_autobus, preferences.quantity_fermate_autobus, radius) +
-//                 calculateScore({
-//                     average_distance: value.palestre_average_distance,
-//                     count: value.palestre_count
-//                 }, preferences.proximity_palestre, preferences.quantity_palestre, radius) +
-//                 calculateScore({
-//                     average_distance: value.parcheggi_average_distance,
-//                     count: value.parcheggi_count
-//                 }, preferences.proximity_parcheggi, preferences.quantity_parcheggi, radius) +
-//                 calculateScore({
-//                     average_distance: value.parchi_e_giardini_average_distance,
-//                     count: value.parchi_e_giardini_count
-//                 }, preferences.proximity_parchi_e_giardini, preferences.quantity_parchi_e_giardini, radius) +
-//                 calculateScore({
-//                     average_distance: value.scuole_average_distance,
-//                     count: value.scuole_count
-//                 }, preferences.proximity_scuole, preferences.quantity_scuole, radius) +
-//                 calculateScore({
-//                     average_distance: value.strutture_sanitarie_average_distance,
-//                     count: value.strutture_sanitarie_count
-//                 }, preferences.proximity_strutture_sanitarie, preferences.quantity_strutture_sanitarie, radius) +
-//                 calculateScore({
-//                     average_distance: value.supermercati_average_distance,
-//                     count: value.supermercati_count
-//                 }, preferences.proximity_supermercati, preferences.quantity_supermercati, radius);
-//
-//
-//             // ranks.push({
-//             //     score: totalScore,
-//             //     immobile: civ_key
-//             // });
-//             ranks.set(civ_key, totalScore);
-//         });
-//
-//         console.log(ranks);
-//         return ranks;
-//     } catch (e) {
-//         console.log(e)
-//     }
-//     return new Map();
-// };
-//
-// const calculateScore = (
-//     poiData: { average_distance: number, count: number },
-//     proximityWeight: number,
-//     quantityWeight: number,
-//     radius: number = RADIUS_METERS
-// ): number => {
-//     // Normalizzare la distanza (più è vicina, più è positivo)
-//     const normalizedDistance = poiData.average_distance === null ? 0 : 1 - Math.min(poiData.average_distance / radius, 1);
-//
-//
-//     // Normalizzare la quantità (ad esempio, usando una funzione logaritmica per evitare l'effetto saturazione)
-//     const normalizedQuantity = poiData.count > 1 ? Math.log(poiData.count + 1) / Math.log(radius) : 0;
-//
-//     // Punteggio ponderato
-//     const proximityScore = proximityWeight * normalizedDistance;
-//     const quantityScore = quantityWeight * normalizedQuantity;
-//
-//     return proximityScore + quantityScore;
-// };
-//
-//
-// const getPOIData = async (db: PostgresJsDatabase<typeof schema>,
-//                           immobili_list: InferSelectModel<typeof schema.immobili>[],
-//                           tableName: string,
-//                           radius: number = RADIUS_METERS
-// ): Promise<Map<string, any>> => {
-//     const civ_keys = immobili_list.map(i => i.civ_key);
-//     const query = db.select({
-//         'civ_key': schema.immobili.civ_key,
-//         'count': count(),
-//         'average_distance': avg(sql.raw(`ST_Distance
-//             (ST_Transform(immobili.geo_point, 32611), ST_Transform(${tableName + '.geo_point'},32611))`))
-//     })
-//         .from(schema.immobili)
-//         .leftJoin(sql.raw(`${tableName}`),
-//             sql.raw(`ST_DWithin
-//             (ST_Transform(immobili.geo_point, 32611), ST_Transform(${tableName + '.geo_point'},32611), ${radius})`))
-//         .where(inArray(schema.immobili.civ_key, civ_keys))
-//         .groupBy(schema.immobili.civ_key);
-//
-//     const results = await query.execute();
-//     const dict = new Map<string, any>();
-//     for (const {civ_key, count, average_distance} of results) {
-//         dict.set(civ_key, {[`${tableName}_count`]: count, [`${tableName}_average_distance`]: average_distance});
-//     }
-//     return dict;
-// };
+    const proximityScore = calculateProximityScoreSigmoid(poiData.min_distance, radius);
+    const quantityScore = calculateQuantityScore(poiData.count, maxCount);
+
+    return (proximityScore * proximityWeight + quantityScore * quantityWeight) / (proximityWeight + quantityWeight);
+};
+
+const getPOIData = async (
+    db: PostgresJsDatabase<typeof schema>,
+    tableName: string,
+    radius: number = RADIUS_METERS
+): Promise<Map<string, any>> => {
+    const query = db.select({
+        civ_key: schema.immobili.civ_key,
+        count: count(),
+        min_distance: min(sql.raw(`ST_Distance(ST_Transform(immobili.geo_point, 32611), ST_Transform(${tableName}.geo_point, 32611))`))
+    })
+    .from(schema.immobili)
+    .leftJoin(sql.raw(tableName), sql.raw(`ST_DWithin(ST_Transform(immobili.geo_point, 32611), ST_Transform(${tableName}.geo_point, 32611), ${radius})`))
+    .groupBy(schema.immobili.civ_key);
+
+    const results = await query.execute();
+    const dict = new Map<string, any>();
+    results.forEach(({ civ_key, count, min_distance }) => {
+        if (min_distance === null) count = 0;
+        dict.set(civ_key, { [`${tableName}_count`]: count, [`${tableName}_min_distance`]: min_distance });
+    });
+    return dict;
+};
 

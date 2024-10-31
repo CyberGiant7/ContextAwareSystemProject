@@ -21,7 +21,7 @@
     "react-bootstrap-pagination-control": "^1.0.5",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
-    "react-leaflet-heat-layer": "^1.1.1",
+    "@vgrid/react-leaflet-heatmap-layer": "^4.0.3",
     "zod": "^3.23.8",
     "sharp": "^0.33.5",
     "@turf/turf": "^7.1.0",

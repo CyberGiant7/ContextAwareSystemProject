@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server'
 import {immobili as immobili_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
-import {rankImmobili} from "@/lib/rankImmobile";
+import {rankImmobili, rankImmobili2, RankedImmobile} from "@/lib/rankImmobile";
 import {db} from "../../../../db";
 import {eq, InferSelectModel} from "drizzle-orm";
 import * as schema from "../../../../db/schema";
@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
     const orderByRank = searchParams.get('order') === 'rank';
     const email = searchParams.get('email');
     const radius = searchParams.get('radius');
+    const rankMode = searchParams.get('rank_mode');
 
 
     let results: any[] = [];
@@ -66,8 +67,12 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({error: error.message}, {status: error.statusCode});
             }
         }
-
-        const rankedResults = await rankImmobili(db, results, preferences[0], radius ? Number(radius) : undefined);
+        let rankedResults: RankedImmobile[] = [];
+        if (rankMode === '2') {
+            rankedResults = await rankImmobili2(db, results, preferences[0], radius ? Number(radius) : undefined);
+        } else {
+            rankedResults = await rankImmobili(db, results, preferences[0], radius ? Number(radius) : undefined);
+        }
         return NextResponse.json(rankedResults);
     }
 

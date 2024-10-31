@@ -9,6 +9,7 @@ import {TableConfig} from "drizzle-orm";
 import {PgTable} from "drizzle-orm/pg-core";
 import {GenerateImmobili} from "@/lib/GenerateImmobili";
 import {strToGeometryPoint} from "@/lib/utils";
+import {seedDistancesTable} from "@/lib/seedDistancesTable";
 
 
 dotenv.config({path: "./.env"});
@@ -170,13 +171,17 @@ const main = async () => {
 
         for (const task of importTasks) {
             console.log("Importing:", task.file);
-            await importData(db, task.file, task.table, task.transform);
+             // await importData(db, task.file, task.table, task.transform);
         }
         console.log("Generating immobili");
         let immobili = await db.select().from(schema.immobili).execute();
         if (immobili.length < 500) {
-            await GenerateImmobili(500, db)
+            // await GenerateImmobili(500, db)
         }
+
+        console.log("Seeding distances");
+        await seedDistancesTable(db, immobili)
+
         console.log("Seed done");
 
         try {

@@ -141,6 +141,19 @@ const surveyQuestions = [
                 question: "Quanto è importante per te avere accesso ad almeno 2 strutture sanitarie (ospedali, cliniche specialistiche, ecc.) nelle vicinanze? (da 1 a 5)"
             }
         ]
+    },
+    {
+        category: "Teatri e Cinema",
+        questions: [
+            {
+                label: "proximity_teatri_cinema",
+                question: "Quanto è importante per te avere un teatro o cinema nelle vicinanze? (da 1 a 5)"
+            },
+            {
+                label: "quantity_teatri_cinema",
+                question: "Quanto è importante per te avere almeno 2 teatri o cinema nelle vicinanze? (da 1 a 5)"
+            }
+        ]
     }
 ];
 

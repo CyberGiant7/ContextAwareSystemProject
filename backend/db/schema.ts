@@ -1,4 +1,5 @@
 import {
+    boolean,
     customType,
     date,
     doublePrecision,
@@ -6,9 +7,9 @@ import {
     integer,
     numeric,
     pgTable,
-    text,
-    boolean,
-    smallint
+    primaryKey,
+    smallint,
+    text
 } from 'drizzle-orm/pg-core';
 import c from 'wkx';
 
@@ -294,6 +295,7 @@ export const user_preferences = pgTable('user_preferences', {
     proximity_scuole: smallint('proximity_scuole').notNull(),
     proximity_strutture_sanitarie: smallint('proximity_strutture_sanitarie').notNull(),
     proximity_supermercati: smallint('proximity_supermercati').notNull(),
+    proximity_teatri_cinema: smallint('proximity_teatri_cinema').notNull(),
     quantity_bar_ristoranti: smallint('quantity_bar_ristoranti').notNull(),
     quantity_biblioteche: smallint('quantity_biblioteche').notNull(),
     quantity_farmacie: smallint('quantity_farmacie').notNull(),
@@ -304,4 +306,195 @@ export const user_preferences = pgTable('user_preferences', {
     quantity_scuole: smallint('quantity_scuole').notNull(),
     quantity_strutture_sanitarie: smallint('quantity_strutture_sanitarie').notNull(),
     quantity_supermercati: smallint('quantity_supermercati').notNull(),
+    quantity_teatri_cinema: smallint('quantity_teatri_cinema').notNull()
 });
+
+export const distance_from_immobili_to_bar_ristoranti = pgTable('distance_from_immobili_to_bar_ristoranti', {
+        immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+            onDelete: 'cascade',
+            onUpdate: 'cascade'
+        }),
+        bar_ristoranti: integer('bar_ristoranti').notNull().references(() => bar_ristoranti.codice, {
+            onDelete: 'cascade',
+            onUpdate: 'cascade'
+        }),
+        distance: doublePrecision('distance').notNull(),
+    }, (table) => {
+        return {
+            pk: primaryKey({columns: [table.immobili, table.bar_ristoranti]}),
+        }
+    }
+);
+
+export const distance_from_immobili_to_biblioteche = pgTable('distance_from_immobili_to_biblioteche', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    biblioteche: integer('biblioteche').notNull().references(() => biblioteche.codice, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.biblioteche]}),
+    }
+});
+
+export const distance_from_immobili_to_farmacie = pgTable('distance_from_immobili_to_farmacie', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    farmacie: text('farmacie').notNull().references(() => farmacie.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.farmacie]}),
+    }
+});
+
+export const distance_from_immobili_to_fermate_autobus = pgTable('distance_from_immobili_to_fermate_autobus', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    fermate_autobus: integer('fermate_autobus').notNull().references(() => fermate_autobus.codice, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.fermate_autobus]}),
+    }
+
+});
+
+export const distance_from_immobili_to_palestre = pgTable('distance_from_immobili_to_palestre', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    palestre: integer('palestre').notNull().references(() => palestre.codice, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.palestre]}),
+    }
+});
+
+export const distance_from_immobili_to_parcheggi = pgTable('distance_from_immobili_to_parcheggi', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    parcheggi: integer('parcheggi').notNull().references(() => parcheggi.codice, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.parcheggi]}),
+    }
+});
+
+export const distance_from_immobili_to_parchi_e_giardini = pgTable('distance_from_immobili_to_parchi_e_giardini', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    parchi_e_giardini: integer('parchi_e_giardini').notNull().references(() => parchi_e_giardini.codice, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.parchi_e_giardini]}),
+    }
+});
+
+export const distance_from_immobili_to_scuole = pgTable('distance_from_immobili_to_scuole', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    scuole: text('scuole').notNull().references(() => scuole.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.scuole]}),
+    }
+});
+
+export const distance_from_immobili_to_strutture_sanitarie = pgTable('distance_from_immobili_to_strutture_sanitarie', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    strutture_sanitarie: text('strutture_sanitarie').notNull().references(() => strutture_sanitarie.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.strutture_sanitarie]}),
+    }
+});
+
+export const distance_from_immobili_to_supermercati = pgTable('distance_from_immobili_to_supermercati', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    supermercati: integer('supermercati').notNull().references(() => supermercati.codice, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.supermercati]}),
+    }
+});
+
+export const distance_from_immobili_to_teatri_cinema = pgTable('distance_from_immobili_to_teatri_cinema', {
+    immobili: text('immobili').notNull().references(() => immobili.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    teatri_cinema: text('teatri_cinema').notNull().references(() => teatri_cinema.civ_key, {
+        onDelete: 'cascade',
+        onUpdate: 'cascade'
+    }),
+    distance: doublePrecision('distance').notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.immobili, table.teatri_cinema]}),
+    }
+});
+
+export const equidistant_points = pgTable('equidistant_points', {
+    codice: integer('codice').primaryKey(),
+    geo_point: postgisGeometry('geo_point', {type: "Point", srid: 4326}).notNull(),
+});
+
+
+
+
+
+
+
