@@ -1,18 +1,19 @@
 "use client"
-import React, { useContext, useEffect, useState, Suspense } from 'react';
+import React, {Suspense, useContext, useEffect, useState} from 'react';
 import {
     ImmobiliContext,
     SelectedZoneContext,
     SortedByContext,
     VisibleImmobiliContext
 } from "@/components/wrapper/DataWrapper";
-import { immobile } from "@/lib/definitions";
-import { Col, Container, Row } from "react-bootstrap";
-import { MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle, MDBSpinner } from "mdb-react-ui-kit";
-import { PaginationControl } from "react-bootstrap-pagination-control";
-import { ImmobileCardContainer } from "@/components/ImmobileCardContainerComponent";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {immobile} from "@/lib/definitions";
+import {Col, Container, Row} from "react-bootstrap";
+import {MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle, MDBSpinner} from "mdb-react-ui-kit";
+import {PaginationControl} from "react-bootstrap-pagination-control";
+import {ImmobileCardContainer} from "@/components/ImmobileCardContainerComponent";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import dynamic from "next/dynamic";
+import {Feature} from "geojson";
 
 function RecommendedPropertiesPage() {
     const [immobili, setImmobili] = useContext(ImmobiliContext);
@@ -23,6 +24,7 @@ function RecommendedPropertiesPage() {
     const [radius, setRadius] = React.useState<number>(500);
     const [rankingMethod, setRankingMethod] = React.useState<number>(1);
     const [slicedImmobili, setSlicedImmobili] = useState<immobile[]>([]);
+    const [geojsonData, setGeojsonData] = useState<Feature | undefined>(undefined);
     const [page, setPage] = useState(1);
     const [mapView, setMapView] = useState<JSX.Element>();
     const router = useRouter();
@@ -36,6 +38,22 @@ function RecommendedPropertiesPage() {
         if (searchParamRadius) {
             setRadius(parseInt(searchParamRadius as string));
         }
+        const coordinates = searchParams.get('vrt')?.split(';').map((c) => c.split(',').map((c) => parseFloat(c)));
+        if (coordinates === undefined) {
+            return;
+        }
+        setGeojsonData({
+            type: "Feature",
+            properties: {},
+            geometry: {
+                type: "Polygon",
+                coordinates: [coordinates]
+            }
+        })
+    }, [searchParams]);
+
+    useEffect(() => {
+
     }, [searchParams]);
 
     useEffect(() => {
@@ -58,55 +76,66 @@ function RecommendedPropertiesPage() {
             loading: () => <p>Loading...</p>,
         });
 
-        setLazyMap(<Mappa width="100%" height="100%" />);
-    }, [setVisibleImmobili]);
+        setLazyMap(<Mappa width="100%" height="100%" geojsonData={geojsonData}/>);
+    }, [geojsonData, setVisibleImmobili]);
 
     useEffect(() => {
         console.log("radius", radius);
         setImmobili([]);
-        router.push(pathname + `?radius=${radius}&rank_mode=${rankingMethod}${selectedZone.length > 0 ? '&' + selectedZone.map((z) => `zona=${z}`).join("&"): ''}`);
+        const searchParams = new URLSearchParams();
+        searchParams.append("radius", radius.toString());
+        searchParams.append("rank_mode", rankingMethod.toString());
+        if (selectedZone.length > 0) {
+            selectedZone.forEach((z) => searchParams.append("zona", z));
+        }
+        router.push(pathname + `?${searchParams.toString()}`);
     }, [radius, rankingMethod, selectedZone]);
 
     useEffect(() => {
         setMapView(
-            <Container fluid style={{ height: "100%" }}>
-                <Row style={{ height: "100%" }}>
+            <Container fluid style={{height: "100%"}}>
+                <Row style={{height: "100%"}}>
                     <Col>
                         <p>
                             {visibleImmobili.length} risultati per case in vendita a Bologna
                         </p>
-                        <MDBDropdown style={{ float: "right", height: "max-content", margin:"0.2em" }}>
-                            <MDBDropdownToggle color="primary" >
+                        <MDBDropdown style={{float: "right", height: "max-content", margin: "0.2em"}}>
+                            <MDBDropdownToggle color="primary">
                                 Metodo di ranking
                             </MDBDropdownToggle>
                             <MDBDropdownMenu>
-                                <MDBDropdownItem link disabled={rankingMethod === 1} aria-current={rankingMethod === 1} onClick={() => setRankingMethod(1)}>
+                                <MDBDropdownItem link disabled={rankingMethod === 1} aria-current={rankingMethod === 1}
+                                                 onClick={() => setRankingMethod(1)}>
                                     Metodo 1
                                 </MDBDropdownItem>
-                                <MDBDropdownItem link disabled={rankingMethod === 2} aria-current={rankingMethod === 2} onClick={() => setRankingMethod(2)}>
+                                <MDBDropdownItem link disabled={rankingMethod === 2} aria-current={rankingMethod === 2}
+                                                 onClick={() => setRankingMethod(2)}>
                                     Metodo 2
                                 </MDBDropdownItem>
                             </MDBDropdownMenu>
                         </MDBDropdown>
 
-                        <MDBDropdown style={{ float: "right", height: "max-content", margin:"0.2em"}}>
+                        <MDBDropdown style={{float: "right", height: "max-content", margin: "0.2em"}}>
                             <MDBDropdownToggle color="primary">
                                 Raggio
                             </MDBDropdownToggle>
                             <MDBDropdownMenu>
-                                <MDBDropdownItem link disabled={radius === 500} aria-current={radius === 500} onClick={() => setRadius(500)}>
+                                <MDBDropdownItem link disabled={radius === 500} aria-current={radius === 500}
+                                                 onClick={() => setRadius(500)}>
                                     500 metri
                                 </MDBDropdownItem>
-                                <MDBDropdownItem link disabled={radius === 1000} aria-current={radius === 1000} onClick={() => setRadius(1000)}>
+                                <MDBDropdownItem link disabled={radius === 1000} aria-current={radius === 1000}
+                                                 onClick={() => setRadius(1000)}>
                                     1000 metri
                                 </MDBDropdownItem>
-                                <MDBDropdownItem link disabled={radius === 1500} aria-current={radius === 1500} onClick={() => setRadius(1500)}>
+                                <MDBDropdownItem link disabled={radius === 1500} aria-current={radius === 1500}
+                                                 onClick={() => setRadius(1500)}>
                                     1500 metri
                                 </MDBDropdownItem>
                             </MDBDropdownMenu>
                         </MDBDropdown>
                         {immobili.length == 0 ?
-                            <MDBSpinner color="primary" /> :
+                            <MDBSpinner color="primary"/> :
                             <>
                                 <PaginationControl
                                     page={page}
@@ -116,7 +145,7 @@ function RecommendedPropertiesPage() {
                                     changePage={setPage}
                                     ellipsis={1}
                                 />
-                                <ImmobileCardContainer immobili={slicedImmobili} />
+                                <ImmobileCardContainer immobili={slicedImmobili}/>
                                 <PaginationControl
                                     page={page}
                                     between={4}
@@ -146,7 +175,7 @@ function RecommendedPropertiesPage() {
 export default function App() {
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <RecommendedPropertiesPage />
+            <RecommendedPropertiesPage/>
         </Suspense>
     );
 }

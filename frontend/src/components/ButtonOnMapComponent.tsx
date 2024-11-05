@@ -2,6 +2,7 @@ import {useMap} from "react-leaflet";
 import {Button} from "react-bootstrap";
 import React, {useMemo} from "react";
 import {usePathname, useRouter} from "next/navigation";
+import {MDBRow} from "mdb-react-ui-kit";
 
 const POSITION_CLASSES = {
     bottomleft: 'leaflet-bottom leaflet-left',
@@ -21,12 +22,26 @@ export function ButtonOnMapComponent({position}: { position?: keyof typeof POSIT
     // Memoize the minimap so it's not affected by position changes
     const button = useMemo(
         () => (
-            <Button type={"reset"} onClick={() => {
-                router.push("/select-zone?prevUrl=" + pathname);
-                // router.refresh()
-            }}>
-                Seleziona zona
-            </Button>
+            <div style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "10px"
+            }} >
+                <Button type={"reset"} onClick={() => {
+                    router.push("/select-zone?prevUrl=" + pathname);
+                    // router.refresh()
+                }}>
+                    Scegli la zona
+                </Button>
+                <Button type={"reset"} onClick={() => {
+                    router.push("/custom-zones?prevUrl=" + pathname);
+                    // router.refresh()
+                }}>
+                    Distanza da un punto
+                </Button>
+            </div>
         ),
         [],
     )

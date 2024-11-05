@@ -6,7 +6,7 @@ import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.webpack.css";
 // END: Preserve spaces to avoid auto-sorting
 import {LayerGroup, LayersControl, MapContainer, Marker, Popup, TileLayer, useMapEvents} from "react-leaflet";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {equidistant_points} from "@/lib/definitions";
 import {HeatmapLayerFactory} from "@vgrid/react-leaflet-heatmap-layer"
 import L, {DivIcon} from "leaflet";
@@ -51,8 +51,8 @@ export default function Map(prop: MapProps) {
             <MapEvents/>
             <TileLayer
                 attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
-                // url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+                // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <LayersControl position="topright">
                 <LayersControl.Overlay name="Marker colorati">

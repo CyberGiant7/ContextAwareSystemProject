@@ -1,5 +1,5 @@
 "use client";
-import React, {useContext, useEffect, useState} from 'react';
+import React, {Suspense, useContext, useEffect, useState} from 'react';
 
 import {
     ImmobiliContext,
@@ -13,17 +13,39 @@ import {MDBSpinner} from "mdb-react-ui-kit";
 import {PaginationControl} from "react-bootstrap-pagination-control";
 import {ImmobileCardContainer} from "@/components/ImmobileCardContainerComponent";
 import dynamic from "next/dynamic";
+import {useSearchParams} from "next/navigation";
+import {Feature} from "geojson";
 
 
-export default function App() {
+function Homepage() {
     const [immobili, setImmobili] = useContext(ImmobiliContext);
     const [selectedZone, setSelectedZone] = useContext(SelectedZoneContext);
     const [visibleImmobili, setVisibleImmobili] = useContext(VisibleImmobiliContext);
     const [sortedBy, setSortedBy] = useContext(SortedByContext);
+    const [geojsonData, setGeojsonData] = useState<Feature | undefined>(undefined);
 
     const [slicedImmobili, setSlicedImmobili] = useState<immobile[]>([]);
     const [page, setPage] = useState(1);
     const [mapView, setMapView] = useState<JSX.Element>();
+    const [LazyMap, setLazyMap] = React.useState<any>(<></>);
+
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const coordinates = searchParams.get('vrt')?.split(';').map((c) => c.split(',').map((c) => parseFloat(c)));
+        if (coordinates === undefined) {
+            return;
+        }
+        setGeojsonData({
+            type: "Feature",
+            properties: {},
+            geometry: {
+                type: "Polygon",
+                coordinates: [coordinates]
+            }
+        })
+    }, [searchParams]);
+
 
     useEffect(() => {
         setSortedBy("default");
@@ -39,7 +61,6 @@ export default function App() {
         setSlicedImmobili(visibleImmobili.length > element_per_page ? visibleImmobili.slice((page - 1) * element_per_page, page * element_per_page) : visibleImmobili);
     }, [page]);
 
-    const [LazyMap, setLazyMap] = React.useState<any>(<></>);
 
     useEffect(() => {
         let Mappa = dynamic(() => import("@/components/mapComponents/Map"), {
@@ -47,8 +68,8 @@ export default function App() {
             loading: () => <p>Loading...</p>,
         })
 
-        setLazyMap(<Mappa width="100%" height="100%"/>)
-    }, [setVisibleImmobili]);
+        setLazyMap(<Mappa width="100%" height="100%" geojsonData={geojsonData}/>)
+    }, [setVisibleImmobili, geojsonData]);
 
 
     useEffect(() => {
@@ -96,3 +117,12 @@ export default function App() {
         </div>
     );
 }
+
+export default function App() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <Homepage/>
+        </Suspense>
+    );
+}
+

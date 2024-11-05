@@ -23,22 +23,26 @@ export interface RankedImmobile extends InferSelectModel<typeof schema.immobili>
     rank: number;
 }
 
-async function getPOIDistances(db: PostgresJsDatabase<typeof schema>,
-                               immobile: InferSelectModel<typeof schema.immobili>,
-                               tableName: string,
-                               radius: number): Promise<number[]> {
-    const distance_table = sql.identifier('distance_from_immobili_to_' + tableName);
-    const query = sql`select ${distance_table}.distance
-                      from ${distance_table}
-                      where immobili = ${immobile.civ_key}
-                        and distance <= ${radius}
-                      order by distance`;
-    let result = await db.execute(query);
-    // console.log(result);
-    if (result.length === 1 && result[0]['distance'] === null) {
+async function getPOIDistances(
+    db: PostgresJsDatabase<typeof schema>,
+    immobile: InferSelectModel<typeof schema.immobili>,
+    tableName: string,
+    radius: number
+): Promise<number[]> {
+    const distanceTable = sql.identifier(`distance_from_immobili_to_${tableName}`);
+    const query = sql`
+        SELECT ${distanceTable}.distance
+        FROM ${distanceTable}
+        WHERE immobili = ${immobile.civ_key}
+          AND distance <= ${radius}
+        ORDER BY distance`;
+    const result = await db.execute(query);
+
+    if (result.length === 1 && result[0].distance === null) {
         return [];
     }
-    return result.map(res => res['distance'] as number);
+
+    return result.map(row => row.distance as number);
 }
 
 
@@ -54,20 +58,29 @@ function calculateQuantityScore(poiCount: number, desiredQuantity: number) {
     return 100 * Math.min(poiCount / desiredQuantity, 1);
 }
 
-function calculateProximityScore(poiDistances: number[], maxDistance: number) {
-    let quantity = 0;
-    let totalScore = 0;
-    for (let i = 0; i < poiDistances.length; i++) {
-        const proximityScore = calculateProximityScoreSigmoid(poiDistances[i], maxDistance);
-        if (proximityScore >= 50) {
-            quantity++;
-            totalScore += proximityScore;
+function calculateProximityScore(poiDistances: number[], maxDistance: number): number {
+    let count = 0;
+    let cumulativeScore = 0;
+
+    for (const distance of poiDistances) {
+        const score = calculateProximityScoreSigmoid(distance, maxDistance);
+        if (score >= 50) {
+            count++;
+            cumulativeScore += score;
         }
     }
-    return quantity ? totalScore / quantity : 0;
+    return count > 0 ? cumulativeScore / count : 0;
 }
 
 
+/**
+ * Rank a list of immobili by their proximity and quantity to points of interest within a given radius.
+ * @param db The database to use.
+ * @param immobili_list The list of immobili to rank.
+ * @param preferences The preferences of the user.
+ * @param radius The radius to use for ranking.
+ * @returns The ranked list of immobili.
+ */
 export const rankImmobili2 = async (
     db: PostgresJsDatabase<typeof schema>,
     immobili_list: InferSelectModel<typeof schema.immobili>[],
@@ -76,26 +89,43 @@ export const rankImmobili2 = async (
 ): Promise<RankedImmobile[]> => {
     const rankedImmobiliPromises = immobili_list.map(async (immobile) => {
         let score = 0;
+
         for (const tableName of TABLE_NAMES) {
+            // Fetch distances to points of interest from the database
             const distances = await getPOIDistances(db, immobile, tableName, radius);
+
+            // Calculate proximity and quantity scores
             const proximityScore = calculateProximityScore(distances, radius);
             const quantityScore = calculateQuantityScore(distances.length, DESIRED_QUANTITY[tableName as keyof typeof DESIRED_QUANTITY]);
-            // console.log(tableName, proximityScore, quantityScore);
 
-            const proximityPreference = preferences[('proximity_' + tableName) as keyof typeof preferences] as number +1;
-            const quantityPreference = preferences[('quantity_' + tableName) as keyof typeof preferences] as number +1;
-            score += (proximityScore * proximityPreference + quantityScore * quantityPreference) / (proximityPreference + quantityPreference)
+            // Retrieve user preferences for proximity and quantity
+            const proximityPreference = preferences[('proximity_' + tableName) as keyof typeof preferences] as number + 1;
+            const quantityPreference = preferences[('quantity_' + tableName) as keyof typeof preferences] as number + 1;
+
+            // Aggregate scores weighted by user preferences
+            score += (proximityScore * proximityPreference + quantityScore * quantityPreference) / (proximityPreference + quantityPreference);
         }
+
+        // Normalize score by the number of table names
         score = score / TABLE_NAMES.length;
 
+        // Return the immobile with its calculated rank
         return {...immobile, rank: score} as RankedImmobile;
     });
 
-    // Resolve all promises concurrently and then sort the results
+    // Resolve all promises concurrently and sort the results by rank in descending order
     const rankedImmobili = await Promise.all(rankedImmobiliPromises);
     return rankedImmobili.sort((a, b) => b.rank - a.rank);
 };
 
+/**
+ * Rank a list of immobili by their proximity and quantity to a given radius.
+ * @param db The database to use.
+ * @param immobili_list The list of immobili to rank.
+ * @param preferences The preferences of the user.
+ * @param radius The radius to use for the ranking.
+ * @returns The ranked list of immobili.
+ */
 export const rankImmobili = async (
     db: PostgresJsDatabase<typeof schema>,
     immobili_list: InferSelectModel<typeof schema.immobili>[],
@@ -106,6 +136,7 @@ export const rankImmobili = async (
         const ranks: Map<string, number> = new Map<string, number>();
         const poiData = await Promise.all(TABLE_NAMES.map(tableName => getPOIData(db, tableName, radius)));
 
+        // Merge the poi data into a single map with the civ_key as key
         const mergedData = new Map<string, any>();
         poiData.forEach(data => {
             data.forEach((value, key) => {
@@ -113,6 +144,7 @@ export const rankImmobili = async (
             });
         });
 
+        // Find the maximum count for each table
         const maxCountMap = new Map<string, number>();
         mergedData.forEach(value => {
             Object.keys(value).forEach(key => {
@@ -122,6 +154,7 @@ export const rankImmobili = async (
             });
         });
 
+        // Calculate the score for each immobile
         mergedData.forEach((value, civ_key) => {
             const totalScore = TABLE_NAMES.reduce((score, tableName) => {
                 const minDistKey = `${tableName}_min_distance`;
@@ -137,6 +170,7 @@ export const rankImmobili = async (
             ranks.set(civ_key, totalScore / TABLE_NAMES.length);
         });
 
+        // Return the ranked list of immobili
         return immobili_list.map(immobile => ({
             ...immobile,
             rank: ranks.get(immobile.civ_key) || 0

@@ -25,7 +25,8 @@
     "zod": "^3.23.8",
     "sharp": "^0.33.5",
     "@turf/turf": "^7.1.0",
-    "better-react-mathjax": "^2.0.3"
+    "better-react-mathjax": "^2.0.3",
+    "openrouteservice-js": "^0.4.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

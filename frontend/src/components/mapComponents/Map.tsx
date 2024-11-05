@@ -30,11 +30,12 @@ import {
     parchi_e_giardini,
     scuole,
     strutture_sanitarie,
-    supermercati, teatri_cinema,
+    supermercati,
+    teatri_cinema,
     zona_urbanistica
 } from "@/lib/definitions";
 
-import {leafletIcons} from "@/components/LeafletIcons";
+import {leafletIcons} from "@/lib/LeafletIcons";
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'next-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import L, {DivIcon, Icon} from 'leaflet';
@@ -42,17 +43,20 @@ import {getColorFromRank, numberToK, toTitleCase} from "@/lib/utils";
 import {ButtonOnMapComponent} from "@/components/ButtonOnMapComponent";
 import {
     ImmobiliContext,
-    SelectedZoneContext,
     SelectedImmobileContext,
+    SelectedZoneContext,
     VisibleImmobiliContext
 } from "@/components/wrapper/DataWrapper";
 import MarkerClusterGroup from "next-leaflet-cluster";
 import {getAllTeatriCinema} from "@/queries/teatri_cinema";
+import {Feature, Polygon} from "geojson";
+import * as turf from "@turf/turf";
 
 
 export interface MapProps {
     width: string;
     height: string;
+    geojsonData: Feature | undefined;
 }
 
 function renderZone(data: zona_urbanistica) {
@@ -95,7 +99,6 @@ export default function Map(prop: MapProps) {
     const [visibleImmobiliMarkers, setVisibleImmobiliMarkers] = useState<immobile[]>([]);
 
     const [zoneGeoJson, setZoneGeoJson] = useState<any>(null);
-    const [maxRank, setMaxRank] = useState<number>(0);
 
     let maxZoomLevelForMarkers = 16;
 
@@ -215,12 +218,6 @@ export default function Map(prop: MapProps) {
                 newMarkers.push(immobile);
             }
         }
-        // console.log(
-        //     '!!! map bounds:',
-        //     map.getBounds(),
-        //     ' visible markers: ',
-        //     newMarkers
-        // );
         setVisibleImmobiliMarkers(newMarkers);
         setVisibleImmobili(newMarkers);
     };
@@ -246,18 +243,34 @@ export default function Map(prop: MapProps) {
         getAllStruttureSanitarie().then(setStruttureSanitarie).catch(console.error);
         getAllSupermercati().then(setSupermercati).catch(console.error);
         getAllTeatriCinema().then(setTeatriCinema).catch(console.error);
-        }, []);
+    }, []);
 
     useEffect(() => {
-        setZoneGeoJson(zoneUrbanistiche.map(renderZone));
-    }, [selectedZone, zoneUrbanistiche]);
+        if (prop.geojsonData !== undefined) {
+            setZoneGeoJson(<GeoJSON data={prop.geojsonData} style={{
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.05
+            }}/>);
+        } else {
+            setZoneGeoJson(zoneUrbanistiche.map(renderZone));
+        }
+    }, [prop.geojsonData, selectedZone, zoneUrbanistiche]);
 
     useEffect(() => {
-        console.log("immobili", immobili);
-        setMaxRank(Math.max(...immobili.map(i => i.rank ? i.rank : 0)));
-        console.log("maxrank:" + maxRank);
-    }, [immobili]);
-
+        // filter immobili based on selected geojsondata
+        if (prop.geojsonData !== undefined) {
+            const geojson = prop.geojsonData;
+            const polygon = turf.polygon((geojson.geometry as Polygon).coordinates);
+            const newImmobili = immobili.filter((immobile) => {
+                const point = turf.point([immobile.geo_point.coordinates[0], immobile.geo_point.coordinates[1]]);
+                return turf.booleanPointInPolygon(point, polygon);
+            });
+            console.log("new immobili", newImmobili);
+            if (newImmobili.length !== immobili.length)
+                setImmobili(newImmobili);
+        }
+    }, [immobili, prop.geojsonData, setImmobili]);
 
     return (
         <MapContainer

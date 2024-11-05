@@ -2,9 +2,7 @@
 
 import React, {useEffect, useState} from "react";
 import {user, zona_urbanistica} from "@/lib/definitions";
-import {getAllZone, getRankedZone} from "@/queries/zone";
 import {useSessionData} from "@/lib/useSessionData";
-import {getUserPreferences} from "@/queries/user_preferences";
 import dynamic from "next/dynamic";
 import {getAllEquidistantPoints} from "@/queries/equidistant_points";
 
@@ -14,7 +12,6 @@ const LazyZoneSelectorMap = dynamic(() => import("@/components/mapComponents/sim
 });
 
 export default function App() {
-    const [zone, setZone] = useState<zona_urbanistica[]>([]);
     const [user, setUser] = useState<user>();
     const [equidistantPoints, setEquidistantPoints] = useState<any[]>([]);
     const session = useSessionData();
