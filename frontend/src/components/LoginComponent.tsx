@@ -13,14 +13,14 @@ export default function Login() {
     );
     return (
         <Form action={formAction}>
-            <h3>Sign In</h3>
+            <h3>Accedi</h3>
             <div className="mb-3">
-                <label>Email address</label>
+                <label>Indirizzo email</label>
                 <input
                     id="email"
                     type="email"
                     name="email"
-                    placeholder="Enter your email address"
+                    placeholder="Inserisci il tuo indirizzo email"
                     className="form-control"
                     required
                 />
@@ -34,7 +34,7 @@ export default function Login() {
                     required
                     className="form-control"
                     minLength={6}
-                    placeholder="Enter password"
+                    placeholder="Inserisci la password"
                 />
             </div>
             <div className="d-grid">

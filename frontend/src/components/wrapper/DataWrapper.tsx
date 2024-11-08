@@ -3,7 +3,7 @@ import React, {createContext, useContext, useEffect, useState} from "react";
 import {immobile} from "@/lib/definitions";
 import {SearchParamsContext} from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 import {useSessionData} from "@/lib/useSessionData";
-import {getAllImmobili, getAllImmobiliInZone} from "@/queries/immobili";
+import {getAllImmobili} from "@/queries/immobili";
 
 
 export const ImmobiliContext = createContext<[immobile[], React.Dispatch<React.SetStateAction<immobile[]>>]>([[], () => {
@@ -38,11 +38,13 @@ export default function DataWrapper({children}: Readonly<{ children: React.React
 
 
     useEffect(() => {
-        if (selectedZone.length === 0) {
-            getAllImmobili(user !== undefined && sortedBy == "rank", user?.email, radius_param, rank_mode_param).then(setImmobili).catch(console.error);
-        } else {
-            getAllImmobiliInZone(selectedZone, user !== undefined && sortedBy == "rank", user?.email, radius_param, rank_mode_param).then(setImmobili).catch(console.error);
-        }
+        getAllImmobili({
+            orderByRank: user !== undefined && sortedBy == "rank",
+            zone: selectedZone,
+            email: user?.email,
+            radius: radius_param,
+            rankMode: rank_mode_param
+        }).then(setImmobili).catch(console.error);
     }, [selectedZone, user?.email, sortedBy]);
 
 

@@ -2,7 +2,7 @@ import {supermercati} from "@/lib/definitions";
 
 export async function getAllSupermercati() {
     try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/supermercati',{
+        const response = await fetch( 'api/supermercati',{
             cache: 'force-cache'
         });
         return await response.json() as supermercati[];

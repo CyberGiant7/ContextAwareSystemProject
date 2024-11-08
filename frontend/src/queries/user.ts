@@ -3,15 +3,7 @@ import {user} from "@/lib/definitions";
 
 export async function getUser(email: string) {
     try {
-        let url: string;
-
-        // check if we are in development or production
-        if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_API_URL) {
-            url = process.env.NEXT_PUBLIC_API_URL;
-        } else {
-            url = 'http://backend:4000/api/';
-        }
-        const response = await fetch(`${url}/user?email=${email}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user?email=${email}`);
 
         if (response.ok) {
             let users: user[] = await response.json();
@@ -27,7 +19,7 @@ export async function getUser(email: string) {
 
 export async function createUser(user: user) {
     try {
-        return await fetch(process.env.NEXT_PUBLIC_API_URL + '/user', {
+        return await fetch( 'api/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

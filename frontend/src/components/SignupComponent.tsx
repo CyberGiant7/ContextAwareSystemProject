@@ -1,25 +1,35 @@
-import React, {useState} from 'react'
+"use client"
+import React, { useState } from 'react'
 import bcrypt from 'bcryptjs';
-import {authenticate} from "@/lib/actions";
-import {useFormState} from "react-dom";
-import {user} from "@/lib/definitions";
-import {createUser} from "@/queries/user";
-
+import { useFormState } from "react-dom";
+import { user } from "@/lib/definitions";
+import { createUser } from "@/queries/user";
+import { useRouter } from "next/navigation";
+import { Form } from "react-bootstrap";
+import { authenticate } from "@/lib/actions";
 
 export default function SignUp() {
+    const router = useRouter();
+    const [newUser, setNewUser] = useState({ email: '', password: '', first_name: '', last_name: '' });
 
-    function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const [errorMessage, formAction, isPending] = useFormState(
+        (prevState: string | undefined, formData: FormData) => {
+            return authenticate(prevState, formData);
+        },
+        undefined
+    );
+
+    // Funzione per il controllo della password
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         checkPassword(e.target);
         if (!e.target.value || !e.target.checkValidity()) {
             return;
         }
+        setNewUser({ ...newUser, password: e.target.value });
+    };
 
-        setNewUser({...newUser, password: e.target.value});
-        console.log(newUser);
-    }
-
+    // Funzione per aggiungere l'utente
     const addUser = async (e: React.FormEvent<HTMLFormElement>) => {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
         e.preventDefault();
 
         const passwordInput = document.getElementById('password') as HTMLInputElement;
@@ -27,28 +37,29 @@ export default function SignUp() {
             return;
         }
 
-        let new_user: user = {
+        const new_user: user = {
             email: newUser.email,
             password: bcrypt.hashSync(newUser.password, 10),
             first_name: newUser.first_name,
             last_name: newUser.last_name,
-        }
+        };
 
         try {
             const response = await createUser(new_user);
 
-            if (response.status === 200) {
-                let formdata = new FormData();
-                formdata.append('email', newUser.email);
-                formdata.append('password', newUser.password);
-
-                formAction(formdata);
-
+            if (response.status === 201) {
+                // Autenticazione immediata dopo la registrazione
+                const formData = new FormData();
+                formData.append('email', newUser.email);
+                formData.append('password', newUser.password as string);
+                // formAction(formData);  // Attiva l'autenticazione
+                return authenticate(undefined, formData)
+                // router.push('/survey'); // Redirect dopo l'autenticazione
             }
+
             if (response.status === 409) {
                 const email = document.getElementById('email') as HTMLInputElement;
                 email.setCustomValidity('Email already exists');
-
                 email.reportValidity();
             }
         } catch (error) {
@@ -56,68 +67,69 @@ export default function SignUp() {
         }
     };
 
-    const [errorMessage, formAction, isPending] = useFormState(
-        authenticate,
-        undefined,
-    );
-    const [newUser, setNewUser] = useState({email: '', password: '', first_name: '', last_name: ''});
     return (
-        <form id="signup-form" onSubmit={addUser}>
+        <Form onSubmit={addUser}>
             <h3>Sign Up</h3>
+
             <div className="mb-3">
                 <label>First name</label>
-                <input
+                <Form.Control
                     type="text"
-                    className="form-control"
                     placeholder="First name"
-                    onChange={(e) => setNewUser({...newUser, first_name: e.target.value})}
+                    onChange={(e) => setNewUser({ ...newUser, first_name: e.target.value })}
                     required
                 />
             </div>
+
             <div className="mb-3">
                 <label>Last name</label>
-                <input
+                <Form.Control
                     type="text"
-                    className="form-control"
                     placeholder="Last name"
-                    onChange={(e) => setNewUser({...newUser, last_name: e.target.value})}
-                    required/>
+                    onChange={(e) => setNewUser({ ...newUser, last_name: e.target.value })}
+                    required
+                />
             </div>
+
             <div className="mb-3">
                 <label>Email address</label>
-                <input
+                <Form.Control
                     id="email"
                     type="email"
-                    className="form-control"
                     placeholder="Enter email"
                     onChange={(e) => {
-                        setNewUser({...newUser, email: e.target.value});
+                        setNewUser({ ...newUser, email: e.target.value });
                         e.target.setCustomValidity('');
                     }}
                     required
                 />
             </div>
+
             <div className="mb-3">
                 <label>Password</label>
-                <input
-                    id={"password"}
+                <Form.Control
+                    id="password"
                     type="password"
-                    className="form-control"
                     placeholder="Enter password"
-                    // minLength={8}
                     onInput={handlePasswordChange}
                     required
                 />
             </div>
+
             <div className="d-grid">
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-primary" disabled={isPending}>
                     Sign Up
                 </button>
             </div>
-        </form>
-    )
-}
 
+            {errorMessage && (
+                <div className="alert alert-danger mt-3">
+                    {errorMessage}
+                </div>
+            )}
+        </Form>
+    );
+}
 
 const checkPassword = (passwordInput: HTMLInputElement) => {
     if (passwordInput) {

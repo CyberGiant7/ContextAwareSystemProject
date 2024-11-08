@@ -2,7 +2,7 @@ import {user_preferences} from "@/lib/definitions";
 
 export async function getUserPreferences(email: string) {
     try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/user_preferences?email=${email}`);
+        const response = await fetch(`api/user_preferences?email=${email}`);
         if (response.ok) {
             let userPreferences: user_preferences[] = await response.json();
             return userPreferences[0];
@@ -17,7 +17,7 @@ export async function getUserPreferences(email: string) {
 
 export async function createUserPreferences(userPreferences: user_preferences) {
     try {
-        return await fetch(process.env.NEXT_PUBLIC_API_URL + '/user_preferences', {
+        return await fetch('api/user_preferences', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

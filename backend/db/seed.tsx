@@ -10,6 +10,7 @@ import {PgTable} from "drizzle-orm/pg-core";
 import {GenerateImmobili} from "@/lib/GenerateImmobili";
 import {strToGeometryPoint} from "@/lib/utils";
 import {seedDistancesTable} from "@/lib/seedDistancesTable";
+import "../data/equidistant_points.json" ;
 
 
 dotenv.config({path: "./.env"});
@@ -171,16 +172,21 @@ const main = async () => {
 
         for (const task of importTasks) {
             console.log("Importing:", task.file);
-             // await importData(db, task.file, task.table, task.transform);
+             await importData(db, task.file, task.table, task.transform);
         }
         console.log("Generating immobili");
         let immobili = await db.select().from(schema.immobili).execute();
         if (immobili.length < 500) {
-            // await GenerateImmobili(500, db)
+            await GenerateImmobili(500, db)
         }
 
         console.log("Seeding distances");
         await seedDistancesTable(db, immobili)
+
+        //TODO fix this
+        // console.log("Adding equidistant points");
+        // const equidistant_points = require("../data/equidistant_points.json");
+        // await db.insert(schema.equidistant_points).values(equidistant_points).onConflictDoNothing().execute();
 
         console.log("Seed done");
 

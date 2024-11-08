@@ -4,7 +4,6 @@ import {fermate_autobus, immobile} from "@/lib/definitions";
 import {getAllImmobili} from "@/queries/immobili";
 import {MDBContainer, MDBRow} from "mdb-react-ui-kit";
 import * as turf from "@turf/turf";
-
 import {round} from "@turf/turf";
 import {MathJax, MathJaxContext} from "better-react-mathjax";
 import {getAllFermateAutobus} from "@/queries/fermate_autobus";
@@ -59,9 +58,7 @@ export default function Page() {
     });
 
     useEffect(() => {
-        getAllImmobili(false).then((immobili) => {
-            setImmobili(immobili);
-        });
+        getAllImmobili({orderByRank: false}).then(setImmobili).catch(console.error);
         getAllFermateAutobus().then(setFermateAutobus).catch(console.error);
     }, []);
 
@@ -82,7 +79,8 @@ export default function Page() {
                 </MDBRow>
                 <MDBRow>
                     <p>
-                        L&apos;indice di Moran (Moran&apos;s I) è una misura statistica utilizzata per rilevare l&apos;autocorrelazione
+                        L&apos;indice di Moran (Moran&apos;s I) è una misura statistica utilizzata per rilevare
+                        l&apos;autocorrelazione
                         spaziale, ossia il grado in cui una variabile è simile in punti vicini dello spazio geografico.
                         In
                         altre parole, verifica se i valori di una variabile osservata in una regione geografica sono più
@@ -93,7 +91,8 @@ export default function Page() {
                     </p>
                     <ul>
                         <li>
-                            Un valore vicino a 1 indica un&apos;elevata autocorrelazione spaziale positiva, cioè che i valori
+                            Un valore vicino a 1 indica un&apos;elevata autocorrelazione spaziale positiva, cioè che i
+                            valori
                             simili sono raggruppati geograficamente.
                         </li>
                         <li>
@@ -101,7 +100,8 @@ export default function Page() {
                             diversi tendono a essere vicini tra loro.
                         </li>
                         <li>
-                            Un valore vicino a 0 indica l&apos;assenza di autocorrelazione spaziale, ovvero una distribuzione
+                            Un valore vicino a 0 indica l&apos;assenza di autocorrelazione spaziale, ovvero una
+                            distribuzione
                             casuale.
                         </li>
                     </ul>
@@ -133,7 +133,8 @@ export default function Page() {
                         </li>
                         <li>
                             <MathJax style={{display: "contents"}}>{"\\( w_{ij} \\)"}</MathJax> rappresenta un elemento
-                            della matrice dei pesi spaziali, che definisce la relazione tra l&apos;unità spaziale <MathJax
+                            della matrice dei pesi spaziali, che definisce la relazione tra l&apos;unità
+                            spaziale <MathJax
                             style={{display: "contents"}}>{"\\( i \\)"}</MathJax> e l&apos;unità spaziale <MathJax
                             style={{display: "contents"}}>{"\\( j \\)"}</MathJax>. In altre parole, il
                             peso <MathJax style={{display: "contents"}}>{"\\( w_{ij} \\)"}</MathJax> indica quanto
@@ -153,17 +154,20 @@ export default function Page() {
                     <h3>Indice di Moran sul prezzo degli immobili</h3>
                 </MDBRow>
                 <p>
-                    È stato calcolato l&apos;indice di Moran sui prezzi degli immobili presenti nel database. Di seguito sono
+                    È stato calcolato l&apos;indice di Moran sui prezzi degli immobili presenti nel database. Di seguito
+                    sono
                     riportati i risultati del calcolo.
                 </p>
                 <ul>
                     <li>
-                        <MathJax style={{display: "contents"}}>{"\\(I\\)"}</MathJax>: il valore dell&apos;indice di Moran
+                        <MathJax style={{display: "contents"}}>{"\\(I\\)"}</MathJax>: il valore dell&apos;indice di
+                        Moran
                         calcolato: <MathJax
                         style={{display: "contents"}}>{"\\(" + round(moranIndexImmobili.moranIndex, 4) + "\\)"}</MathJax>
                     </li>
                     <li>
-                        <MathJax style={{display: "contents"}}>{"\\(E[I]\\)"}</MathJax>: il valore atteso dell&apos;indice di
+                        <MathJax style={{display: "contents"}}>{"\\(E[I]\\)"}</MathJax>: il valore atteso
+                        dell&apos;indice di
                         Moran: <MathJax
                         style={{display: "contents"}}>{"\\(" + round(moranIndexImmobili.expectedMoranIndex, 4) + "\\)"}</MathJax>
                     </li>
@@ -186,13 +190,15 @@ export default function Page() {
                 </MDBRow>
                 <MDBRow>
                     <p>
-                        È stato calcolato l&apos;indice di Moran sul numero di linee di autobus presenti nel database. Di
+                        È stato calcolato l&apos;indice di Moran sul numero di linee di autobus presenti nel database.
+                        Di
                         seguito
                         sono riportati i risultati del calcolo.
                     </p>
                     <ul>
                         <li>
-                            <MathJax style={{display: "contents"}}>{"\\(I\\)"}</MathJax>: il valore dell&apos;indice di Moran
+                            <MathJax style={{display: "contents"}}>{"\\(I\\)"}</MathJax>: il valore dell&apos;indice di
+                            Moran
                             calcolato: <MathJax
                             style={{display: "contents"}}>{"\\(" + round(moranIndexFermateAutobus.moranIndex, 4) + "\\)"}</MathJax>
                         </li>
