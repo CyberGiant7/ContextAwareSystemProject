@@ -126,7 +126,7 @@ async function getIsochrones(position: { lat: number, lng: number }, travelTime:
     const apiKey = process.env.NEXT_PUBLIC_OPENROUTESERVICE_API_KEY;
     try {
         const response = await fetch(
-            `https://api.openrouteservice.org/v2/isochrones/${vehicle}`,  // Modifica "foot-walking" a seconda del mezzo
+            `api/isochrones`,
             {
                 method: 'POST',
                 headers: {
@@ -135,12 +135,10 @@ async function getIsochrones(position: { lat: number, lng: number }, travelTime:
                 },
                 // Aggiungi i parametri URL
                 body: JSON.stringify({
-                    locations: [[position.lng, position.lat]],
-                    range: [travelTime * 60],  // Converti il limite di tempo in secondi
-                    range_type: 'time',
-                    interval: travelTime * 60  // Intervallo di tempo per l'isochrone
+                    position: position,
+                    vehicle: vehicle,
+                    travelTime: travelTime
                 })
-
             }
         );
         return await response.json();

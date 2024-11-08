@@ -1,5 +1,7 @@
 import {NextResponse} from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
     try {
         return await fetch(process.env.NEXT_PUBLIC_API_URL + '/fermate_autobus', {

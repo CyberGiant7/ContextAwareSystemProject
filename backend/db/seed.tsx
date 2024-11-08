@@ -166,6 +166,14 @@ const main = async () => {
                     prezzo_max: row.prezzo_max ? parseInt(row.prezzo_max) : null
                 })
             },
+            {
+                file: './data/equidistant_points.csv',
+                table: schema.equidistant_points,
+                transform: (row: any) => ({
+                    ...row,
+                    geo_point: geomFromGeoJSON(JSON.parse(row.geo_point))
+                })
+            }
         ];
 
         console.log("Seed start");
@@ -182,11 +190,6 @@ const main = async () => {
 
         console.log("Seeding distances");
         await seedDistancesTable(db, immobili)
-
-        //TODO fix this
-        // console.log("Adding equidistant points");
-        // const equidistant_points = require("../data/equidistant_points.json");
-        // await db.insert(schema.equidistant_points).values(equidistant_points).onConflictDoNothing().execute();
 
         console.log("Seed done");
 

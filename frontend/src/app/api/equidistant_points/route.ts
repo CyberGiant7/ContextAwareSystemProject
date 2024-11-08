@@ -1,5 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams;
@@ -10,9 +12,7 @@ export async function GET(request: NextRequest) {
         const radius = searchParams.get('radius');
         let url = `${process.env.NEXT_PUBLIC_API_URL}/equidistant_points?email=${email}${radius ? '&radius=' + radius : ''}`
         console.log('url', url);
-        return await fetch(url, {
-            cache: 'force-cache'
-        });
+        return await fetch(url);
     } catch (error) {
         console.error('Error fetching data:', error);
         return NextResponse.json({error: 'Error fetching data'}, {status: 500});

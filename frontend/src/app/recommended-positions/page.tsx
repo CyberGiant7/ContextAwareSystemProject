@@ -1,20 +1,23 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
-import {user, zona_urbanistica} from "@/lib/definitions";
+import React, {Suspense, useEffect, useState} from "react";
+import {user} from "@/lib/definitions";
 import {useSessionData} from "@/lib/useSessionData";
 import dynamic from "next/dynamic";
 import {getAllEquidistantPoints} from "@/queries/equidistant_points";
+import {useSearchParams} from "next/navigation";
 
-const LazyZoneSelectorMap = dynamic(() => import("@/components/mapComponents/simpleMap"), {
+const LazyZoneSelectorMap = dynamic(() => import("@/components/mapComponents/HeatMap"), {
     ssr: false,
     loading: () => <p>Loading...</p>,
 });
 
-export default function App() {
+function RecommendedPositions() {
     const [user, setUser] = useState<user>();
     const [equidistantPoints, setEquidistantPoints] = useState<any[]>([]);
     const session = useSessionData();
+    const searchParams = useSearchParams();
+    const radius = searchParams.get("radius") || "1500";
 
     useEffect(() => {
         if (session.status === "authenticated") {
@@ -24,17 +27,30 @@ export default function App() {
 
     useEffect(() => {
         if (user) {
-            getAllEquidistantPoints(user.email, "1500").then(setEquidistantPoints).catch(console.error);
+            getAllEquidistantPoints(user.email, radius).then(setEquidistantPoints).catch(console.error);
         }
     }, [user]);
 
     return (
+        <LazyZoneSelectorMap
+            width="100%"
+            height={"100%"}
+            equidistantPoints={equidistantPoints}
+        />
+    );
+}
+
+
+export default function App() {
+    return (
         <div className="App">
-            <LazyZoneSelectorMap
-                width="100%"
-                height={"100%"}
-                equidistantPoints={equidistantPoints}
-            />
+            <Suspense fallback={
+                <div>
+                    <h1>Loading...</h1>
+                </div>
+            }>
+                <RecommendedPositions/>
+            </Suspense>
         </div>
     );
 }

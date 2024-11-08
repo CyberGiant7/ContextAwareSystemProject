@@ -135,7 +135,6 @@ function CustomZonesPage() {
                             geojsonData={geojsonData}
                             setGeojsonData={setGeojsonData}
                         />
-                        {/*<span style={{width: "100%", height: "100%"}}>sas</span>*/}
                     </Col>
                 </Row>
             </Container>
