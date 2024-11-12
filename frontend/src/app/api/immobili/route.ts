@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Costruzione dell'URL finale
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/immobili?${urlParams.toString()}`;
+        const url = `${process.env.BACKEND_API_URL}/immobili?${urlParams.toString()}`;
 
         const response = await fetch(url, {
             cache: 'force-cache'
@@ -39,6 +39,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(data);
     } catch (error) {
         console.error('Error fetching data:', error);
-        return NextResponse.json({ error: 'Error fetching data' }, { status: 500 });
+        return NextResponse.json({ error: `Error fetching data` }, { status: 500 });
     }
 }

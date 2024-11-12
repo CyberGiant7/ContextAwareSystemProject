@@ -1,3 +1,4 @@
+name: progetto-cas
 services:
   frontend:
     container_name: frontend
@@ -8,6 +9,7 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=production
+      - OPENROUTESERVICE_API_KEY=${OPENROUTESERVICE_API_KEY}
     restart: always
     networks:
       - internal-network

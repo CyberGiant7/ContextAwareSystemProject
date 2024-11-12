@@ -201,7 +201,6 @@ export default function Map(prop: MapProps) {
                 if (!map) return;
                 const zoom = map.getZoom(); // get current Zoom of map
                 setZoom(zoom);
-                // console.log(zoom);
             },
         });
         return false;
@@ -212,7 +211,6 @@ export default function Map(prop: MapProps) {
         const bounds = map.getBounds();
         const newMarkers: immobile[] = [];
         for (let immobile of immobili) {
-            // console.log(immobile)
             let point: L.LatLngExpression = [immobile.geo_point.coordinates[1], immobile.geo_point.coordinates[0]]
             if (bounds.contains(point)) {
                 newMarkers.push(immobile);

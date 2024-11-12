@@ -10,8 +10,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({error: 'Email is required'}, {status: 400});
         }
         const radius = searchParams.get('radius');
-        let url = `${process.env.NEXT_PUBLIC_API_URL}/equidistant_points?email=${email}${radius ? '&radius=' + radius : ''}`
-        console.log('url', url);
+        let url = `${process.env.BACKEND_API_URL}/equidistant_points?email=${email}${radius ? '&radius=' + radius : ''}`
         return await fetch(url);
     } catch (error) {
         console.error('Error fetching data:', error);

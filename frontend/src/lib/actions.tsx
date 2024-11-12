@@ -18,13 +18,10 @@ export async function authenticate(
                 redirect: true,
                 redirectTo: "/survey",
             });
-            console.log("signin response: ", response);
             return response;
         }
     } catch (error) {
-        console.log("error", error);
         if (error instanceof AuthError) {
-            console.log("error Type", error.type);
             switch (error.type) {
                 case 'AccessDenied':
                     return 'Invalid credentials.';

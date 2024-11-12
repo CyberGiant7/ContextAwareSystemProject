@@ -23,7 +23,6 @@ export const authConfig = {
             return !!user;
         },
         async redirect({url, baseUrl}) {
-            console.log('redirect', {url, baseUrl});
             // Allows relative callback URLs
             if (url.startsWith("/")) return `${baseUrl}${url}`
             // Allows callback URLs on the same origin
@@ -31,7 +30,6 @@ export const authConfig = {
             return baseUrl
         },
         jwt({token, user}) {
-            // console.log('jwt', {token, user});
             if (user) {
                 delete (user as user)["password"];
                 token.user = user;
@@ -40,20 +38,15 @@ export const authConfig = {
         },
 
         session({session, token}) {
-            // console.log('session return', {...session, user: token.user as User});
             return {
                 ...session,
                 user: token.user as user
             }
         },
         authorized({auth, request: {nextUrl}}) {
-            // console.log('authorized', {auth, nextUrl});
-            console.log(auth);
             const isLoggedIn = !!auth;
             const isOnProfile = nextUrl.pathname.startsWith('/profile');
             const isOnSurvey = nextUrl.pathname.startsWith('/survey');
-            console.log('isOnSurvey', isOnSurvey);
-            console.log('isLoggedIn', isLoggedIn);
 
             if (isOnProfile) {
                 return isLoggedIn;
@@ -61,7 +54,6 @@ export const authConfig = {
             } else if (isOnSurvey) {
                 return isLoggedIn;
             }else {
-                console.log("authorized redirecting to", new URL('/profile', nextUrl))
                 return NextResponse.redirect(new URL('/profile', nextUrl));
             }
         },

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
         if (!email) {
             return NextResponse.json({error: 'Missing email'}, {status: 400});
         }
-        return await fetch(process.env.NEXT_PUBLIC_API_URL + '/user?email=' + email);
+        return await fetch(process.env.BACKEND_API_URL + '/user?email=' + email);
     } catch (error) {
         console.error('Failed to fetch user:', error);
         throw new Error('Failed to fetch user.');
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({error: 'Missing body'}, {status: 400});
         }
 
-        return await fetch(process.env.NEXT_PUBLIC_API_URL + '/user', {
+        return await fetch(process.env.BACKEND_API_URL + '/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

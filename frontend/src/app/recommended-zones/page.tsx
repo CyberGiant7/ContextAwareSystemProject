@@ -24,7 +24,6 @@ export default function App() {
     }, [session]);
 
     useEffect(() => {
-        console.log("changed user", user);
         if (user) {
             getUserPreferences(user.email).then((userPreferences) => {
                 if (userPreferences) {

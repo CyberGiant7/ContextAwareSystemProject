@@ -4,7 +4,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
     try {
-        return await fetch(process.env.NEXT_PUBLIC_API_URL + '/palestre', {
+        return await fetch(process.env.BACKEND_API_URL + '/palestre', {
             cache: 'force-cache'
         })
     } catch (error) {

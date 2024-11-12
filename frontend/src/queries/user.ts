@@ -3,7 +3,7 @@ import {user} from "@/lib/definitions";
 
 export async function getUser(email: string) {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user?email=${email}`);
+        const response = await fetch(`${process.env.BACKEND_API_URL}/user?email=${email}`);
 
         if (response.ok) {
             let users: user[] = await response.json();

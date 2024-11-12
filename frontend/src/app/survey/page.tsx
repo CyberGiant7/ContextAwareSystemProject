@@ -198,11 +198,9 @@ export default function Page() {
 
 
     useEffect(() => {
-        console.log("changed user", user);
         if (user) {
             getUserPreferences(user.email).then((userPreferences) => {
                 if (userPreferences) {
-                    console.log("userPreferences", userPreferences);
                     for (let key in userPreferences) {
                         if (key !== "email") {
                             setAnswers((prev) => ({

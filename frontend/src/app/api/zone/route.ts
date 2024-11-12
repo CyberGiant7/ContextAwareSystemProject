@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
             if (!user_email) {
                 return NextResponse.json({error: 'Email is required'}, {status: 400});
             }
-            return await fetch(process.env.NEXT_PUBLIC_API_URL +  '/zone?order=rank&email=' + user_email,{
+            return await fetch(process.env.BACKEND_API_URL +  '/zone?order=rank&email=' + user_email,{
                 cache: 'force-cache'
             });
         }
-        return await fetch(process.env.NEXT_PUBLIC_API_URL + '/zone', {
+        return await fetch(process.env.BACKEND_API_URL + '/zone', {
             cache: 'force-cache'
         })
     } catch (error) {

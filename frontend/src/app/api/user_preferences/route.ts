@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
         const urlParams = new URLSearchParams();
         urlParams.append('email', email);
 
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/user_preferences?${urlParams.toString()}`;
+        const url = `${process.env.BACKEND_API_URL}/user_preferences?${urlParams.toString()}`;
 
         const response = await fetch(url, {
             cache: "default"
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + '/user_preferences', {
+        const response = await fetch(process.env.BACKEND_API_URL + '/user_preferences', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

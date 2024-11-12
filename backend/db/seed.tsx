@@ -43,8 +43,8 @@ const importData = async (db: PostgresJsDatabase<any>, filePath: string, tableNa
 }
 
 const main = async () => {
-        console.log(process.env.DATABASE_URL);
         const client = postgres(process.env.DATABASE_URL || '');
+
         const db = drizzle(client, {schema});
 
 

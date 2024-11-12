@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: myapp
+  name: progetto-cas
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: myapp
+  namespace: progetto-cas
 spec:
   replicas: 1
   selector:
@@ -20,25 +20,30 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: frontend
-        image: cybergiant/progetto_cas-frontend:v1 # Cambia con il tag dell'immagine
-        ports:
-          - containerPort: 3000
-        env:
-          - name: NODE_ENV
-            value: "production"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 30
+        - name: frontend
+          image: cybergiant/progetto-cas-frontend:v1
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: OPENROUTESERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openrouteservice-api-key-secret  # Nome del Secret
+                  key: API_KEY             # Nome della chiave all'interno del Secret
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 30
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: myapp
+  namespace: progetto-cas
 spec:
   replicas: 1
   selector:
@@ -49,26 +54,44 @@ spec:
       labels:
         app: backend
     spec:
+      initContainers:
+        - name: db-setup
+          image: cybergiant/progetto-cas-backend:v1 # Usa la stessa immagine del backend
+          envFrom:
+            - configMapRef:
+                name: backend-config
+          command: [ "/bin/sh", "-c" ]
+          args:
+            - |
+              npm run db:generate &&
+              npm run db:migrate &&
+              npm run db:seed
+          env:
+            - name: NODE_ENV
+              value: "production"
       containers:
-      - name: backend
-        image: cybergiant/progetto_cas-backend:v1 # Cambia con il tag dell'immagine
-        ports:
-          - containerPort: 4000
-        env:
-          - name: NODE_ENV
-            value: "production"
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 4000
-          initialDelaySeconds: 10
-          periodSeconds: 30
+        - name: backend
+          image: cybergiant/progetto-cas-backend:v1
+          envFrom:
+            - configMapRef:
+                name: backend-config
+          ports:
+            - containerPort: 4000
+          env:
+            - name: NODE_ENV
+              value: "production"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 30
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
-  namespace: myapp
+  namespace: progetto-cas
 spec:
   replicas: 1
   selector:
@@ -80,41 +103,59 @@ spec:
         app: db
     spec:
       containers:
-      - name: db
-        image: postgis/postgis:16-3.4-alpine
-        ports:
-          - containerPort: 5432
-        env:
-          - name: POSTGRES_USER
-            value: "postgres"
-          - name: POSTGRES_PASSWORD
-            value: "postgres"
-          - name: POSTGRES_DB
-            value: "postgres"
-        volumeMounts:
-          - mountPath: /var/lib/postgresql/data
-            name: pgdata
-        livenessProbe:
-          exec:
-            command:
-              - "pg_isready"
-              - "-U"
-              - "postgres"
-          initialDelaySeconds: 30
-          periodSeconds: 10
+        - name: db
+          image: postgis/postgis:16-3.4-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "postgres"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: pgdata
+          livenessProbe:
+            exec:
+              command:
+                - "pg_isready"
+                - "-U"
+                - "postgres"
+            initialDelaySeconds: 30
+            periodSeconds: 10
       volumes:
-      - name: pgdata
-        persistentVolumeClaim:
-          claimName: pgdata-pvc
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: pgdata-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: pgdata-pvc
-  namespace: myapp
+  namespace: progetto-cas
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: progetto-cas
+data:
+  DATABASE_URL: "postgres://postgres:postgres@db.progetto-cas.svc.cluster.local:5432/postgres"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: progetto-cas
+data:
+    BACKEND_URL: "http://backend.progetto-cas.svc.cluster.local:4000/api"
+
+
