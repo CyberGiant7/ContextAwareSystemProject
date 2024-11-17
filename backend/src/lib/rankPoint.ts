@@ -23,7 +23,6 @@ interface RankedPoint extends InferSelectModel<typeof schema.equidistant_points>
 }
 
 const calculateProximityScoreSigmoid = (distance: number, maxDistance: number) => {
-
     if (distance > maxDistance) return 0;
     const k = 8 / maxDistance;
     return 100 / (1 + Math.exp(k * (distance - maxDistance / 2)));

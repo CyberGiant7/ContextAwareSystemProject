@@ -1,5 +1,10 @@
 import {createSwaggerSpec} from 'next-swagger-doc';
 
+/**
+ * Generates the Swagger API documentation specification.
+ *
+ * @returns {Promise<object>} The Swagger specification object.
+ */
 export const getApiDocs = async () => {
     return createSwaggerSpec({
         apiFolder: 'src/app/api',

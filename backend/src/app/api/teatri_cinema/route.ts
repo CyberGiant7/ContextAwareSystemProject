@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/teatri_cinema:
  *     get:
- *       description: Returns a list of theaters and cinemas of the city of Bologna
+ *       summary: Returns a list of theaters and cinemas of the city of Bologna
  *       parameters:
  *         - in: query
  *           name: civ_key
@@ -18,12 +18,19 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Teatri e Cinema
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: Theater or cinema not found
+ */
+
+/**
+ * Handles GET requests to fetch a list of theaters and cinemas.
+ *
+ * @param {NextRequest} request - The incoming request object.
+ * @returns {Promise<NextResponse>} - The response containing the list of theaters and cinemas or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;

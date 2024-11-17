@@ -1,17 +1,16 @@
 import {eq} from "drizzle-orm";
-
-export const dynamic = "force-dynamic"
-
 import {NextRequest, NextResponse} from 'next/server'
 import {db} from "@/../db";
 import {user} from "@/../db/schema"
+
+export const dynamic = "force-dynamic"
 
 
 /**
  * @swagger
  *  /api/user:
  *     get:
- *       description: Returns a user
+ *       summary: Returns a user by email
  *       parameters:
  *         - in: query
  *           name: email
@@ -24,24 +23,29 @@ import {user} from "@/../db/schema"
  *       responses:
  *         200:
  *           description: OK
+ *         400:
+ *           description: Bad Request - email is required
  *         404:
  *           description: User not found
  */
 export async function GET(request: NextRequest) {
+    // Extract search parameters from the request URL
     const searchParams = request.nextUrl.searchParams
+    // Get the 'email' parameter from the search parameters
     const email = searchParams.get('email')
 
-    if (email) {
-        const users = await db.select().from(user).where(eq(user.email, email));
-        if (users.length === 0) {
-            // error
-            return NextResponse.json({error: 'User not found'}, {status: 404});
-        }
-        return NextResponse.json(users);
+    // If 'email' is not provided, return a 400 Bad Request response
+    if (!email) {
+        return NextResponse.json({error: 'Bad Request - email is required'}, {status: 400});
     }
-    const users = await db.select().from(user)
-    console.log(users)
 
+    // Query the database for users with the provided email
+    const users = await db.select().from(user).where(eq(user.email, email));
+    // If no users are found, return a 404 Not Found response
+    if (users.length === 0) {
+        return NextResponse.json({error: 'User not found'}, {status: 404});
+    }
+    // Return the found users in the response
     return NextResponse.json(users);
 }
 
@@ -50,7 +54,7 @@ export async function GET(request: NextRequest) {
  * @swagger
  *  /api/user:
  *     post:
- *       description: Create a new user
+ *       summary: Creates a new user
  *       requestBody:
  *         required: true
  *         content:
@@ -69,30 +73,35 @@ export async function GET(request: NextRequest) {
  *       tags:
  *         - User
  *       responses:
- *         200:
- *           description: OK
+ *         201:
+ *           description: User created successfully
  *         400:
  *           description: Bad Request - email, password, first_name, last_name are required
  *         409:
  *           description: Conflict - email already exists
  */
 export async function POST(request: NextRequest) {
+    // Parse the JSON body of the request
     const body = await request.json()
 
-    //validate the request body
+    // Validate the request body to ensure all required fields are present
     if (!body.email || !body.password || !body.first_name || !body.last_name) {
+        // Return a 400 Bad Request response if any required field is missing
         return NextResponse.json({error: 'Bad Request - email, password, first_name, last_name are required'}, {status: 400});
     }
     try {
-        const res = await db.insert(user).values(body);
+        // Insert the new user into the database
+        await db.insert(user).values(body);
+        // Return a 201 Created response if the user is created successfully
         return NextResponse.json({message: 'User created successfully'}, {status: 201});
     } catch (e: any) {
-        // if email already exists
+        // Log the error for debugging purposes
         console.log(e)
 
+        // Check if the error code indicates a conflict (e.g., email already exists)
         if (e.code === '23505') {
+            // Return a 409 Conflict response if the email already exists
             return NextResponse.json({error: 'Conflict - email already exists'}, {status: 409})
         }
-
     }
 }

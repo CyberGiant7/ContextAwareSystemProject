@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/parcheggi:
  *     get:
- *       description: Returns a list of all the parking lots in the city of Bologna
+ *       summary: Returns a list of all the parking lots in the city of Bologna
  *       parameters:
  *         - in: query
  *           name: codice
@@ -19,12 +19,18 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Parcheggi
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: Parking lot not found
+ */
+
+/**
+ * Handles GET requests to fetch a list of parking lots.
+ * @param request - The incoming request object.
+ * @return - The response containing the list of parking lots or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;

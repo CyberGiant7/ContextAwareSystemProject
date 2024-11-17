@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/parchi_e_giardini:
  *     get:
- *       description: Returns a list of all the parks and gardens in the city of Bologna
+ *       summary: Returns a list of all the parks and gardens in the city of Bologna
  *       parameters:
  *         - in: query
  *           name: codice
@@ -18,12 +18,20 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Parchi e Giardini
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: Park or garden not found
+ */
+
+
+/**
+ * Handles GET requests to fetch parks and gardens data.
+ *
+ * @param {NextRequest} request - The incoming request object.
+ * @returns {Promise<NextResponse>} - The response containing the data or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;

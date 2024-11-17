@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/scuole:
  *     get:
- *       description: Returns a list of schools in the city of Bologna
+ *       summary: Returns a list of schools in the city of Bologna
  *       parameters:
  *         - in: query
  *           name: civ_key
@@ -18,12 +18,18 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Scuole
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: School not found
+ */
+/**
+ * Handles GET requests to fetch a list of schools.
+ *
+ * @param {NextRequest} request - The incoming request object.
+ * @returns {Promise<NextResponse>} - The response containing the list of schools or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
@@ -35,5 +41,4 @@ export async function GET(request: NextRequest) {
         if (error instanceof ApiError)
             return NextResponse.json({error: error.message}, {status: error.statusCode});
     }
-
 }

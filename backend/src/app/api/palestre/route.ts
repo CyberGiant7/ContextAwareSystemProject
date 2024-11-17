@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/palestre:
  *     get:
- *       description: Returns a list of gyms in the city of Bologna
+ *       summary: Returns a list of gyms in the city of Bologna
  *       parameters:
  *         - in: query
  *           name: codice
@@ -18,12 +18,19 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Palestre
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: Gym not found
+ */
+
+/**
+ * Handles GET requests to fetch a list of gyms.
+ *
+ * @param {NextRequest} request - The incoming request object.
+ * @returns {Promise<NextResponse>} - The response containing the list of gyms or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;

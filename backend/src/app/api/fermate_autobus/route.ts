@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/fermate_autobus:
  *     get:
- *       description: Returns a list of bus stops in the city of Bologna
+ *       summary: Returns a list of bus stops in the city of Bologna
  *       parameters:
  *         - in: query
  *           name: codice
@@ -18,12 +18,19 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Fermate Autobus
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: Bus stop not found
+ */
+
+/**
+ * Handles GET requests to fetch bus stops.
+ *
+ * @param {NextRequest} request - The incoming request object.
+ * @returns {Promise<NextResponse>} - The response object containing the bus stops data or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;

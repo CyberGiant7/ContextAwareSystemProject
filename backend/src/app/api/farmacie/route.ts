@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/farmacie:
  *     get:
- *       description: Returns a list of pharmacies in the city of Bologna
+ *       summary: Returns a list of pharmacies in the city of Bologna
  *       parameters:
  *         - in: query
  *           name: civ_key
@@ -18,12 +18,19 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Farmacie
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: Pharmacy not found
+ */
+
+/**
+ * Handles GET requests to fetch a list of pharmacies.
+ *
+ * @param {NextRequest} request - The incoming request object.
+ * @returns {Promise<NextResponse>} - The response containing the list of pharmacies or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;

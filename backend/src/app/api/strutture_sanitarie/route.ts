@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * @swagger
  *  /api/strutture_sanitarie:
  *     get:
- *       description: Returns a list of health facilities in the city of Bologna
+ *       summary: Returns a list of health facilities in the city of Bologna
  *       parameters:
  *         - in: query
  *           name: civ_key
@@ -18,12 +18,18 @@ export const dynamic = "force-dynamic";
  *             type: string
  *           required: false
  *       tags:
- *         - Strutture Sanitarie
+ *         - Point of Interest
  *       responses:
  *         200:
  *           description: OK
  *         404:
  *           description: Health facility not found
+ */
+/**
+ * Handles GET requests to fetch health facilities.
+ *
+ * @param {NextRequest} request - The incoming request object.
+ * @returns {Promise<NextResponse>} - The response containing the health facilities data or an error message.
  */
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
