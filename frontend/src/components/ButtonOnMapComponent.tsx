@@ -57,7 +57,7 @@ export function ButtonOnMapComponent({position}: { position?: keyof typeof POSIT
         (position && POSITION_CLASSES[position]) || POSITION_CLASSES.topright
     return (
         <div className={positionClass}>
-            <div className="leaflet-control leaflet-bar">{button}</div>
+            <div className="leaflet-control leaflet-bar" style={{border:"0px"}}>{button}</div>
         </div>
     )
 }

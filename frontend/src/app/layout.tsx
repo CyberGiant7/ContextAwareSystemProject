@@ -1,8 +1,8 @@
 import {SessionDataProvider} from '@/components/wrapper/SessionDataWrapper'
 import DataWrapper from "@/components/wrapper/DataWrapper";
 import type {Metadata} from "next";
-import '../scss/mdb.free.scss';
-import "./globals.css";
+
+import '../scss/mystyle.scss';
 
 import NavbarComponent from "@/components/NavbarComponent";
 import React from "react";
