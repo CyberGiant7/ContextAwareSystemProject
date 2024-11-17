@@ -26,13 +26,19 @@ interface MapProps {
 
 
 export default function Map(prop: MapProps) {
-    const [currentZoom, setCurrentZoom] = useState(12);
+    // State to keep track of the map instance
     const [map, setMap] = useState<L.Map>();
+
+    // State to keep track of the marker position
     const [position, setPosition] = useState({lat: 44.4934936536425, lng: 11.335745752828108})
+
+    // Reference to the marker instance
     const markerRef = useRef<L.Marker>(null)
 
+    // Reference to the GeoJSON layer
     const geoJsonLayer = useRef<L.GeoJSON>(null);
 
+    // Memoized event handlers for the marker
     const eventHandlers = useMemo(
         () => ({
             dragend() {
@@ -47,6 +53,7 @@ export default function Map(prop: MapProps) {
     )
 
 
+    // Effect to update GeoJSON data based on the selected vehicle and position
     useEffect(() => {
         if (!map) return;
         if (prop.vehicle === 'raggio') {
@@ -58,26 +65,25 @@ export default function Map(prop: MapProps) {
         }
     }, [map, position, prop.radius, prop.travelTime, prop.vehicle])
 
-
+    // Effect to update the GeoJSON layer when geojsonData changes
     useEffect(() => {
         console.log(prop.geojsonData);
-        if (geoJsonLayer.current) {
-            if (prop.geojsonData) {
-                geoJsonLayer.current.clearLayers().addData(prop.geojsonData);
-            } else {
-                geoJsonLayer.current.clearLayers();
-            }
+        if (!geoJsonLayer.current) {
+            return;
         }
+        if (!prop.geojsonData) {
+            geoJsonLayer.current.clearLayers();
+            return;
+        }
+        geoJsonLayer.current.clearLayers().addData(prop.geojsonData);
+
     }, [prop.geojsonData]);
 
 
+    // Component to handle map events
     const MapEvents = () => {
         useMapEvents({
-            zoomend() { // zoom event (when zoom animation ended)
-                if (!map) return;
-                setCurrentZoom(map.getZoom());
-            },
-
+            // Event handler for map click event
             click(e) {
                 setPosition(e.latlng);
                 if (markerRef.current) {
@@ -122,18 +128,28 @@ export default function Map(prop: MapProps) {
     )
 }
 
-async function getIsochrones(position: { lat: number, lng: number }, travelTime: number, vehicle: string) : Promise<FeatureCollection | undefined> {
-    const apiKey = process.env.NEXT_PUBLIC_OPENROUTESERVICE_API_KEY;
+/**
+ * Fetches isochrones based on the given position, travel time, and vehicle type.
+ *
+ * @param {Object} position - The latitude and longitude of the position.
+ * @param {number} position.lat - The latitude of the position.
+ * @param {number} position.lng - The longitude of the position.
+ * @param {number} travelTime - The travel time in minutes.
+ * @param {string} vehicle - The type of vehicle (e.g., car, bike).
+ * @returns {Promise<FeatureCollection | undefined>} A promise that resolves to a FeatureCollection or undefined if an error occurs.
+ */
+async function getIsochrones(position: {
+    lat: number,
+    lng: number
+}, travelTime: number, vehicle: string): Promise<FeatureCollection | undefined> {
     try {
         const response = await fetch(
             `api/isochrones`,
             {
                 method: 'POST',
                 headers: {
-                    'authorization': apiKey as string,
                     'Content-Type': 'application/json; charset=utf-8'
                 },
-                // Aggiungi i parametri URL
                 body: JSON.stringify({
                     position: position,
                     vehicle: vehicle,

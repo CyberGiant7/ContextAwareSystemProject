@@ -1,8 +1,14 @@
 import {scuole} from "@/lib/definitions";
 
-export async function getAllScuole() {
+/**
+ * Fetches all scuole data from the API.
+ *
+ * @returns {Promise<scuole[]>} A promise that resolves to an array of scuole objects.
+ * If an error occurs, it returns an empty array.
+ */
+export async function getAllScuole(): Promise<scuole[]> {
     try {
-        const response = await fetch('api/scuole',{
+        const response = await fetch('api/scuole', {
             cache: 'force-cache'
         });
         return await response.json() as scuole[];

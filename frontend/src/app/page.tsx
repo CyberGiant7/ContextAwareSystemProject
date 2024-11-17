@@ -18,24 +18,36 @@ import {Feature} from "geojson";
 
 
 function Homepage() {
-    const [immobili, setImmobili] = useContext(ImmobiliContext);
-    const [selectedZone, setSelectedZone] = useContext(SelectedZoneContext);
+    // Contexts to manage state
+    const [immobili, ] = useContext(ImmobiliContext);
+    const [selectedZone, ] = useContext(SelectedZoneContext);
     const [visibleImmobili, setVisibleImmobili] = useContext(VisibleImmobiliContext);
-    const [sortedBy, setSortedBy] = useContext(SortedByContext);
+    const [, setSortedBy] = useContext(SortedByContext);
+
+    // State to store GeoJSON data
     const [geojsonData, setGeojsonData] = useState<Feature | undefined>(undefined);
 
+    // State to manage pagination and map view
     const [slicedImmobili, setSlicedImmobili] = useState<immobile[]>([]);
     const [page, setPage] = useState(1);
     const [mapView, setMapView] = useState<JSX.Element>();
     const [LazyMap, setLazyMap] = React.useState<any>(<></>);
 
+    // Hook to get search parameters
     const searchParams = useSearchParams();
 
+    // Effect to set GeoJSON data based on search parameters
+
     useEffect(() => {
+        // Get coordinates from search parameters
         const coordinates = searchParams.get('vrt')?.split(';').map((c) => c.split(',').map((c) => parseFloat(c)));
+
+        // If coordinates are undefined, return early
         if (coordinates === undefined) {
             return;
         }
+
+        // Set GeoJSON data with the retrieved coordinates
         setGeojsonData({
             type: "Feature",
             properties: {},
@@ -43,14 +55,15 @@ function Homepage() {
                 type: "Polygon",
                 coordinates: [coordinates]
             }
-        })
+        });
     }, [searchParams]);
 
-
+    // Effect to set default sorting
     useEffect(() => {
         setSortedBy("default");
     }, []);
 
+    // Effect to manage pagination
     let element_per_page = 10;
     useEffect(() => {
         setPage(1);
@@ -61,14 +74,14 @@ function Homepage() {
         setSlicedImmobili(visibleImmobili.length > element_per_page ? visibleImmobili.slice((page - 1) * element_per_page, page * element_per_page) : visibleImmobili);
     }, [page]);
 
-
+    // Effect to dynamically import and set the map component
     useEffect(() => {
         let Mappa = dynamic(() => import("@/components/mapComponents/Map"), {
             ssr: false,
             loading: () => <p>Loading...</p>,
-        })
+        });
 
-        setLazyMap(<Mappa width="100%" height="100%" geojsonData={geojsonData}/>)
+        setLazyMap(<Mappa width="100%" height="100%" geojsonData={geojsonData}/>);
     }, [setVisibleImmobili, geojsonData]);
 
 

@@ -31,6 +31,7 @@ function CustomZonesPage() {
     const searchParams = useSearchParams()
     const prevUrl = searchParams.get("prevUrl")
 
+    // Handle tab click event
     const handleBasicClick = (value: string) => {
         if (value === basicActive) {
             return;
@@ -38,12 +39,19 @@ function CustomZonesPage() {
         setBasicActive(value);
     };
 
+    // Handle confirm button click event
     const handleConfirm = (geoJsonData: Feature) => {
+        // Create URL search parameters
         const params = new URLSearchParams();
+        // Extract geometry as Polygon
         const geometry: Polygon = geoJsonData.geometry as Polygon;
+        // Get coordinates from geometry
         const coordinates = geometry.coordinates;
+        // Append coordinates to params
         params.append('vrt', coordinates[0].map((c) => c.join(',')).join(';'));
+        // Determine previous URL or default to '/'
         const previousUrl = prevUrl ? prevUrl : '/';
+        // Navigate to the previous URL with appended params
         router.push(`${previousUrl}?${params.toString()}`);
     }
 

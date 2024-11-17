@@ -1,9 +1,10 @@
-import {useMap} from "react-leaflet";
 import {Button} from "react-bootstrap";
 import React, {useMemo} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import {MDBRow} from "mdb-react-ui-kit";
 
+/**
+ * Mapping of position keys to their corresponding CSS classes for positioning the button on the map.
+ */
 const POSITION_CLASSES = {
     bottomleft: 'leaflet-bottom leaflet-left',
     bottomcenter: 'leaflet-bottom leaflet-center',
@@ -14,12 +15,18 @@ const POSITION_CLASSES = {
 }
 
 
-export function ButtonOnMapComponent({position}: { position?: keyof typeof POSITION_CLASSES }) {
-    const parentMap = useMap()
+/**
+ * ButtonOnMapComponent renders a button on the map at a specified position.
+ *
+ * @param {Object} props - The component props.
+ * @param {keyof typeof POSITION_CLASSES} [props.position] - The position of the button on the map.
+ * @returns {React.JSX.Element} The rendered component.
+ */
+export function ButtonOnMapComponent({position}: { position?: keyof typeof POSITION_CLASSES }): React.JSX.Element {
     const router = useRouter()
     let pathname = usePathname()
 
-    // Memoize the minimap so it's not affected by position changes
+    // Memoize the button so it's not affected by position changes
     const button = useMemo(
         () => (
             <div style={{
@@ -28,7 +35,7 @@ export function ButtonOnMapComponent({position}: { position?: keyof typeof POSIT
                 justifyContent: "center",
                 alignItems: "center",
                 gap: "10px"
-            }} >
+            }}>
                 <Button type={"reset"} onClick={() => {
                     router.push("/select-zone?prevUrl=" + pathname);
                     // router.refresh()

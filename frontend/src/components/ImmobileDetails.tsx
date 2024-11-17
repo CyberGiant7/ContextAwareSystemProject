@@ -1,15 +1,24 @@
-// frontend/src/components/ImmobileDetails.tsx
-import {Col, Container, Row} from "react-bootstrap";
 import Image from 'next/image';
 import {MDBCol, MDBContainer, MDBRow, MDBTooltip} from "mdb-react-ui-kit";
+import React from "react";
 
+/**
+ * Interface representing the details of an immobile.
+ */
 interface Detail {
     icon: string;
     label: string;
     value: string | number;
 }
 
-export function ImmobileDetails({details}: { details: Detail[] }) {
+/**
+ * Component to display the details of an immobile.
+ *
+ * @param {Object} props - The component props.
+ * @param {Detail[]} props.details - The array of details to display.
+ * @returns {React.JSX.Element} The rendered component.
+ */
+export function ImmobileDetails({details}: { details: Detail[] }): React.JSX.Element {
     return (
         <>
             {details.map(({icon, label, value}) => (

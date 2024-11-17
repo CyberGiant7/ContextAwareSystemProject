@@ -1,8 +1,14 @@
 import {supermercati} from "@/lib/definitions";
 
-export async function getAllSupermercati() {
+/**
+ * Fetches all supermercati data from the API.
+ *
+ * @returns {Promise<supermercati[]>} A promise that resolves to an array of supermercati.
+ * If an error occurs, it returns an empty array.
+ */
+export async function getAllSupermercati(): Promise<supermercati[]> {
     try {
-        const response = await fetch( 'api/supermercati',{
+        const response = await fetch('api/supermercati', {
             cache: 'force-cache'
         });
         return await response.json() as supermercati[];

@@ -1,7 +1,14 @@
 import {user} from "@/lib/definitions";
 
 
-export async function getUser(email: string) {
+/**
+ * Fetches a user by email.
+ *
+ * @param {string} email - The email of the user to fetch.
+ * @returns {Promise<user | undefined>} The user object if found, otherwise undefined.
+ * @throws {Error} If an error occurs while fetching the user.
+ */
+export async function getUser(email: string): Promise<user | undefined> {
     try {
         const response = await fetch(`${process.env.BACKEND_API_URL}/user?email=${email}`);
 
@@ -17,9 +24,16 @@ export async function getUser(email: string) {
     }
 }
 
-export async function createUser(user: user) {
+/**
+ * Creates a new user.
+ *
+ * @param {user} user - The user object to create.
+ * @returns {Promise<Response>} The response from the server.
+ * @throws {Error} If an error occurs while creating the user.
+ */
+export async function createUser(user: user): Promise<Response> {
     try {
-        return await fetch( 'api/user', {
+        return await fetch('api/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

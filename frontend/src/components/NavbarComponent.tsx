@@ -1,43 +1,70 @@
 "use client";
 import Link from "next/link";
-import React from "react";
-import {useSession} from "next-auth/react";
+import React, {useState} from "react";
+import {
+    MDBCollapse,
+    MDBContainer,
+    MDBIcon,
+    MDBNavbar,
+    MDBNavbarItem,
+    MDBNavbarNav,
+    MDBNavbarToggler
+} from "mdb-react-ui-kit";
 
-export default function NavbarComponent() {
+/**
+ * NavbarComponent is a functional React component that renders the navigation bar.
+ * It includes links to various sections of the application such as Home, Sign In, Sign Up, Profile, Survey, and Moran Index.
+ *
+ * @returns {React.JSX.Element} The rendered navigation bar component.
+ */
+export default function NavbarComponent(): React.JSX.Element {
+    const [openBasic, setOpenBasic] = useState(false);
     return (
-        <nav className="navbar navbar-expand-lg navbar-light fixed-top">
-            <div className="container">
+        <MDBNavbar expand="lg" light bgColor="light" fixed="top">
+            <MDBContainer fluid>
                 <Link className="navbar-brand" href={'/'}>
                     Home Zone Analyzer
                 </Link>
-                <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-                    <ul className="navbar-nav ml-auto">
-                        <li className="nav-item">
+
+                <MDBNavbarToggler
+                    aria-controls='navbarTogglerDemo02'
+                    aria-expanded='false'
+                    aria-label='Toggle navigation'
+                    onClick={() => setOpenBasic(!openBasic)}
+                >
+                    <i className="fa-solid fa-bars"></i>
+                </MDBNavbarToggler>
+
+                <MDBCollapse navbar open={openBasic}>
+                    <MDBNavbarNav className='mr-auto mb-2 mb-lg-0'>
+                        <MDBNavbarItem>
                             <Link className="nav-link" href={'/sign-in'}>
                                 Accedi
                             </Link>
-                        </li>
-                        <li className="nav-item">
+                        </MDBNavbarItem>
+                        <MDBNavbarItem>
                             <Link className="nav-link" href={'/sign-up'}>
                                 Registrati
                             </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link href={'/profile'}
-                                  className="nav-link">Profilo</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link href={'/survey'}
-                                  className="nav-link">Questionario</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link href={'/moran-index'}
-                                  className="nav-link">Moran Index</Link>
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-        </nav>
+                        </MDBNavbarItem>
+                        <MDBNavbarItem>
+                            <Link href={'/profile'} className="nav-link">
+                                Profilo
+                            </Link>
+                        </MDBNavbarItem>
+                        <MDBNavbarItem>
+                            <Link href={'/survey'} className="nav-link">
+                                Questionario
+                            </Link>
+                        </MDBNavbarItem>
+                        <MDBNavbarItem>
+                            <Link href={'/moran-index'} className="nav-link">
+                                Moran Index
+                            </Link>
+                        </MDBNavbarItem>
+                    </MDBNavbarNav>
+                </MDBCollapse>
+            </MDBContainer>
+        </MDBNavbar>
     );
 }

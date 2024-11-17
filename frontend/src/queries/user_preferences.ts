@@ -1,6 +1,13 @@
 import {user_preferences} from "@/lib/definitions";
 
-export async function getUserPreferences(email: string) {
+/**
+ * Fetches the user preferences for a given email.
+ *
+ * @param {string} email - The email of the user whose preferences are to be fetched.
+ * @returns {Promise<user_preferences | undefined>} A promise that resolves to the user preferences or undefined if not found.
+ * @throws {Error} If the fetch operation fails.
+ */
+export async function getUserPreferences(email: string): Promise<user_preferences | undefined> {
     try {
         const response = await fetch(`api/user_preferences?email=${email}`);
         if (response.ok) {
@@ -15,7 +22,14 @@ export async function getUserPreferences(email: string) {
     }
 }
 
-export async function createUserPreferences(userPreferences: user_preferences) {
+/**
+ * Creates new user preferences.
+ *
+ * @param {user_preferences} userPreferences - The user preferences to be created.
+ * @returns {Promise<Response>} A promise that resolves to the response of the fetch operation.
+ * @throws {Error} If the fetch operation fails.
+ */
+export async function createUserPreferences(userPreferences: user_preferences): Promise<Response> {
     try {
         return await fetch('api/user_preferences', {
             method: 'POST',

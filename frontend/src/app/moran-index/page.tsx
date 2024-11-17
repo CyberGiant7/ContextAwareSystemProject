@@ -8,23 +8,39 @@ import {round} from "@turf/turf";
 import {MathJax, MathJaxContext} from "better-react-mathjax";
 import {getAllFermateAutobus} from "@/queries/fermate_autobus";
 
+const RANGE = 500;
 
-// moran's I
-const getMoransI = (feature: any[], inputField: string) => {
+interface moranIndex {
+    moranIndex: number;
+    expectedMoranIndex: number;
+    stdNorm: number;
+    zNorm: number;
+}
+
+/**
+ * Calculates Moran's I index for a given set of features.
+ * @param {any[]} feature - Array of features to calculate Moran's I.
+ * @param {string} inputField - The field in the feature to be used for calculation.
+ * @returns {number} - The calculated Moran's I index.
+ */
+function getMoransI(feature: any[], inputField: string): moranIndex {
     const points = feature.map(i => turf.point(i.geo_point.coordinates, {...i}));
     const featureCollection = turf.featureCollection(points);
 
-    const index = turf.moranIndex(featureCollection, {
+    return turf.moranIndex(featureCollection, {
         inputField: inputField,
         standardization: false,
-        threshold: turf.lengthToDegrees(500, 'meters'),
+        threshold: turf.lengthToDegrees(RANGE, 'meters'),
         binary: true
     });
-
-    return index;
 }
 
-const commentMoransI = (index: number) => {
+/**
+ * Provides a textual interpretation of Moran's I index.
+ * @param {number} index - The calculated Moran's I index.
+ * @returns {string} - A description of the Moran's I index.
+ */
+function commentMoransI(index: number): string {
     if (index > 0.5) {
         return "L'indice di Moran è molto vicino a 1, ciò indica che i valori simili sono raggruppati geograficamente.";
     } else if (index < -0.5) {
@@ -34,12 +50,6 @@ const commentMoransI = (index: number) => {
     }
 }
 
-interface moranIndex {
-    moranIndex: number;
-    expectedMoranIndex: number;
-    stdNorm: number;
-    zNorm: number;
-}
 
 export default function Page() {
     const [immobili, setImmobili] = useState<immobile[]>([]);
@@ -57,19 +67,21 @@ export default function Page() {
         zNorm: 0
     });
 
+    // Fetch data for immobili and fermate_autobus on component mount
     useEffect(() => {
         getAllImmobili({orderByRank: false}).then(setImmobili).catch(console.error);
         getAllFermateAutobus().then(setFermateAutobus).catch(console.error);
     }, []);
 
+    // Calculate Moran's I index for immobili when immobili data changes
     useEffect(() => {
         setMoranIndexImmobili(getMoransI(immobili, "prezzo"));
     }, [immobili]);
 
+    // Calculate Moran's I index for fermate_autobus when fermate_autobus data changes
     useEffect(() => {
         setMoranIndexFermateAutobus(getMoransI(fermateAutobus, "numero_linee"));
     }, [fermateAutobus]);
-
 
     return (
         <MathJaxContext>

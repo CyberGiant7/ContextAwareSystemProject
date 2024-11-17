@@ -1,8 +1,14 @@
 import {farmacie} from "@/lib/definitions";
 
-export async function getAllFarmacie() {
+/**
+ * Fetches all farmacie data from the API.
+ *
+ * @returns {Promise<farmacie[]>} A promise that resolves to an array of farmacie objects.
+ * If an error occurs, it returns an empty array.
+ */
+export async function getAllFarmacie(): Promise<farmacie[]> {
     try {
-        const response = await fetch('api/farmacie',{
+        const response = await fetch('api/farmacie', {
             cache: 'force-cache'
         });
         return await response.json() as farmacie[];

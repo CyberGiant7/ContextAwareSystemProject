@@ -1,13 +1,23 @@
-// frontend/src/components/ImmobileCard.tsx
 import {Card, Container, Row} from "react-bootstrap";
 import {immobile} from "@/lib/definitions";
 import {numberWithCommas, toTitleCase} from "@/lib/utils";
 import {ImmobileDetails} from "@/components/ImmobileDetails";
 import {SelectedImmobileContext} from "@/components/wrapper/DataWrapper";
-import {useContext} from "react";
+import React, {useContext} from "react";
 import Image from "next/image"
 
-export function ImmobileCard({immobile}: { immobile: immobile }) {
+
+interface ImmobileCardProps {
+    immobile: immobile;
+}
+
+/**
+ * ImmobileCard component displays the details of an immobile (property) in a card format.
+ *
+ * @param {ImmobileCardProps} props - The properties for the ImmobileCard component.
+ * @returns {React.JSX.Element} The rendered ImmobileCard component.
+ */
+export function ImmobileCard({immobile}: ImmobileCardProps): React.JSX.Element {
     const details = [
         {icon: "surface.svg", label: "Superficie", value: `${immobile.superficie} mq`},
         {icon: "floor.svg", label: "Piano", value: immobile.piano},
@@ -18,18 +28,19 @@ export function ImmobileCard({immobile}: { immobile: immobile }) {
         {icon: "energetic_class_icon.svg", label: "Anno costruzione", value: immobile.eta_costruzione}
     ];
 
-    const [_, setSelectedImmobile] = useContext(SelectedImmobileContext);
+    const [, setSelectedImmobile] = useContext(SelectedImmobileContext);
 
     return (
+        // Card component to display immobile details
         <Card className="card-horizontal hover-shadow" key={immobile.civ_key}
               style={{flexDirection: "row"}}
               onMouseEnter={(e) => {
+                  // Set the selected immobile on mouse enter
                   setSelectedImmobile(immobile.civ_key)
-                  // e.currentTarget.style.boxShadow = "0 0 10px #000000!important";
               }}
               onMouseLeave={(e) => {
+                  // Clear the selected immobile on mouse leave
                   setSelectedImmobile(null)
-                  // e.currentTarget.style.boxShadow = "0 0 0px #000000!important";
               }}>
             <div style={{width: "100%", position: "relative"}}>
                 <Image
@@ -37,7 +48,6 @@ export function ImmobileCard({immobile}: { immobile: immobile }) {
                     alt="house placeholder"
                     style={{objectFit: "cover"}}
                     fill
-                    // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
             </div>
             <Card.Body>

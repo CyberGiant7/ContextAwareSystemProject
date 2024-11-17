@@ -20,12 +20,22 @@ interface MapProps {
 
 const HeatmapLayer = HeatmapLayerFactory<[number, number, number]>()
 
-
-export default function Map(prop: MapProps) {
+/**
+ * Map component to render a leaflet map with heatmap and markers.
+ * @param {MapProps} prop - The properties for the map component.
+ * @param {string} prop.width - The width of the map.
+ * @param {string} prop.height - The height of the map.
+ * @param {equidistant_points[]} prop.equidistantPoints - Array of points to be displayed on the map.
+ * @returns {React.JSX.Element} The rendered map component.
+ */
+export default function Map(prop: MapProps): React.JSX.Element {
     const [currentZoom, setCurrentZoom] = useState(12);
     const [map, setMap] = useState<L.Map>();
 
-
+    /**
+     * Component to handle map events.
+     * @returns {boolean} False to indicate no additional rendering.
+     */
     const MapEvents = () => {
         useMapEvents({
             zoomend() { // zoom event (when zoom animation ended)
@@ -57,23 +67,7 @@ export default function Map(prop: MapProps) {
             <LayersControl position="topright">
                 <LayersControl.Overlay name="Marker colorati">
                     <LayerGroup>
-                        {prop.equidistantPoints.map((point: equidistant_points) => {
-                            if (!point.rank) return
-                            const markerColor = getColorFromRank(point.rank, 100);
-                            const icon = new DivIcon({
-                                className: 'custom-div-icon', // Add a custom class
-                                html: `<div style="background-color:${markerColor}; width:20px; height:20px; border-radius:50%; border: 2px solid white; position:inherit; left: -4px; top: -4px;" class="custom-div-icon"></div>`,
-                            });
-                            return (
-                                <Marker position={[point.geo_point.coordinates[1], point.geo_point.coordinates[0]]}
-                                        key={point.codice}
-                                        icon={icon}>
-                                    <Popup>
-                                        {point.rank}
-                                    </Popup>
-                                </Marker>
-                            )
-                        })}
+                        <ColoredMarkers equidistantPoints={prop.equidistantPoints}/>
                     </LayerGroup>
                 </LayersControl.Overlay>
                 <LayersControl.Overlay name="Heatmap" checked>
@@ -83,8 +77,8 @@ export default function Map(prop: MapProps) {
                             longitudeExtractor={(point: [number, number, number]) => point[0]}
                             latitudeExtractor={(point: [number, number, number]) => point[1]}
                             intensityExtractor={(point: [number, number, number]) => point[2]}
-                            radius={getRadius(currentZoom).radius}
-                            blur={getRadius(currentZoom).blur}
+                            radius={getRadiusBlur(currentZoom).radius}
+                            blur={getRadiusBlur(currentZoom).blur}
                             max={100}
                             useLocalExtrema={false}
                             opacity={0.5}
@@ -96,8 +90,48 @@ export default function Map(prop: MapProps) {
     )
 }
 
-function getRadius(currentZoom: number) {
+interface ColoredMarkersProps {
+    equidistantPoints: equidistant_points[];
+}
+
+/**
+ * Component to render colored markers on the map.
+ * @param {ColoredMarkersProps} props - The properties for the colored markers component.
+ * @param {equidistant_points[]} props.equidistantPoints - Array of points to be displayed as colored markers.
+ * @returns {React.JSX.Element} The rendered colored markers component.
+ */
+const ColoredMarkers: React.FC<ColoredMarkersProps> = ({ equidistantPoints }: ColoredMarkersProps): React.JSX.Element => {
+    return (
+        <>
+            {equidistantPoints.map((point: equidistant_points) => {
+                if (!point.rank) return null;
+                const markerColor = getColorFromRank(point.rank, 100);
+                const icon = new DivIcon({
+                    className: 'custom-div-icon', // Add a custom class
+                    html: `<div style="background-color:${markerColor}; width:20px; height:20px; border-radius:50%; border: 2px solid white; position:inherit; left: -4px; top: -4px;" class="custom-div-icon"></div>`,
+                });
+                return (
+                    <Marker position={[point.geo_point.coordinates[1], point.geo_point.coordinates[0]]}
+                            key={point.codice}
+                            icon={icon}>
+                        <Popup>
+                            {point.rank}
+                        </Popup>
+                    </Marker>
+                );
+            })}
+        </>
+    );
+};
+
+
+/**
+ * Function to calculate the radius and blur for the heatmap based on the current zoom level.
+ * @param {number} currentZoom - The current zoom level of the map.
+ * @returns {{radius: number, blur: number}} The radius and blur values.
+ */
+function getRadiusBlur(currentZoom: number): { radius: number; blur: number; } {
     const radius = Math.pow(2, currentZoom - 9);
     const blur = radius;
-    return { radius, blur };
+    return {radius, blur};
 }

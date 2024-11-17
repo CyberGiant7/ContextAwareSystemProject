@@ -11,6 +11,9 @@ declare module "next-auth" {
     function getCsrfToken(): Promise<string>
 }
 
+/**
+ * Configuration object for NextAuth.
+ */
 export const authConfig = {
     pages: {
         signIn: '/sign-in',
@@ -36,7 +39,6 @@ export const authConfig = {
             }
             return token;
         },
-
         session({session, token}) {
             return {
                 ...session,
