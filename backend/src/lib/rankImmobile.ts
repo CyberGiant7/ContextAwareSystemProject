@@ -147,9 +147,12 @@ export const rankImmobili2 = async (
             const quantityScore = calculateQuantityScore(distances.length, DESIRED_QUANTITY[tableName as keyof typeof DESIRED_QUANTITY]);
 
             // Retrieve user preferences for proximity and quantity
-            const proximityPreference = preferences[('proximity_' + tableName) as keyof typeof preferences] as number + 1;
-            const quantityPreference = preferences[('quantity_' + tableName) as keyof typeof preferences] as number + 1;
+            // const proximityPreference = preferences[('proximity_' + tableName) as keyof typeof preferences] as number + 1;
+            // const quantityPreference = preferences[('quantity_' + tableName) as keyof typeof preferences] as number + 1;
+            const proximityPreference = preferences[('proximity_' + tableName) as keyof typeof preferences] as number;
+            const quantityPreference = preferences[('quantity_' + tableName) as keyof typeof preferences] as number;
 
+            if (proximityPreference === 0 && quantityPreference === 0) continue;
             // Aggregate scores weighted by user preferences
             score += (proximityScore * proximityPreference + quantityScore * quantityPreference) / (proximityPreference + quantityPreference);
         }
@@ -162,8 +165,18 @@ export const rankImmobili2 = async (
     });
 
     // Resolve all promises concurrently and sort the results by rank in descending order
-    const rankedImmobili = await Promise.all(rankedImmobiliPromises);
-    return rankedImmobili.sort((a, b) => b.rank - a.rank);
+    let rankedImmobili = await Promise.all(rankedImmobiliPromises);
+
+    rankedImmobili = rankedImmobili.sort((a, b) => b.rank - a.rank);
+
+    // Normalize rank values to a range between 0 and 100
+    let max = rankedImmobili[0].rank;
+    let min = 0;
+    for (let immobile of rankedImmobili) {
+        immobile.rank = (immobile.rank - min) / (max - min) * 100;
+    }
+    return rankedImmobili;
+
 };
 
 /**
@@ -219,10 +232,20 @@ export const rankImmobili = async (
         });
 
         // Return the ranked list of immobili
-        return immobili_list.map(immobile => ({
+        let rankedImmobili = immobili_list.map(immobile => ({
             ...immobile,
             rank: ranks.get(immobile.civ_key) || 0 // Assign rank to each immobile
         })).sort((a, b) => b.rank - a.rank); // Sort by rank in descending order
+
+        // Normalize rank values to a range between 0 and 100
+        let max = rankedImmobili[0].rank;
+
+        let min = 0;
+        for (let immobile of rankedImmobili) {
+            immobile.rank = (immobile.rank - min) / (max - min) * 100;
+        }
+        return rankedImmobili; // Return the ranked immobili
+
     } catch (e) {
         console.log(e); // Log any errors
         return []; // Return an empty array in case of error
@@ -236,14 +259,13 @@ const calculateScore = (
     maxCount: number,
     radius: number = RADIUS_METERS
 ): number => {
-    proximityWeight += 1;
-    quantityWeight += 1;
-
     if (poiData.count === 0) return 0;
+    if (proximityWeight === 0 && quantityWeight === 0) return 0;
 
     const proximityScore = calculateProximityScoreSigmoid(poiData.min_distance, radius);
     const quantityScore = calculateQuantityScore(poiData.count, maxCount);
 
+    if (proximityWeight === 0 && quantityWeight === 0) return 0;
     return (proximityScore * proximityWeight + quantityScore * quantityWeight) / (proximityWeight + quantityWeight);
 };
 

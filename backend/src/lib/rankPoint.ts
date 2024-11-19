@@ -4,19 +4,6 @@ import {PostgresJsDatabase} from "drizzle-orm/postgres-js";
 
 const RADIUS_METERS = 250;
 const TABLE_NAMES = ['bar_ristoranti', 'biblioteche', 'farmacie', 'fermate_autobus', 'palestre', 'parcheggi', 'parchi_e_giardini', 'scuole', 'strutture_sanitarie', 'supermercati', 'teatri_cinema'];
-const DESIRED_QUANTITY = {
-    bar_ristoranti: 5,
-    biblioteche: 3,
-    farmacie: 2,
-    fermate_autobus: 3,
-    palestre: 2,
-    parcheggi: 2,
-    parchi_e_giardini: 2,
-    scuole: 2,
-    strutture_sanitarie: 2,
-    supermercati: 3,
-    teatri_cinema: 2
-};
 
 interface RankedPoint extends InferSelectModel<typeof schema.equidistant_points> {
     rank: number;
@@ -62,14 +49,12 @@ const calculateScore = (
     maxCount: number,
     radius: number = RADIUS_METERS
 ): number => {
-    proximityWeight += 1;
-    quantityWeight += 1;
-
     if (poiData.count === 0) return 0;
+    if (proximityWeight === 0 && quantityWeight === 0) return 0;
 
     const proximityScore = calculateProximityScoreSigmoid(poiData.min_distance, radius);
     const quantityScore = calculateQuantityScore(poiData.count, maxCount);
-    // console.log(proximityScore, quantityScore);
+
     return (proximityScore * proximityWeight + quantityScore * quantityWeight) / (proximityWeight + quantityWeight);
 };
 
@@ -115,10 +100,20 @@ export const rankPoints = async (
             ranks.set(codice, totalScore / TABLE_NAMES.length);
         });
 
-        return points_list.map(point => ({
+        let rankedPoints = points_list.map(point => ({
             ...point,
             rank: ranks.get(point.codice) || 0
         })).sort((a, b) => b.rank - a.rank);
+
+        // Normalize rank values to a range between 0 and 100
+        let max = rankedPoints[0].rank;
+
+        let min = 0;
+        for (let immobile of rankedPoints) {
+            immobile.rank = (immobile.rank - min) / (max - min) * 100;
+        }
+        return rankedPoints; // Return the ranked immobili
+
     } catch (e) {
         console.log(e);
         return [];
