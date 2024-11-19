@@ -19,8 +19,8 @@ import {Feature} from "geojson";
 
 function Homepage() {
     // Contexts to manage state
-    const [immobili, ] = useContext(ImmobiliContext);
-    const [selectedZone, ] = useContext(SelectedZoneContext);
+    const [immobili,] = useContext(ImmobiliContext);
+    const [selectedZone,] = useContext(SelectedZoneContext);
     const [visibleImmobili, setVisibleImmobili] = useContext(VisibleImmobiliContext);
     const [, setSortedBy] = useContext(SortedByContext);
 

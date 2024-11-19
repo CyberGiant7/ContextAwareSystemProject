@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
         // If 'ranked' is true and 'email' is not provided, return an error response
         if (ranked && !user_email) {
-            return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+            return NextResponse.json({error: 'Email is required'}, {status: 400});
         }
 
         // Use URLSearchParams to build the URL parameters
@@ -51,6 +51,6 @@ export async function GET(request: NextRequest) {
         // Log any errors that occur during the fetch
         console.error('Error fetching data:', error);
         // Return an error response with status 500
-        return NextResponse.json({ error: `Error fetching data` }, { status: 500 });
+        return NextResponse.json({error: `Error fetching data`}, {status: 500});
     }
 }

@@ -2,7 +2,7 @@ import {count, InferSelectModel, min, sql} from "drizzle-orm";
 import * as schema from "../../db/schema";
 import {PostgresJsDatabase} from "drizzle-orm/postgres-js";
 
-const RADIUS_METERS = 500;
+const RADIUS_METERS = 250;
 const TABLE_NAMES = ['bar_ristoranti', 'biblioteche', 'farmacie', 'fermate_autobus', 'palestre', 'parcheggi', 'parchi_e_giardini', 'scuole', 'strutture_sanitarie', 'supermercati', 'teatri_cinema'];
 const DESIRED_QUANTITY = {
     bar_ristoranti: 5,

@@ -8,6 +8,7 @@ declare module "next-auth" {
     interface Session extends DefaultSession {
         user: user;
     }
+
     function getCsrfToken(): Promise<string>
 }
 
@@ -52,10 +53,10 @@ export const authConfig = {
 
             if (isOnProfile) {
                 return isLoggedIn;
-                 // Redirect unauthenticated users to login page
+                // Redirect unauthenticated users to login page
             } else if (isOnSurvey) {
                 return isLoggedIn;
-            }else {
+            } else {
                 return NextResponse.redirect(new URL('/profile', nextUrl));
             }
         },

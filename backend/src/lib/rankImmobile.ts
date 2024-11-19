@@ -32,6 +32,7 @@ const DESIRED_QUANTITY = {
 export interface RankedImmobile extends InferSelectModel<typeof schema.immobili> {
     rank: number;
 }
+
 /**
  * Fetches the distances to points of interest (POI) from the database for a given immobile.
  *

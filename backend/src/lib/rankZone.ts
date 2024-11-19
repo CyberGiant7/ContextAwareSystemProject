@@ -1,7 +1,7 @@
 import {PostgresJsDatabase} from "drizzle-orm/postgres-js";
 import * as schema from "../../db/schema";
-import {count, eq, InferSelectModel, sql} from "drizzle-orm";
 import {teatri_cinema} from "../../db/schema";
+import {count, eq, InferSelectModel, sql} from "drizzle-orm";
 
 
 // List of table names to be used for ranking

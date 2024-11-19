@@ -2,7 +2,9 @@
 
 ## Overview
 
-Home Zone Analyzer is a web application designed to help users find the best place to live in Bologna. It provides a comprehensive analysis of different zones based on various criteria, making it easier for users to make informed decisions about their next home.
+Home Zone Analyzer is a web application designed to help users find the best place to live in Bologna. It provides a
+comprehensive analysis of different zones based on various criteria, making it easier for users to make informed
+decisions about their next home.
 
 ## Features
 
@@ -19,41 +21,45 @@ The project is divided into two main parts: the frontend and the backend.
 
 The frontend is built using Next.js and React. It includes the following key components and files:
 
-- **Pages**: Located in the 
+- **Pages**: Located in the
 
 app
 
- directory, these files define the different pages of the application.
-- **Components**: Located in the 
+directory, these files define the different pages of the application.
+
+- **Components**: Located in the
 
 components
 
- directory, these files define reusable UI components.
-- **Styles**: Located in the 
+directory, these files define reusable UI components.
+
+- **Styles**: Located in the
 
 scss
 
- directory, these files define the styles for the application.
+directory, these files define the styles for the application.
 
 ### Backend
 
 The backend is built using Next.js and includes the following key components and files:
 
-- **API Routes**: Located in the 
+- **API Routes**: Located in the
 
 api
 
- directory, these files define the API endpoints for the application.
-- **Database**: The database schema and seed data are defined in the 
+directory, these files define the API endpoints for the application.
+
+- **Database**: The database schema and seed data are defined in the
 
 db
 
- directory.
-- **Configuration**: Configuration files for Docker, Kubernetes, and environment variables are located in the 
+directory.
+
+- **Configuration**: Configuration files for Docker, Kubernetes, and environment variables are located in the
 
 backend
 
- directory.
+directory.
 
 ## Installation
 
@@ -139,6 +145,7 @@ We welcome contributions to improve Home Zone Analyzer. Please follow these step
 git push origin feature-branch
 
 ).
+
 5. Open a pull request.
 
 ## License
@@ -147,7 +154,8 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## Contact
 
-For any inquiries or feedback, please contact Leonardo Dessì at [https://github.com/CyberGiant7](https://github.com/CyberGiant7).
+For any inquiries or feedback, please contact Leonardo Dessì
+at [https://github.com/CyberGiant7](https://github.com/CyberGiant7).
 
 ---
 

@@ -1,15 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, {useState} from "react";
-import {
-    MDBCollapse,
-    MDBContainer,
-    MDBIcon,
-    MDBNavbar,
-    MDBNavbarItem,
-    MDBNavbarNav,
-    MDBNavbarToggler
-} from "mdb-react-ui-kit";
+import {MDBCollapse, MDBContainer, MDBNavbar, MDBNavbarItem, MDBNavbarNav, MDBNavbarToggler} from "mdb-react-ui-kit";
 
 /**
  * NavbarComponent is a functional React component that renders the navigation bar.

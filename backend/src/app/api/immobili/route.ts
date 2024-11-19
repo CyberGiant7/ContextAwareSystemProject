@@ -1,15 +1,14 @@
 import {NextRequest, NextResponse} from 'next/server'
+import * as schema from "../../../../db/schema";
 import {immobili as immobili_schema} from "../../../../db/schema";
 import {fetchData} from "@/lib/fetchData";
-import {rankImmobili, rankImmobili2, RankedImmobile} from "@/lib/rankImmobile";
+import {rankImmobili, rankImmobili2} from "@/lib/rankImmobile";
 import {db} from "../../../../db";
-import {eq, InferSelectModel} from "drizzle-orm";
-import * as schema from "../../../../db/schema";
+import {InferSelectModel} from "drizzle-orm";
 import {ApiError} from "next/dist/server/api-utils";
 
 
 export const dynamic = "force-dynamic"
-
 
 
 /**
@@ -68,7 +67,7 @@ export const dynamic = "force-dynamic"
  */
 export async function GET(request: NextRequest) {
     // Extract search parameters from the request URL
-    const { searchParams } = request.nextUrl;
+    const {searchParams} = request.nextUrl;
     const civKey = searchParams.get('civ_key');
     const zones = searchParams.getAll('zona');
     const orderByRank = searchParams.get('order') === 'rank';
@@ -83,10 +82,10 @@ export async function GET(request: NextRequest) {
         for (const z of zones) {
             results = results.concat(await fetchData(immobili_schema, 'zona_di_prossimita', z));
         }
-    // Fetch data based on the provided civ_key
+        // Fetch data based on the provided civ_key
     } else if (civKey) {
         results = await fetchData(immobili_schema, 'civ_key', civKey);
-    // Fetch all data if no specific parameters are provided
+        // Fetch all data if no specific parameters are provided
     } else {
         results = await fetchData(immobili_schema);
     }
@@ -95,7 +94,7 @@ export async function GET(request: NextRequest) {
     if (orderByRank) {
         // Ensure email is provided
         if (!email) {
-            return NextResponse.json({ error: 'email is required' }, { status: 400 });
+            return NextResponse.json({error: 'email is required'}, {status: 400});
         }
 
         let preferences: InferSelectModel<typeof schema.user_preferences>[] = [];
@@ -104,7 +103,7 @@ export async function GET(request: NextRequest) {
             preferences = await fetchData(schema.user_preferences, 'email', email) as InferSelectModel<typeof schema.user_preferences>[];
         } catch (error) {
             if (error instanceof ApiError) {
-                return NextResponse.json({ error: error.message }, { status: error.statusCode });
+                return NextResponse.json({error: error.message}, {status: error.statusCode});
             }
         }
 

@@ -156,6 +156,6 @@ metadata:
   name: frontend-config
   namespace: progetto-cas
 data:
-    BACKEND_URL: "http://backend.progetto-cas.svc.cluster.local:4000/api"
+  BACKEND_URL: "http://backend.progetto-cas.svc.cluster.local:4000/api"
 
 

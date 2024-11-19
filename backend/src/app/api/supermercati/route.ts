@@ -32,7 +32,7 @@ export const dynamic = "force-dynamic";
  * @param {NextRequest} request - The incoming request object.
  * @returns {Promise<NextResponse>} - The response object containing the list of supermarkets or an error message.
  */
-export async function GET(request: NextRequest){
+export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const codice = searchParams.get('codice');
 

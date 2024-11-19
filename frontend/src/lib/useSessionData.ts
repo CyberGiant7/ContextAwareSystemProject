@@ -1,9 +1,9 @@
 // useSessionData.ts (replace useSession hook)
 'use client'
 
-import { useContext } from 'react'
-import type { Session } from 'next-auth'
-import { SessionContext, type TSessionContextValue } from '@/components/wrapper/SessionDataWrapper'
+import {useContext} from 'react'
+import type {Session} from 'next-auth'
+import {SessionContext, type TSessionContextValue} from '@/components/wrapper/SessionDataWrapper'
 
 /**
  * Retrieve session data from the SessionContext for client side usage only.

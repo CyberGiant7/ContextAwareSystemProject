@@ -1,7 +1,5 @@
-
-import {NextResponse} from 'next/server';
 import {db} from "@/../db";
-import {eq, sql, getTableColumns} from "drizzle-orm";
+import {getTableColumns, sql} from "drizzle-orm";
 import {ApiError} from "next/dist/server/api-utils";
 
 /**

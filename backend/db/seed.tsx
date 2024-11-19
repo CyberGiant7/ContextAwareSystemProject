@@ -10,7 +10,6 @@ import {PgTable} from "drizzle-orm/pg-core";
 import {GenerateImmobili} from "@/lib/GenerateImmobili";
 import {strToGeometryPoint} from "@/lib/utils";
 import {seedDistancesTable} from "@/lib/seedDistancesTable";
-import "../data/equidistant_points.json";
 
 
 dotenv.config({path: "./.env"});

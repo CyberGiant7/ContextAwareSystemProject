@@ -100,7 +100,7 @@ interface ColoredMarkersProps {
  * @param {equidistant_points[]} props.equidistantPoints - Array of points to be displayed as colored markers.
  * @returns {React.JSX.Element} The rendered colored markers component.
  */
-const ColoredMarkers: React.FC<ColoredMarkersProps> = ({ equidistantPoints }: ColoredMarkersProps): React.JSX.Element => {
+const ColoredMarkers: React.FC<ColoredMarkersProps> = ({equidistantPoints}: ColoredMarkersProps): React.JSX.Element => {
     return (
         <>
             {equidistantPoints.map((point: equidistant_points) => {

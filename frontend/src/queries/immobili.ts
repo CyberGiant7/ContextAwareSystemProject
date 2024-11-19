@@ -19,7 +19,7 @@ export async function getAllImmobili(options: {
     radius?: string,
     rankMode?: string
 }): Promise<immobile[]> {
-    const { orderByRank, zone, email, radius, rankMode } = options;
+    const {orderByRank, zone, email, radius, rankMode} = options;
 
     try {
         const urlParams = new URLSearchParams();

@@ -1,10 +1,10 @@
 // SessionDataWrapper.tsx (replace the current SessionProvider from next-auth/react)
 'use client'
 
-import React, { Context, createContext, type PropsWithChildren, useEffect, useMemo, useState } from 'react'
-import { usePathname } from 'next/navigation'
-import type { Session } from 'next-auth'
-import { getCsrfToken } from 'next-auth/react'
+import React, {Context, createContext, type PropsWithChildren, useEffect, useMemo, useState} from 'react'
+import {usePathname} from 'next/navigation'
+import type {Session} from 'next-auth'
+import {getCsrfToken} from 'next-auth/react'
 
 /**
  * Provider props
@@ -24,7 +24,7 @@ export type TSessionContextValue = { data: Session | null; status: string; updat
  */
 export const SessionContext: Context<TSessionContextValue | undefined> = createContext?.<TSessionContextValue | undefined>(undefined)
 
-export function SessionDataProvider({ session: initialSession = null, children }: TSessionProviderProps) {
+export function SessionDataProvider({session: initialSession = null, children}: TSessionProviderProps) {
     const [session, setSession] = useState<Session | null>(initialSession)
     const [loading, setLoading] = useState<boolean>(!initialSession)
     const pathname: string = usePathname()
@@ -62,7 +62,7 @@ export function SessionDataProvider({ session: initialSession = null, children }
                 if (data) {
                     fetchOptions.method = 'POST'
                     // That is possible to replace getCsrfToken with a fetch to /api/auth/csrf
-                    fetchOptions.body = JSON.stringify({ csrfToken: await getCsrfToken(), data })
+                    fetchOptions.body = JSON.stringify({csrfToken: await getCsrfToken(), data})
                 }
 
                 const fetchedSessionResponse: Response = await fetch('/api/auth/session', fetchOptions)
