@@ -9,7 +9,8 @@ services:
       - '3000:3000'
     environment:
       - NODE_ENV=production
-      - OPENROUTESERVICE_API_KEY=${OPENROUTESERVICE_API_KEY}
+    env_file:
+      - ./frontend/.env.local
     restart: always
     networks:
       - internal-network

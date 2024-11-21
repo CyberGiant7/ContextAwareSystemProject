@@ -6,13 +6,6 @@ Home Zone Analyzer is a web application designed to help users find the best pla
 comprehensive analysis of different zones based on various criteria, making it easier for users to make informed
 decisions about their next home.
 
-## Features
-
-- **Interactive Map**: Explore different zones in Bologna with an interactive map.
-- **Detailed Analysis**: Get detailed information about each zone, including amenities, transportation, and more.
-- **User-Friendly Interface**: Easy-to-use interface designed for a seamless user experience.
-- **Responsive Design**: Optimized for both desktop and mobile devices.
-
 ## Project Structure
 
 The project is divided into two main parts: the frontend and the backend.
@@ -21,47 +14,25 @@ The project is divided into two main parts: the frontend and the backend.
 
 The frontend is built using Next.js and React. It includes the following key components and files:
 
-- **Pages**: Located in the
+- **Pages**: Located in the `frontend/src/app` directory, these files define the different pages of the application.
 
-app
+- **Components**: Located in the `frontend/src/components` directory, these files define reusable UI components.
 
-directory, these files define the different pages of the application.
-
-- **Components**: Located in the
-
-components
-
-directory, these files define reusable UI components.
-
-- **Styles**: Located in the
-
-scss
-
-directory, these files define the styles for the application.
+- **Styles**: Located in the `scss` directory, these files define the styles for the application.
 
 ### Backend
 
-The backend is built using Next.js and includes the following key components and files:
+The backend is built using `Next.js` and includes the following key components and files:
 
-- **API Routes**: Located in the
-
-api
-
-directory, these files define the API endpoints for the application.
-
-- **Database**: The database schema and seed data are defined in the
-
-db
-
-directory.
-
-- **Configuration**: Configuration files for Docker, Kubernetes, and environment variables are located in the
-
-backend
-
-directory.
+- **API Routes**: Located in the `backend/src/app/api`directory, these files define the API endpoints for the
+  application.
+- **Database**: The database schema and seed data are defined in the `backend/db`directory.
 
 ## Installation
+
+Before you start you should replace in the `frontend/.env.local` file the `OPENROUTESERVICE_API_KEY` with your own key.
+If you want to use kubernetes you should replace the `OPENROUTESERVICE_API_KEY` in the `k8s-secret.yaml` file with your
+openrouteservice API key in base64 format.
 
 ### Prerequisites
 
@@ -72,7 +43,7 @@ directory.
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/home-zone-analyzer.git
+    git clone https://github.com/CyberGiant7/progetto_cas.git
     cd home-zone-analyzer
     ```
 
@@ -92,9 +63,22 @@ directory.
     yarn install
     ```
 
-## Running the Application
+## Running the Application in local
 
-1. Start the backend server:
+1. Start the database:
+    ```bash
+    docker compose up -d db
+    ```
+
+2. Run database migrations and seed data:
+    ```bash
+    cd backend
+    npm run db:generate
+    npm run db:migrate
+    npm run db:seed
+    ```
+
+3. Start the backend server:
     ```bash
     cd backend
     npm run dev
@@ -102,7 +86,7 @@ directory.
     yarn dev
     ```
 
-2. Start the frontend server:
+4. Start the frontend server:
     ```bash
     cd ../frontend
     npm run dev
@@ -110,43 +94,50 @@ directory.
     yarn dev
     ```
 
-3. Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to see the application in action.
+5. Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to see the application in action.
 
 ## Deployment
 
+You can deploy the application in different environments using the following methods:
+
 ### Docker
+
+You can simply run the `run.bat` (or `run.sh`) script to start the Docker containers.
+
+Alternatively, you can follow these steps:
 
 1. Build and run the Docker containers:
     ```bash
-    docker-compose up --build
+   docker compose up -d db
+   docker compose build backend
+   docker compose up -d backend
+   docker exec -it backend npm run db:generate
+   docker exec -it backend npm run db:migrate
+   docker exec -it backend npm run db:seed
+   docker compose build frontend
+   docker compose up frontend
     ```
 
 2. The application will be available at [http://localhost:3000](http://localhost:3000).
 
 ### Kubernetes
 
-1. Apply the Kubernetes deployment and service configurations:
+1. If you use minikube you can access the application using the following command:
+   ```bash
+   minikube start
+   ```
+
+2. Apply the Kubernetes deployment and service configurations:
     ```bash
-    kubectl apply -f k8s-deployment.yaml
-    kubectl apply -f k8s-service.yaml
+   kubectl apply -f k8s-deployment.yaml
+   kubeclt apply -f k8s-secret.yaml
+   kubectl apply -f k8s-service.yaml
     ```
 
-2. Access the application through the Kubernetes service.
-
-## Contributing
-
-We welcome contributions to improve Home Zone Analyzer. Please follow these steps to contribute:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes and commit them (`git commit -m 'Add new feature'`).
-4. Push to the branch (
-
-git push origin feature-branch
-
-).
-
-5. Open a pull request.
+3. Open service in browser:
+    ```bash
+   minikube service frontend -n progetto-cas
+    ```
 
 ## License
 
