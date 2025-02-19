@@ -43,8 +43,8 @@ openrouteservice API key in base64 format.
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/CyberGiant7/progetto_cas.git
-    cd home-zone-analyzer
+    git clone https://github.com/CyberGiant7/ContextAwareSystemProject.git
+    cd ContextAwareSystemProject
     ```
 
 2. Install dependencies for the frontend:
